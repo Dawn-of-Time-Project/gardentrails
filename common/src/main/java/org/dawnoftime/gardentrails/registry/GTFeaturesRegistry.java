@@ -19,6 +19,8 @@ public abstract class GTFeaturesRegistry {
     public static final ResourceKey<PlacedFeature> COMMELINA_PLACED_KEY = registerKey("commelina_placed");
     public static final ResourceKey<PlacedFeature> CYPRESS_PLACED_KEY = registerKey("cypress_placed");
     public static final ResourceKey<PlacedFeature> RED_MAPLE_PLACED_KEY = registerKey("red_maple_placed");
+    public static final ResourceKey<PlacedFeature> ORANGE_MAPLE_PLACED_KEY = registerKey("orange_maple_placed");
+    public static final ResourceKey<PlacedFeature> GREEN_MAPLE_PLACED_KEY = registerKey("green_maple_placed");
     public static final ResourceKey<PlacedFeature> BOXWOOD_BUSH_PLACED_KEY = registerKey("boxwood_bush_placed");
     public static final ResourceKey<PlacedFeature> MULBERRY_PLACED_KEY = registerKey("mulberry_placed");
     public static final ResourceKey<PlacedFeature> RICE_PLACED_KEY = registerKey("rice_placed");

@@ -26,6 +26,8 @@ public class BiomeModifiers {
         addFromConfig("ivy",                GTFeaturesRegistry.IVY_PLACED_KEY);
         addFromConfig("mulberry",           GTFeaturesRegistry.MULBERRY_PLACED_KEY);
         addFromConfig("red_maple",          GTFeaturesRegistry.RED_MAPLE_PLACED_KEY);
+        addFromConfig("orange_maple",       GTFeaturesRegistry.ORANGE_MAPLE_PLACED_KEY);
+        addFromConfig("green_maple",        GTFeaturesRegistry.GREEN_MAPLE_PLACED_KEY);
         addFromConfig("rice",               GTFeaturesRegistry.RICE_PLACED_KEY);
         addFromConfig("wild_grape",         GTFeaturesRegistry.WILD_GRAPE_PLACED_KEY);
         addFromConfig("wild_maize",         GTFeaturesRegistry.WILD_MAIZE_PLACED_KEY);

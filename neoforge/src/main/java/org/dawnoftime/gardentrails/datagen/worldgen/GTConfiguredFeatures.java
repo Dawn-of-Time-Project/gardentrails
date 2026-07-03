@@ -21,6 +21,8 @@ public class GTConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> COMMELINA_KEY = registerKey("commelina");
     public static final ResourceKey<ConfiguredFeature<?, ?>> CYPRESS_KEY = registerKey("cypress");
     public static final ResourceKey<ConfiguredFeature<?, ?>> RED_MAPLE_KEY = registerKey("red_maple");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORANGE_MAPLE_KEY = registerKey("orange_maple");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GREEN_MAPLE_KEY = registerKey("green_maple");
     public static final ResourceKey<ConfiguredFeature<?, ?>> BOXWOOD_BUSH_KEY = registerKey("boxwood_bush");
     public static final ResourceKey<ConfiguredFeature<?, ?>> MULBERRY_KEY = registerKey("mulberry");
     public static final ResourceKey<ConfiguredFeature<?, ?>> RICE_KEY = registerKey("rice");
@@ -69,7 +71,27 @@ public class GTConfiguredFeatures {
                 new RandomPatchConfiguration(32, 3, 2,
                         PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
                                 new SimpleBlockConfiguration(
-                                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MAPLE_RED_SAPLING.get())
+                                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.get("red").sapling().get())
+                                )
+                        )
+                )
+        );
+
+        register(context, ORANGE_MAPLE_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(32, 3, 2,
+                        PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.get("orange").sapling().get())
+                                )
+                        )
+                )
+        );
+
+        register(context, GREEN_MAPLE_KEY, Feature.RANDOM_PATCH,
+                new RandomPatchConfiguration(32, 3, 2,
+                        PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
+                                new SimpleBlockConfiguration(
+                                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.get("green").sapling().get())
                                 )
                         )
                 )

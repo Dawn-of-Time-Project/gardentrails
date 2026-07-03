@@ -11,11 +11,13 @@ public class RenderLayers {
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.STICK_BUNDLE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.RICE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PINK.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PAUSED_MAPLE_RED_SAPLING.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MULBERRY.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MAPLE_RED_TRUNK.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MAPLE_RED_SAPLING.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MAPLE_RED_LEAVES.get(), RenderType.cutout());
+        for (String variantId : GTBlocksRegistry.MAPLE_VARIANT_IDS) {
+            var mapleVariant = GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.get(variantId);
+            BlockRenderLayerMap.INSTANCE.putBlock(mapleVariant.trunk().get(), RenderType.cutout());
+            BlockRenderLayerMap.INSTANCE.putBlock(mapleVariant.sapling().get(), RenderType.cutout());
+            BlockRenderLayerMap.INSTANCE.putBlock(mapleVariant.leaves().get(), RenderType.cutout());
+        }
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MAIZE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.IVY.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.GERANIUM_PINK.get(),      RenderType.cutout());
@@ -39,7 +41,9 @@ public class RenderLayers {
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("maize_flower_pot"),             RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("mulberry_flower_pot"),          RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("ivy_flower_pot"),               RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("maple_red_sapling_flower_pot"), RenderType.cutout());
+        for (String variantId : GTBlocksRegistry.MAPLE_VARIANT_IDS) {
+            BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("maple_" + variantId + "_sapling_flower_pot"), RenderType.cutout());
+        }
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("grape_seeds_flower_pot"),       RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.BOXWOOD_TALL_HEDGE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.BOXWOOD_SMALL_HEDGE.get(), RenderType.cutout());

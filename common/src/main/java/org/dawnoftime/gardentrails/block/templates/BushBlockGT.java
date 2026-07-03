@@ -3,10 +3,16 @@ package org.dawnoftime.gardentrails.block.templates;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -15,7 +21,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.dawnoftime.gardentrails.block.IBlockGeneration;
 import org.dawnoftime.gardentrails.block.IFlammable;
 
-public class BushBlockGT extends BushBlock implements IBlockGeneration, IFlammable {
+public class BushBlockGT extends BushBlock implements IBlockGeneration, IFlammable, BonemealableBlock {
     private final VoxelShape[] shapes;
 
     public BushBlockGT(final Properties properties, VoxelShape[] shapes) {
@@ -50,6 +56,21 @@ public class BushBlockGT extends BushBlock implements IBlockGeneration, IFlammab
         world.setBlock(pos, state, 2);
 
         return true;
+    }
+
+    @Override
+    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+        return true;
+    }
+
+    @Override
+    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+        return random.nextInt(10) == 0;
+    }
+
+    @Override
+    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+        Block.popResource(level, pos, new ItemStack(this.asItem()));
     }
 
     // unused

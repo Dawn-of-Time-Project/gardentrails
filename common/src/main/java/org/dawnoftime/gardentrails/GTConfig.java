@@ -59,6 +59,12 @@ public class GTConfig {
     public List<String> redMapleBiomes = List.of(
         "minecraft:birch_forest", "minecraft:old_growth_birch_forest", "minecraft:dark_forest"
     );
+    public List<String> orangeMapleBiomes = List.of(
+        "minecraft:birch_forest", "minecraft:old_growth_birch_forest", "minecraft:dark_forest"
+    );
+    public List<String> greenMapleBiomes = List.of(
+        "minecraft:birch_forest", "minecraft:old_growth_birch_forest", "minecraft:dark_forest"
+    );
     public List<String> riceBiomes = List.of(
         "minecraft:swamp", "minecraft:mangrove_swamp"
     );
@@ -85,6 +91,8 @@ public class GTConfig {
             case "ivy"                -> ivyBiomes;
             case "mulberry"           -> mulberryBiomes;
             case "red_maple"          -> redMapleBiomes;
+            case "orange_maple"       -> orangeMapleBiomes;
+            case "green_maple"        -> greenMapleBiomes;
             case "rice"               -> riceBiomes;
             case "wild_grape"         -> wildGrapeBiomes;
             case "wild_maize"         -> wildMaizeBiomes;

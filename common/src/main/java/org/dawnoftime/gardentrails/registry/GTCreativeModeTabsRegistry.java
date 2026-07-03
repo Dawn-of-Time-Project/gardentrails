@@ -61,7 +61,9 @@ public abstract class GTCreativeModeTabsRegistry {
         output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_RED.get());
         output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_WHITE.get());
         output.accept(GTBlocksRegistry.INSTANCE.IVY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.MAPLE_RED_SAPLING.get());
+        for (String variantId : GTBlocksRegistry.MAPLE_VARIANT_IDS) {
+            output.accept(GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.get(variantId).sapling().get());
+        }
 
         // Silk chain
         output.accept(GTItemsRegistry.INSTANCE.SILK_WORM_EGGS.get());
@@ -86,6 +88,8 @@ public abstract class GTCreativeModeTabsRegistry {
         output.accept(GTBlocksRegistry.POT_BLOCKS.get("ivy_flower_pot"));
         output.accept(GTBlocksRegistry.POT_BLOCKS.get("grape_seeds_flower_pot"));
         output.accept(GTBlocksRegistry.POT_BLOCKS.get("maize_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("maple_red_sapling_flower_pot"));
+        for (String variantId : GTBlocksRegistry.MAPLE_VARIANT_IDS) {
+            output.accept(GTBlocksRegistry.POT_BLOCKS.get("maple_" + variantId + "_sapling_flower_pot"));
+        }
     }
 }

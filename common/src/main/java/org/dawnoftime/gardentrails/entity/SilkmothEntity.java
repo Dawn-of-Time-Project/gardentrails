@@ -22,6 +22,7 @@ import org.dawnoftime.gardentrails.GTConstants;
 import org.dawnoftime.gardentrails.block.templates.DoubleGrowingBushBlock;
 import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
 import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
+import org.dawnoftime.gardentrails.registry.GTItemsRegistry;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -70,6 +71,11 @@ public class SilkmothEntity extends AmbientCreature {
         if(this.random.nextInt(GTConstants.SILKMOTH_ROTATION_CHANGE) == 0){
             //Randomly changes the rotation pos.
             this.changeRotationPos();
+        }
+
+        // ~3 silk worm egg drops over a full lifetime (24000 ticks)
+        if(this.random.nextInt(8000) == 0){
+            this.spawnAtLocation(GTItemsRegistry.INSTANCE.SILK_WORM_EGGS.get());
         }
 
         BlockPos pos = this.getEntityData().get(ROTATION_POS);

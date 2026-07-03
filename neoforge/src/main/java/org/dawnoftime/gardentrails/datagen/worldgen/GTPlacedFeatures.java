@@ -48,6 +48,22 @@ public class GTPlacedFeatures {
                 )
         );
 
+        register(context, GTFeaturesRegistry.ORANGE_MAPLE_PLACED_KEY,
+                configuredFeatures.getOrThrow(GTConfiguredFeatures.ORANGE_MAPLE_KEY),
+                List.of(
+                        RarityFilter.onAverageOnceEvery(2),
+                        InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome()
+                )
+        );
+
+        register(context, GTFeaturesRegistry.GREEN_MAPLE_PLACED_KEY,
+                configuredFeatures.getOrThrow(GTConfiguredFeatures.GREEN_MAPLE_KEY),
+                List.of(
+                        RarityFilter.onAverageOnceEvery(2),
+                        InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome()
+                )
+        );
+
         register(context, GTFeaturesRegistry.BOXWOOD_BUSH_PLACED_KEY,
                 configuredFeatures.getOrThrow(GTConfiguredFeatures.BOXWOOD_BUSH_KEY),
                 List.of(
