@@ -1,0 +1,6 @@
+{
+	"parent": "gardentrails:block/maple_base/middle_right_1",
+	"textures": {
+		"2": "gardentrails:block/maple_green_leaves"
+	}
+}

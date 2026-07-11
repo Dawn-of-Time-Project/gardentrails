@@ -6,7 +6,7 @@
             "entries": [
                 {
                     "type": "minecraft:item",
-                    "name": "gardentrails:maple_red_sapling"
+                    "name": "gardentrails:planter_geranium_purple"
                 }
             ],
             "conditions": [

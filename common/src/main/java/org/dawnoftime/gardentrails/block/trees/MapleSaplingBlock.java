@@ -5,11 +5,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.FlintAndSteelItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
@@ -18,11 +13,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.phys.BlockHitResult;
-
 
 import org.dawnoftime.gardentrails.block.templates.BushBlockGT;
-import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
+
+import java.util.function.Supplier;
 
 import static org.dawnoftime.gardentrails.util.VoxelShapes.SAPLING_SHAPES;
 
@@ -30,26 +24,15 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
 
     public static final IntegerProperty STAGE = BlockStateProperties.STAGE;
 
-    public MapleSaplingBlock(final Properties properties) {
+    private final Supplier<Block> trunk;
+    private final Supplier<Block> leaves;
+
+    public MapleSaplingBlock(final Properties properties, final Supplier<Block> trunk, final Supplier<Block> leaves) {
         super(properties, SAPLING_SHAPES);
+        this.trunk = trunk;
+        this.leaves = leaves;
         this.registerDefaultState(this.stateDefinition.any().setValue(MapleSaplingBlock.STAGE, 0));
     }
-
-    @Override
-    public InteractionResult use(final BlockState p_225533_1_In, final Level p_225533_2_In, final BlockPos p_225533_3_In, final Player p_225533_4_In, final InteractionHand p_225533_5_In, final BlockHitResult p_225533_6_In) {
-        final Item mainItem = p_225533_4_In.getMainHandItem().getItem();
-        if(mainItem instanceof FlintAndSteelItem) {
-            if(!p_225533_2_In.isClientSide) {
-                p_225533_2_In.setBlock(p_225533_3_In, GTBlocksRegistry.INSTANCE.PAUSED_MAPLE_RED_SAPLING.get().defaultBlockState(), 35);
-                p_225533_2_In.levelEvent(p_225533_4_In, 2001, p_225533_3_In, Block.getId(p_225533_1_In));
-            }
-
-            return InteractionResult.SUCCESS;
-        }
-
-        return InteractionResult.FAIL;
-    }
-
 
     @Override
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> p_206840_1_) {
@@ -78,7 +61,7 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
         if(state.getValue(MapleSaplingBlock.STAGE) == 0) {
             level.setBlock(pos, state.cycle(MapleSaplingBlock.STAGE), 4);
         } else {
-            MapleSaplingBlock.placeFinalTreeIfPossible(level, pos);
+            this.placeFinalTreeIfPossible(level, pos);
         }
     }
 
@@ -106,7 +89,6 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
     }
 
     @Override
-
     public float getShadeBrightness(final BlockState p_220080_1_, final BlockGetter p_220080_2_, final BlockPos p_220080_3_) {
         return 1.0F;
     }
@@ -118,8 +100,9 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
 
     @Override
     public boolean generateOnPos(WorldGenLevel world, BlockPos pos, BlockState state, RandomSource random) {
-        return MapleSaplingBlock.placeFinalTreeIfPossible(world, pos);
+        return this.placeFinalTreeIfPossible(world, pos);
     }
+
     public static boolean isValidForPlacement(final LevelAccessor worldIn, final BlockPos bottomCenterIn) {
         final BlockPos floorCenter = bottomCenterIn.below();
         BlockState state = worldIn.getBlockState(floorCenter);
@@ -139,17 +122,17 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
         return true;
     }
 
-    public static boolean placeFinalTreeIfPossible(final LevelAccessor worldIn, final BlockPos centerPosIn) {
+    public boolean placeFinalTreeIfPossible(final LevelAccessor worldIn, final BlockPos centerPosIn) {
         if(MapleSaplingBlock.isValidForPlacement(worldIn, centerPosIn)) {
             final Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(worldIn.getRandom());
-            worldIn.setBlock(centerPosIn, GTBlocksRegistry.INSTANCE.MAPLE_RED_TRUNK.get().defaultBlockState().setValue(MapleTrunkBlock.FACING, direction), 10);
+            worldIn.setBlock(centerPosIn, this.trunk.get().defaultBlockState().setValue(MapleTrunkBlock.FACING, direction), 10);
 
             for(int x = -1; x <= 1; x++) {
                 for(int y = 0; y <= 1; y++) {
                     for(int z = -1; z <= 1; z++) {
                         final BlockPos newBlockPosition = new BlockPos(centerPosIn.getX() + x, centerPosIn.getY() + y + 1, centerPosIn.getZ() + z);
 
-                        worldIn.setBlock(newBlockPosition, GTBlocksRegistry.INSTANCE.MAPLE_RED_LEAVES.get().defaultBlockState().setValue(MapleTrunkBlock.FACING, direction).setValue(MapleLeavesBlock.MULTIBLOCK_X, x + 1).setValue(MapleLeavesBlock.MULTIBLOCK_Y, y).setValue(MapleLeavesBlock.MULTIBLOCK_Z, z + 1), 10);
+                        worldIn.setBlock(newBlockPosition, this.leaves.get().defaultBlockState().setValue(MapleTrunkBlock.FACING, direction).setValue(MapleLeavesBlock.MULTIBLOCK_X, x + 1).setValue(MapleLeavesBlock.MULTIBLOCK_Y, y).setValue(MapleLeavesBlock.MULTIBLOCK_Z, z + 1), 10);
                     }
                 }
             }

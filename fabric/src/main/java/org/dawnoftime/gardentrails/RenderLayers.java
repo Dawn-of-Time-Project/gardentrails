@@ -2,6 +2,7 @@ package org.dawnoftime.gardentrails;
 
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.minecraft.client.renderer.RenderType;
+import org.dawnoftime.gardentrails.block.trees.MapleVariant;
 import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
 
 public class RenderLayers {
@@ -11,11 +12,12 @@ public class RenderLayers {
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.STICK_BUNDLE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.RICE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PINK.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PAUSED_MAPLE_RED_SAPLING.get(), RenderType.cutout());
+        for(MapleVariant variant : GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.values()) {
+            BlockRenderLayerMap.INSTANCE.putBlock(variant.trunk().get(), RenderType.cutout());
+            BlockRenderLayerMap.INSTANCE.putBlock(variant.leaves().get(), RenderType.cutout());
+            BlockRenderLayerMap.INSTANCE.putBlock(variant.sapling().get(), RenderType.cutout());
+        }
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MULBERRY.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MAPLE_RED_TRUNK.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MAPLE_RED_SAPLING.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MAPLE_RED_LEAVES.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MAIZE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.IVY.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.GERANIUM_PINK.get(), RenderType.cutout());
@@ -38,7 +40,9 @@ public class RenderLayers {
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("commelina_flower_pot"), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("grape_seeds_flower_pot"), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("maize_flower_pot"), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("maple_red_sapling_flower_pot"), RenderType.cutout());
+        for(MapleVariant variant : GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.values()) {
+            BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.POT_BLOCKS.get("maple_" + variant.id() + "_sapling_flower_pot"), RenderType.cutout());
+        }
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.COMMELINA.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.CAMELLIA.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.BOXWOOD_TALL_HEDGE.get(), RenderType.cutout());

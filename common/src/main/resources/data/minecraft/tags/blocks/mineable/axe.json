@@ -11,7 +11,10 @@
         "gardentrails:spruce_drying_tray",
         "gardentrails:maple_red_leaves",
         "gardentrails:maple_red_trunk",
-        "gardentrails:paused_maple_red_sapling",
+        "gardentrails:maple_orange_leaves",
+        "gardentrails:maple_orange_trunk",
+        "gardentrails:maple_green_leaves",
+        "gardentrails:maple_green_trunk",
         "gardentrails:rice",
         "gardentrails:stick_bundle"
     ]

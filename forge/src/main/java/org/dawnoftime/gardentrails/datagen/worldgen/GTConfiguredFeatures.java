@@ -64,7 +64,7 @@ public class GTConfiguredFeatures {
             new RandomPatchConfiguration(32, 3, 2,
                 PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
                     new SimpleBlockConfiguration(
-                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MAPLE_RED_SAPLING.get())
+                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.get("red").sapling().get())
                     )
                 )
             )

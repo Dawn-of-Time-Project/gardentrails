@@ -1,7 +1,7 @@
 {
 	"render_type": "minecraft:cutout",
 	"credit": "Made with Blockbench",
-	"ambientocclusion": false,
+	"ambientocclusion": true,
 	"textures": {
 		"particle": "gardentrails:block/maple_red_sapling",
 		"cross": "gardentrails:block/maple_red_sapling"

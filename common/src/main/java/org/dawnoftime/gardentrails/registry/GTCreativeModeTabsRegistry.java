@@ -5,6 +5,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import org.dawnoftime.gardentrails.GTCommon;
+import org.dawnoftime.gardentrails.block.trees.MapleVariant;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -69,7 +70,9 @@ public abstract class GTCreativeModeTabsRegistry {
         output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_RED.get());
         output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_WHITE.get());
         output.accept(GTBlocksRegistry.INSTANCE.IVY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.MAPLE_RED_SAPLING.get());
+        for(MapleVariant variant : GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.values()) {
+            output.accept(variant.sapling().get());
+        }
 
         // ── Sake ──────────────────────────────────────────────────────────────
         output.accept(GTItemsRegistry.INSTANCE.SAKE.get());
@@ -87,6 +90,11 @@ public abstract class GTCreativeModeTabsRegistry {
 
         // ── Pots ──────────────────────────────────────────────────────────────
         output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PINK.get());
+        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_ORANGE.get());
+        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PURPLE.get());
+        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PURPLEISH.get());
+        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_RED.get());
+        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_WHITE.get());
         output.accept(GTBlocksRegistry.POT_BLOCKS.get("geranium_pink_flower_pot"));
         output.accept(GTBlocksRegistry.POT_BLOCKS.get("geranium_orange_flower_pot"));
         output.accept(GTBlocksRegistry.POT_BLOCKS.get("geranium_purple_flower_pot"));
@@ -100,6 +108,8 @@ public abstract class GTCreativeModeTabsRegistry {
         output.accept(GTBlocksRegistry.POT_BLOCKS.get("ivy_flower_pot"));
         output.accept(GTBlocksRegistry.POT_BLOCKS.get("grape_seeds_flower_pot"));
         output.accept(GTBlocksRegistry.POT_BLOCKS.get("maize_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("maple_red_sapling_flower_pot"));
+        for(MapleVariant variant : GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.values()) {
+            output.accept(GTBlocksRegistry.POT_BLOCKS.get("maple_" + variant.id() + "_sapling_flower_pot"));
+        }
     }
 }

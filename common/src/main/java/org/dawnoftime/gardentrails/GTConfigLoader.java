@@ -43,6 +43,8 @@ public class GTConfigLoader {
                     case "ivy_biomes"             -> INSTANCE.ivyBiomes          = parseList(rawValue);
                     case "mulberry_biomes"        -> INSTANCE.mulberryBiomes     = parseList(rawValue);
                     case "red_maple_biomes"       -> INSTANCE.redMapleBiomes     = parseList(rawValue);
+                    case "orange_maple_biomes"    -> INSTANCE.orangeMapleBiomes  = parseList(rawValue);
+                    case "green_maple_biomes"     -> INSTANCE.greenMapleBiomes   = parseList(rawValue);
                     case "rice_biomes"            -> INSTANCE.riceBiomes         = parseList(rawValue);
                     case "wild_grape_biomes"      -> INSTANCE.wildGrapeBiomes    = parseList(rawValue);
                     case "wild_maize_biomes"      -> INSTANCE.wildMaizeBiomes    = parseList(rawValue);
@@ -95,6 +97,8 @@ geranium_pink_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_fo
 ivy_biomes=minecraft:forest,minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest
 mulberry_biomes=minecraft:taiga,minecraft:old_growth_pine_taiga,minecraft:old_growth_spruce_taiga
 red_maple_biomes=minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest
+orange_maple_biomes=minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest
+green_maple_biomes=minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest
 rice_biomes=minecraft:swamp,minecraft:mangrove_swamp
 wild_grape_biomes=minecraft:forest,minecraft:birch_forest,minecraft:dark_forest
 wild_maize_biomes=minecraft:savanna,minecraft:savanna_plateau,minecraft:windswept_savanna,minecraft:plains
