@@ -21,6 +21,9 @@
         ],
         "client": [
             "org.dawnoftime.gardentrails.GTFabric"
+        ],
+        "jei_mod_plugin": [
+            "org.dawnoftime.gardentrails.compat.jei.GTJeiPlugin"
         ]
     },
     "mixins": [

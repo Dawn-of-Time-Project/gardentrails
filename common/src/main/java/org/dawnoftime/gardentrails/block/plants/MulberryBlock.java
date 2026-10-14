@@ -1,6 +1,6 @@
 package org.dawnoftime.gardentrails.block.plants;
 
-import net.minecraft.ChatFormatting;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.block.state.properties.Half;
 import org.dawnoftime.gardentrails.block.templates.DoubleGrowingBushBlock;
 import org.dawnoftime.gardentrails.platform.Services;
@@ -27,11 +28,9 @@ public class MulberryBlock extends DoubleGrowingBushBlock {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable BlockGetter world, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, world, tooltip, flag);
-        tooltip.add(Component.translatable("lore.gardentrails.silk_process").withStyle(ChatFormatting.AQUA));
-        Component yellowArg = Component.translatable("item.gardentrails.mulberry_leaves").withStyle(ChatFormatting.YELLOW);
-        tooltip.add(Component.translatable("lore.gardentrails.mulberry", yellowArg).withStyle(ChatFormatting.WHITE));
-        Component yellowEggs = Component.translatable("item.gardentrails.silk_worm_eggs").withStyle(ChatFormatting.YELLOW);
-        tooltip.add(Component.translatable("lore.gardentrails.mulberry.silkmoths", yellowEggs).withStyle(ChatFormatting.WHITE));
+        TooltipHelper.label(tooltip, "lore.gardentrails.silk_process");
+        TooltipHelper.lore(tooltip, "lore.gardentrails.mulberry", TooltipHelper.name("item.gardentrails.mulberry_leaves"));
+        TooltipHelper.lore(tooltip, "lore.gardentrails.mulberry.silkmoths", TooltipHelper.name("item.gardentrails.silk_worm_eggs"));
     }
 
     @Override
@@ -47,5 +46,10 @@ public class MulberryBlock extends DoubleGrowingBushBlock {
     @Override
     public boolean isRandomlyTicking(BlockState blockState) {
         return true;
+    }
+
+    @Override
+    public boolean isPathfindable(final BlockState state, final BlockGetter level, final BlockPos pos, final PathComputationType type) {
+        return type != PathComputationType.LAND && super.isPathfindable(state, level, pos, type);
     }
 }

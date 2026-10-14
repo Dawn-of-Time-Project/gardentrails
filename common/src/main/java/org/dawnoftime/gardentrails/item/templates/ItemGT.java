@@ -1,78 +1,86 @@
 package org.dawnoftime.gardentrails.item.templates;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemGT extends Item {
-    // Translation key for the "Silk Process:" AQUA header (shared by all silk chain items)
+    // Translation keys for the process labels (shared by all items of a chain)
     private static final String SILK_PROCESS_HEADER_KEY = "lore.gardentrails.silk_process";
+    private static final String SAKE_PROCESS_HEADER_KEY = "lore.gardentrails.sake_process";
 
-    @Nullable private final String loreKey;
-    // Description key for the silk process pattern (supports %s substitution for the highlighted item name)
+    private static final String[] NO_ARGS = new String[0];
+
+    private final String[] loreKeys;
+    // Label key of the process pattern ("Silk Process:", "Sake Process:")
+    @Nullable private final String processHeaderKey;
+    // Description key for the process pattern (supports %s substitution for the highlighted item names)
     @Nullable private final String processDescKey;
-    // Translation key for the item name to highlight — null means no header, no highlight (e.g. Silk)
-    @Nullable private final String processArgKey;
-    // Color of the highlighted item name — defaults to YELLOW, can be overridden (e.g. LIGHT_PURPLE for Silk)
-    private final ChatFormatting processArgColor;
+    // Translation keys of the item names to highlight, empty means no label, no highlight (e.g. Silk)
+    private final String[] processArgKeys;
 
     public ItemGT() {
-        this(new Properties(), null, null, null, ChatFormatting.YELLOW);
+        this(new Properties(), new String[0], null, null, NO_ARGS);
     }
 
     public ItemGT(Properties properties) {
-        this(properties, null, null, null, ChatFormatting.YELLOW);
+        this(properties, new String[0], null, null, NO_ARGS);
     }
 
     public ItemGT(String loreKey) {
-        this(new Properties(), loreKey, null, null, ChatFormatting.YELLOW);
+        this(new Properties(), loreKey, null, null);
     }
 
     public ItemGT(Properties properties, @Nullable String loreKey) {
-        this(properties, loreKey, null, null, ChatFormatting.YELLOW);
+        this(properties, loreKey, null, null);
     }
 
-    // Silk process pattern: AQUA header + white description with one highlighted item name (%s arg)
-    // Pass null for processArgKey to show only the white description without a header (e.g. Silk — end of chain)
+    // Silk process pattern: label + lore with one highlighted item name (%s arg)
+    // Pass null for processArgKey to show only the lore without a label (e.g. Silk, end of chain)
     public ItemGT(Properties properties, String processDescKey, @Nullable String processArgKey) {
-        this(properties, null, processDescKey, processArgKey, ChatFormatting.YELLOW);
+        this(properties, new String[0], SILK_PROCESS_HEADER_KEY, processDescKey, processArgKey == null ? NO_ARGS : new String[]{processArgKey});
     }
 
-    // Same as above but with a custom highlight color for the item name arg
-    public ItemGT(Properties properties, String processDescKey, @Nullable String processArgKey, ChatFormatting argColor) {
-        this(properties, null, processDescKey, processArgKey, argColor);
+    // Several lore lines, one per key
+    public ItemGT(Properties properties, String[] loreKeys) {
+        this(properties, loreKeys, null, null, NO_ARGS);
     }
 
-    private ItemGT(Properties properties, @Nullable String loreKey, @Nullable String processDescKey, @Nullable String processArgKey, ChatFormatting processArgColor) {
+    // Sake process pattern: label + lore with highlighted item names (one %s arg per key)
+    public static ItemGT sakeProcess(Properties properties, String processDescKey, String... processArgKeys) {
+        return new ItemGT(properties, new String[0], SAKE_PROCESS_HEADER_KEY, processDescKey, processArgKeys);
+    }
+
+    private ItemGT(Properties properties, @Nullable String loreKey, @Nullable String processDescKey, @Nullable String processArgKey) {
+        this(properties, loreKey == null ? new String[0] : new String[]{loreKey}, processDescKey == null ? null : SILK_PROCESS_HEADER_KEY, processDescKey, processArgKey == null ? NO_ARGS : new String[]{processArgKey});
+    }
+
+    private ItemGT(Properties properties, String[] loreKeys, @Nullable String processHeaderKey, @Nullable String processDescKey, String[] processArgKeys) {
         super(properties);
-        this.loreKey = loreKey;
+        this.loreKeys = loreKeys;
+        this.processHeaderKey = processHeaderKey;
         this.processDescKey = processDescKey;
-        this.processArgKey = processArgKey;
-        this.processArgColor = processArgColor;
+        this.processArgKeys = processArgKeys;
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> tooltips, @NotNull TooltipFlag flagIn) {
         super.appendHoverText(stack, world, tooltips, flagIn);
-        if (this.loreKey != null) {
-            tooltips.add(Component.translatable(this.loreKey).withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        for (String loreKey : this.loreKeys) {
+            TooltipHelper.lore(tooltips, loreKey);
         }
         if (this.processDescKey != null) {
-            if (this.processArgKey != null) {
-                // Header "Silk Process:" in aqua, then white description with highlighted item name
-                tooltips.add(Component.translatable(SILK_PROCESS_HEADER_KEY).withStyle(ChatFormatting.AQUA));
-                Component highlightedArg = Component.translatable(this.processArgKey).withStyle(this.processArgColor);
-                tooltips.add(Component.translatable(this.processDescKey, highlightedArg).withStyle(ChatFormatting.WHITE));
+            if (this.processArgKeys.length > 0 && this.processHeaderKey != null) {
+                TooltipHelper.process(tooltips, this.processHeaderKey, this.processDescKey, this.processArgKeys);
             } else {
-                // End of chain (Silk): just a white description, no header
-                tooltips.add(Component.translatable(this.processDescKey).withStyle(ChatFormatting.WHITE));
+                TooltipHelper.lore(tooltips, this.processDescKey);
             }
         }
     }

@@ -3,7 +3,7 @@
 	"dryingTime": 1200,
 	"experience": 1.0,
 	"ingredient": {
-		"item": "gardentrails:cooked_rice",
+		"item": "gardentrails:moldy_rice",
 		"count": 4
 	},
 	"result": {

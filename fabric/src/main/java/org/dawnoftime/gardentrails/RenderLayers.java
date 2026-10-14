@@ -7,6 +7,7 @@ import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
 
 public class RenderLayers {
     public static void init() {
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.SAKE_VAT.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.WILD_MAIZE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.WILD_GRAPE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.STICK_BUNDLE.get(), RenderType.cutout());
@@ -17,6 +18,7 @@ public class RenderLayers {
             BlockRenderLayerMap.INSTANCE.putBlock(variant.leaves().get(), RenderType.cutout());
             BlockRenderLayerMap.INSTANCE.putBlock(variant.sapling().get(), RenderType.cutout());
         }
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.ROTTEN_OAK_TRAPDOOR.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MULBERRY.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.MAIZE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.IVY.get(), RenderType.cutout());

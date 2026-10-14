@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IiI",
+    " I ",
+    "I I"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:copper_ingot"
+    },
+    "i": {
+      "item": "minecraft:honeycomb"
+    }
+  },
+  "result": {
+    "item": "gardentrails:copper_lattice",
+    "count": 16
+  }
+}

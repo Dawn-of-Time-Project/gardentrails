@@ -26,6 +26,8 @@ repositories {
 
 dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+    // Soft integration: JEI API only needed at compile time, the plugin class is loaded only when JEI is present
+    compileOnly "mezz.jei:jei-1.20.1-common-api:15.62.0.219"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 }
 

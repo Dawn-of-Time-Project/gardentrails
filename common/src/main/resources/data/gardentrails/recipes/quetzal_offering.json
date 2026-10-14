@@ -1,0 +1,20 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"PGP",
+		"MBM",
+		"RAU"
+	],
+	"key": {
+		"P": {"item": "gardentrails:blue_petals"},
+		"G": {"item": "gardentrails:green_feather"},
+		"M": {"item": "gardentrails:grains_and_seeds_mix"},
+		"B": {"item": "minecraft:bowl"},
+		"R": {"item": "gardentrails:red_feather"},
+		"A": {"item": "minecraft:amethyst_shard"},
+		"U": {"item": "gardentrails:blue_feather"}
+	},
+	"result": {
+		"item": "gardentrails:quetzal_offering"
+	}
+}

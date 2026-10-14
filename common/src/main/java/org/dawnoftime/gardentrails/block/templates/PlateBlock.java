@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,6 +103,15 @@ public class PlateBlock extends WaterloggedBlock {
         return state.getBlock() instanceof PlateBlock;
     }
 
+    /**
+     * Plates are considered as full blocks for support checks, so panes, iron bars and walls connect to every side.
+     * The visual model and the collision shape are not affected.
+     */
+    @Override
+    public @NotNull VoxelShape getBlockSupportShape(final @NotNull BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos) {
+        return Shapes.block();
+    }
+
     @Override
     public @NotNull BlockState rotate(final BlockState state, final Rotation rot) {
         return state.setValue(PlateBlock.FACING, rot.rotate(state.getValue(PlateBlock.FACING)));
@@ -138,5 +148,10 @@ public class PlateBlock extends WaterloggedBlock {
         }
 
         return super.mirror(state, mirrorIn);
+    }
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
+        return true;
     }
 }

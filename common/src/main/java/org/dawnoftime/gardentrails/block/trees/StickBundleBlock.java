@@ -1,6 +1,6 @@
 package org.dawnoftime.gardentrails.block.trees;
 
-import net.minecraft.ChatFormatting;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -45,9 +45,8 @@ public class StickBundleBlock extends BlockGT implements IBlockChain {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable BlockGetter worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(Component.translatable("lore.gardentrails.silk_process").withStyle(ChatFormatting.AQUA));
-        Component yellowWorms = Component.translatable("item.gardentrails.silk_worms").withStyle(ChatFormatting.YELLOW);
-        tooltip.add(Component.translatable("lore.gardentrails.stick_bundle", yellowWorms).withStyle(ChatFormatting.WHITE));
+        TooltipHelper.label(tooltip, "lore.gardentrails.silk_process");
+        TooltipHelper.lore(tooltip, "lore.gardentrails.stick_bundle", TooltipHelper.name("item.gardentrails.silk_worms"));
     }
 
     public StickBundleBlock(Properties properties) {
@@ -181,5 +180,10 @@ public class StickBundleBlock extends BlockGT implements IBlockChain {
             }
         }
         super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
+        return true;
     }
 }

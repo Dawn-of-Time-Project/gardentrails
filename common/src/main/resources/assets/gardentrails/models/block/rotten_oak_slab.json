@@ -1,0 +1,1 @@
+{ "parent": "minecraft:block/slab", "textures": { "bottom": "gardentrails:block/rotten_oak_planks", "top": "gardentrails:block/rotten_oak_planks", "side": "gardentrails:block/rotten_oak_planks" } }

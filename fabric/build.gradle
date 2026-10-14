@@ -8,6 +8,10 @@ base {
 
 repositories {
     maven {
+        name = "QuiltMC"
+        url = "https://maven.quiltmc.org/repository/release/"
+    }
+    maven {
         name = "Terraformers"
         url = "https://maven.terraformersmc.com/"
     }
@@ -33,9 +37,14 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+    compileOnly "mezz.jei:jei-1.20.1-common-api:15.62.0.219"
     modRuntimeOnly "maven.modrinth:fusion-connected-textures:uCMQtEFU"
     modRuntimeOnly "maven.modrinth:dawn-of-time:i5FxdR6m"
-    modRuntimeOnly "maven.modrinth:armor-of-the-ages:fZN07J9e"
+    modRuntimeOnly "maven.modrinth:armor-of-the-ages:S0y1uFau"
+    modRuntimeOnly "maven.modrinth:yacl:dvS5DjUA"
+    // YACL libs (Modrinth maven does not expose transitive dependencies)
+    runtimeOnly "org.quiltmc.parsers:json:0.2.1"
+    runtimeOnly "org.quiltmc.parsers:gson:0.2.1"
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":common")
 }

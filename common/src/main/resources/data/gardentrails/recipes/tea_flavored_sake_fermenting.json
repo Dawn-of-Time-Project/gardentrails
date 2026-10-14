@@ -1,0 +1,14 @@
+{
+	"type": "gardentrails:fermenting",
+	"fermentingTime": 1200,
+	"ingredients": [
+		{
+			"item": "minecraft:potion",
+			"nbt": "{Potion:\"minecraft:water\"}",
+			"remainder": "minecraft:glass_bottle"
+		},
+		{ "item": "gardentrails:fermented_rice" },
+		{ "item": "gardentrails:tea_leaves" }
+	],
+	"result": { "item": "gardentrails:tea_flavored_sake", "count": 1 }
+}

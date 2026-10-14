@@ -1,6 +1,6 @@
 package org.dawnoftime.gardentrails.block.templates;
 
-import net.minecraft.ChatFormatting;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
@@ -122,9 +122,10 @@ public class PergolaBlock extends BlockGT {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable BlockGetter worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(Component.translatable("lore.gardentrails.pergola.accepts").withStyle(ChatFormatting.GOLD)
-                .append(Component.translatable("lore.gardentrails.pergola.accepts.plants").withStyle(ChatFormatting.YELLOW)));
-        tooltip.add(Component.translatable("lore.gardentrails.pergola.usage").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC));
+        TooltipHelper.label(tooltip, "lore.gardentrails.pergola.label");
+        TooltipHelper.lore(tooltip, "lore.gardentrails.pergola.accepts", TooltipHelper.names(
+                "item.gardentrails.grape_seeds", "block.gardentrails.ivy", "block.minecraft.vine"));
+        TooltipHelper.lore(tooltip, "lore.gardentrails.pergola.usage");
     }
 
     @Override
@@ -178,5 +179,10 @@ public class PergolaBlock extends BlockGT {
             case 3 -> pos.west();
             default -> pos.above();
         };
+    }
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
+        return true;
     }
 }

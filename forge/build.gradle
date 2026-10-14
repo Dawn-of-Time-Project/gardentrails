@@ -64,10 +64,14 @@ dependencies {
     modRuntimeOnly("maven.modrinth:architectury-api:1MKTLiiG")
     modRuntimeOnly("maven.modrinth:geckolib:LwI6czff")
 
+    compileOnly "mezz.jei:jei-1.20.1-common-api:15.62.0.219"
+    compileOnly "mezz.jei:jei-1.20.1-forge-api:15.62.0.219"
+    modRuntimeOnly("mezz.jei:jei-1.20.1-forge:15.62.0.219")
+
     modRuntimeOnly("maven.modrinth:lets-do-vinery:YpD6ue8A")
     modRuntimeOnly("maven.modrinth:farmers-delight:NcRp00OO")
     modRuntimeOnly("maven.modrinth:critters-and-companions:acDDSIG3")
-    modRuntimeOnly("maven.modrinth:armor-of-the-ages:KK7jQh88")
+    modRuntimeOnly("maven.modrinth:armor-of-the-ages:Bc9cFnLg")
 
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
     implementation 'org.jetbrains:annotations:26.0.2'

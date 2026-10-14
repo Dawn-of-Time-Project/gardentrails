@@ -33,6 +33,9 @@
         "gardentrails:oxidized_copper_pergola",
         "gardentrails:oxidized_copper_pergola_vine",
         "gardentrails:oxidized_copper_pergola_ivy",
-        "gardentrails:oxidized_copper_pergola_grape"
+        "gardentrails:oxidized_copper_pergola_grape",
+        "gardentrails:iron_lattice",
+        "gardentrails:copper_lattice",
+        "gardentrails:oxidized_copper_lattice"
     ]
 }

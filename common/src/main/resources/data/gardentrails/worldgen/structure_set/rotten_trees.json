@@ -1,0 +1,22 @@
+{
+    "structures": [
+        {
+            "structure": "gardentrails:rotten_tree",
+            "weight": 1
+        },
+        {
+            "structure": "gardentrails:rotten_tree_1",
+            "weight": 1
+        },
+        {
+            "structure": "gardentrails:rotten_tree_2",
+            "weight": 1
+        }
+    ],
+    "placement": {
+        "type": "minecraft:random_spread",
+        "spacing": 16,
+        "separation": 6,
+        "salt": 1847362051
+    }
+}

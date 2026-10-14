@@ -19,12 +19,19 @@ public abstract class GTFeaturesRegistry {
     public static final ResourceKey<PlacedFeature> COMMELINA_PLACED_KEY = registerKey("commelina_placed");
     public static final ResourceKey<PlacedFeature> CYPRESS_PLACED_KEY = registerKey("cypress_placed");
     public static final ResourceKey<PlacedFeature> RED_MAPLE_PLACED_KEY = registerKey("red_maple_placed");
+    public static final ResourceKey<PlacedFeature> ORANGE_MAPLE_PLACED_KEY = registerKey("orange_maple_placed");
+    public static final ResourceKey<PlacedFeature> GREEN_MAPLE_PLACED_KEY = registerKey("green_maple_placed");
     public static final ResourceKey<PlacedFeature> BOXWOOD_BUSH_PLACED_KEY = registerKey("boxwood_bush_placed");
     public static final ResourceKey<PlacedFeature> MULBERRY_PLACED_KEY = registerKey("mulberry_placed");
     public static final ResourceKey<PlacedFeature> RICE_PLACED_KEY = registerKey("rice_placed");
     public static final ResourceKey<PlacedFeature> WILD_GRAPE_PLACED_KEY = registerKey("wild_grape_placed");
     public static final ResourceKey<PlacedFeature> WILD_MAIZE_PLACED_KEY = registerKey("wild_maize_placed");
     public static final ResourceKey<PlacedFeature> GERANIUM_PINK_PLACED_KEY = registerKey("geranium_pink_placed");
+    public static final ResourceKey<PlacedFeature> GERANIUM_ORANGE_PLACED_KEY = registerKey("geranium_orange_placed");
+    public static final ResourceKey<PlacedFeature> GERANIUM_PURPLE_PLACED_KEY = registerKey("geranium_purple_placed");
+    public static final ResourceKey<PlacedFeature> GERANIUM_PURPLEISH_PLACED_KEY = registerKey("geranium_purpleish_placed");
+    public static final ResourceKey<PlacedFeature> GERANIUM_RED_PLACED_KEY = registerKey("geranium_red_placed");
+    public static final ResourceKey<PlacedFeature> GERANIUM_WHITE_PLACED_KEY = registerKey("geranium_white_placed");
     public static final ResourceKey<PlacedFeature> IVY_PLACED_KEY = registerKey("ivy_placed");
     public static GTFeaturesRegistry INSTANCE;
 

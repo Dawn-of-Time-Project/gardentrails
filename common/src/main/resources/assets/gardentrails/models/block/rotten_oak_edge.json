@@ -1,0 +1,8 @@
+{
+	"parent": "gardentrails:block/small_plate",
+	"textures": {
+		"side": "gardentrails:block/rotten_oak_planks",
+		"top": "gardentrails:block/rotten_oak_planks",
+		"frieze": "gardentrails:block/rotten_oak_planks"
+	}
+}

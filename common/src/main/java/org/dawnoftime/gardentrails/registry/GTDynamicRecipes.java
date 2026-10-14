@@ -36,6 +36,9 @@ public class GTDynamicRecipes {
     public static JsonObject JAPANESE_LIGHT_ARMOR_HEAD = null;
     public static JsonObject JAPANESE_LIGHT_ARMOR_CHEST = null;
     public static JsonObject JAPANESE_LIGHT_ARMOR_LEGS = null;
+    public static JsonObject QUETZALCOATL_ARMOR_HEAD = null;
+    public static JsonObject QUETZALCOATL_ARMOR_CHEST = null;
+    public static JsonObject QUETZALCOATL_ARMOR_FEET = null;
 
     public static void init(){
         //Dawn of Times recipes
@@ -176,6 +179,52 @@ public class GTDynamicRecipes {
                     List.of("SPS",
                             "L L"));
             addRecipe(new ResourceLocation(AotA_ID,"japanese_light_armor_legs"), JAPANESE_LIGHT_ARMOR_LEGS);
+        }
+
+        //Armor of the Ages Quetzalcoatl recipes (Garden Trails feathers)
+        if(Services.PLATFORM.isModLoaded(AotA_ID) && config.armorOfTheAgesUseQuetzalFeathers){
+            final ResourceLocation greenFeather = new ResourceLocation(GTCommon.MOD_ID, "green_feather");
+            final ResourceLocation redFeather = new ResourceLocation(GTCommon.MOD_ID, "red_feather");
+
+            QUETZALCOATL_ARMOR_HEAD = createShapedRecipe(RecipeCategory.COMBAT,
+                    new ResourceLocation(AotA_ID, "quetzalcoatl_armor_head"),
+                    List.of(
+                            addItem('G', greenFeather),
+                            addItem('R', redFeather),
+                            addItem('o', Items.NETHERITE_HELMET),
+                            addItem('i', Items.GOLD_INGOT),
+                            addItem('v', Items.SKELETON_SKULL)
+                    ),
+                    List.of("GGG",
+                            "RoR",
+                            "ivi"));
+            addRecipe(new ResourceLocation(AotA_ID,"quetzalcoatl_armor_head"), QUETZALCOATL_ARMOR_HEAD);
+
+            QUETZALCOATL_ARMOR_CHEST = createShapedRecipe(RecipeCategory.COMBAT,
+                    new ResourceLocation(AotA_ID, "quetzalcoatl_armor_chest"),
+                    List.of(
+                            addItem('G', greenFeather),
+                            addItem('R', redFeather),
+                            addItem('B', Items.BONE_BLOCK),
+                            addItem('x', Items.GOLD_INGOT),
+                            addItem('i', Items.NETHERITE_CHESTPLATE),
+                            addItem('O', Items.EGG)
+                    ),
+                    List.of("GBR",
+                            "xix",
+                            "ROG"));
+            addRecipe(new ResourceLocation(AotA_ID,"quetzalcoatl_armor_chest"), QUETZALCOATL_ARMOR_CHEST);
+
+            QUETZALCOATL_ARMOR_FEET = createShapedRecipe(RecipeCategory.COMBAT,
+                    new ResourceLocation(AotA_ID, "quetzalcoatl_armor_feet"),
+                    List.of(
+                            addItem('R', redFeather),
+                            addItem('B', Items.BONE_BLOCK),
+                            addItem('x', Items.NETHERITE_BOOTS)
+                    ),
+                    List.of("BxB",
+                            "R R"));
+            addRecipe(new ResourceLocation(AotA_ID,"quetzalcoatl_armor_feet"), QUETZALCOATL_ARMOR_FEET);
         }
     }
 

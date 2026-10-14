@@ -102,4 +102,32 @@ public class VoxelShapesBuilder {
                 Shapes.or(vsAxisXZ, vsAxisY)
         };
     }
+
+    protected static VoxelShape[] makeLatticeShapes() {
+        VoxelShape vsSouth = Block.box(0.0D, 0.0D, 14.0D, 16.0D, 16.0D, 16.0D);
+        VoxelShape vsWest = Block.box(0.0D, 0.0D, 0.0D, 2.0D, 16.0D, 16.0D);
+        VoxelShape vsNorth = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 2.0D);
+        VoxelShape vsEast = Block.box(14.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+        VoxelShape vsSouthWest = Shapes.or(vsSouth, vsWest);
+        VoxelShape vsWestNorth = Shapes.or(vsWest, vsNorth);
+        VoxelShape vsNorthEast = Shapes.or(vsNorth, vsEast);
+        VoxelShape vsSouthEast = Shapes.or(vsEast, vsSouth);
+        return new VoxelShape[]{
+                Shapes.or(vsSouthWest, vsNorthEast), // 0 : all four sides
+                vsSouth,                             // 1
+                vsWest,                              // 2
+                vsSouthWest,                         // 3
+                vsNorth,                             // 4
+                Shapes.or(vsSouth, vsNorth),         // 5
+                vsWestNorth,                         // 6
+                Shapes.or(vsSouthWest, vsNorth),     // 7
+                vsEast,                              // 8
+                vsSouthEast,                         // 9
+                Shapes.or(vsWest, vsEast),           // 10
+                Shapes.or(vsSouthWest, vsEast),      // 11
+                vsNorthEast,                         // 12
+                Shapes.or(vsSouth, vsNorthEast),     // 13
+                Shapes.or(vsWestNorth, vsEast),      // 14
+        };
+    }
 }

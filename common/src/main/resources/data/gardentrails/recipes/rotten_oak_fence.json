@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "PSP",
+        "PSP"
+    ],
+    "key": {
+        "P": {
+            "item": "gardentrails:rotten_oak_planks"
+        },
+        "S": {
+            "item": "minecraft:stick"
+        }
+    },
+    "result": {
+        "item": "gardentrails:rotten_oak_fence",
+        "count": 3
+    }
+}

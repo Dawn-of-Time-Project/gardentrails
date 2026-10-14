@@ -4,7 +4,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.TooltipFlag;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 
@@ -208,6 +211,14 @@ public class IvyBlock extends BlockGT implements IBlockGeneration {
                 levelIn.setBlock(pos, state.setValue(PERSISTENT, true), 2);
             }
         }
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable BlockGetter level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+        TooltipHelper.lore(tooltip, "lore.gardentrails.ivy",
+                TooltipHelper.names("block.minecraft.dirt", "block.minecraft.sand", "block.minecraft.gravel"),
+                TooltipHelper.name("lore.gardentrails.name.lattice"), TooltipHelper.name("lore.gardentrails.name.pergola"));
     }
 
     @Override

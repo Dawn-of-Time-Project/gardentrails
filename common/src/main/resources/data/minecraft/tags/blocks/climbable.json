@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "gardentrails:ivy"
+    "gardentrails:ivy",
+    "gardentrails:iron_lattice",
+    "gardentrails:copper_lattice",
+    "gardentrails:oxidized_copper_lattice"
   ]
 }

@@ -13,7 +13,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -30,7 +32,7 @@ import java.util.function.Supplier;
 
 import static org.dawnoftime.gardentrails.util.VoxelShapes.PERGOLA_COLLISION_SHAPES;
 
-public class PergolaCropBlock extends PergolaBlock {
+public class PergolaCropBlock extends PergolaBlock implements BonemealableBlock {
     private static final IntegerProperty AGE_6 = GTBlockStateProperties.AGE_6;
     private final int[] moonPhasePerAge;
 
@@ -135,5 +137,22 @@ public class PergolaCropBlock extends PergolaBlock {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state, boolean isClient) {
+        return state.getValue(AGE_6) < 6;
+    }
+
+    @Override
+    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state) {
+        return true;
+    }
+
+    @Override
+    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state) {
+        // Bonemeal bypasses the light and moon cycle conditions of the random tick
+        int age = state.getValue(AGE_6);
+        level.setBlock(pos, state.setValue(AGE_6, age < 2 ? age + 1 : 2 + ((age - 1) % 5)), 2);
     }
 }

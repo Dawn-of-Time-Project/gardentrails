@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -28,6 +29,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
+import org.dawnoftime.gardentrails.entity.QuetzalEntity;
 import org.dawnoftime.gardentrails.entity.SilkmothEntity;
 import org.dawnoftime.gardentrails.item.IHasFlowerPot;
 import org.dawnoftime.gardentrails.item.IconItem;
@@ -106,6 +111,15 @@ public class RegistryImpls {
         }
     }
 
+    public static class ForgeMobEffectsRegistry extends GTMobEffectsRegistry {
+        public static final DeferredRegister<MobEffect> MOB_EFFECTS_REGISTRY = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, GTCommon.MOD_ID);
+
+        @Override
+        public <T extends MobEffect> Supplier<T> register(String name, Supplier<T> effect) {
+            return MOB_EFFECTS_REGISTRY.register(name, effect);
+        }
+    }
+
     public static class ForgeFeaturesRegistry extends GTFeaturesRegistry {
         public static final DeferredRegister<Feature<?>> FEATURES_REGISTRY = DeferredRegister.create(ForgeRegistries.FEATURES, GTCommon.MOD_ID);
 
@@ -119,6 +133,7 @@ public class RegistryImpls {
         public static final DeferredRegister<Item> ITEMS_REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, GTCommon.MOD_ID);
 
         public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new ForgeSpawnEggItem(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY, 0xDBD8BD, 0xFEFEFC, new Item.Properties()));
+        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new ForgeSpawnEggItem(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY, 0xFFFFFF, 0xFFFFFF, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
 
         public ForgeItemsRegistry() {
             postRegister();
@@ -199,6 +214,9 @@ public class RegistryImpls {
         GTEntitiesRegistry.INSTANCE = new ForgeEntitiesRegistry();
         ForgeEntitiesRegistry.ENTITY_TYPES_REGISTRY.register(bus);
 
+        GTMobEffectsRegistry.INSTANCE = new ForgeMobEffectsRegistry();
+        ForgeMobEffectsRegistry.MOB_EFFECTS_REGISTRY.register(bus);
+
         GTBlocksRegistry.INSTANCE = new ForgeBlocksRegistry();
         GTItemsRegistry.INSTANCE = new ForgeItemsRegistry();
         GTBlockEntitiesRegistry.INSTANCE = new ForgeBlockEntitiesRegistry();
@@ -219,6 +237,8 @@ public class RegistryImpls {
         ForgeCreativeModeTabsRegistry.CREATIVE_MODE_TABS_REGISTRY.register(bus);
 
         bus.addListener((EntityAttributeCreationEvent event) -> event.put(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), SilkmothEntity.createAttributes().build()));
+        bus.addListener((EntityAttributeCreationEvent event) -> event.put(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), QuetzalEntity.createAttributes().build()));
+        bus.addListener((SpawnPlacementRegisterEvent event) -> event.register(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, QuetzalEntity::checkQuetzalSpawnRules, SpawnPlacementRegisterEvent.Operation.OR));
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if(event.getTab() == GTCreativeModeTabsRegistry.INSTANCE.GT_TAB.get()) {
                 GTCreativeModeTabsRegistry.addOrderedItems(event::accept);

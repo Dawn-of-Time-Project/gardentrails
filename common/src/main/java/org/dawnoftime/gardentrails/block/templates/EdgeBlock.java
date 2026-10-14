@@ -165,4 +165,9 @@ public class EdgeBlock extends WaterloggedBlock {
 
         return super.mirror(state, mirrorIn);
     }
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
+        return true;
+    }
 }

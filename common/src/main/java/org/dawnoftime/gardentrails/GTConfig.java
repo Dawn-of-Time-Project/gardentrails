@@ -12,6 +12,7 @@ public class GTConfig {
     public boolean generateMulberry      = true;
     public boolean dawnOfTimeUseSilk     = true;
     public boolean armorOfTheAgesUseSilk = true;
+    public boolean armorOfTheAgesUseQuetzalFeathers = true;
 
     // Plant biome lists - empty list = plant does not spawn
     public List<String> boxwoodBushBiomes = List.of(
@@ -29,6 +30,26 @@ public class GTConfig {
         "minecraft:savanna", "minecraft:savanna_plateau", "minecraft:windswept_savanna"
     );
     public List<String> geraniumPinkBiomes = List.of(
+        "minecraft:flower_forest", "minecraft:meadow",
+        "minecraft:birch_forest", "minecraft:old_growth_birch_forest"
+    );
+    public List<String> geraniumOrangeBiomes = List.of(
+        "minecraft:flower_forest", "minecraft:meadow",
+        "minecraft:birch_forest", "minecraft:old_growth_birch_forest"
+    );
+    public List<String> geraniumPurpleBiomes = List.of(
+        "minecraft:flower_forest", "minecraft:meadow",
+        "minecraft:birch_forest", "minecraft:old_growth_birch_forest"
+    );
+    public List<String> geraniumPurpleishBiomes = List.of(
+        "minecraft:flower_forest", "minecraft:meadow",
+        "minecraft:birch_forest", "minecraft:old_growth_birch_forest"
+    );
+    public List<String> geraniumRedBiomes = List.of(
+        "minecraft:flower_forest", "minecraft:meadow",
+        "minecraft:birch_forest", "minecraft:old_growth_birch_forest"
+    );
+    public List<String> geraniumWhiteBiomes = List.of(
         "minecraft:flower_forest", "minecraft:meadow",
         "minecraft:birch_forest", "minecraft:old_growth_birch_forest"
     );
@@ -66,6 +87,11 @@ public class GTConfig {
             case "commelina"     -> commelinaBiomes;
             case "cypress"       -> cypressBiomes;
             case "geranium_pink" -> geraniumPinkBiomes;
+            case "geranium_orange" -> geraniumOrangeBiomes;
+            case "geranium_purple" -> geraniumPurpleBiomes;
+            case "geranium_purpleish" -> geraniumPurpleishBiomes;
+            case "geranium_red" -> geraniumRedBiomes;
+            case "geranium_white" -> geraniumWhiteBiomes;
             case "ivy"           -> ivyBiomes;
             case "mulberry"      -> mulberryBiomes;
             case "red_maple"     -> redMapleBiomes;

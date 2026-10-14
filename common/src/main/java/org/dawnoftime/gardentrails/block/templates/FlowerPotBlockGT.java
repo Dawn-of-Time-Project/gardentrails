@@ -11,14 +11,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 import org.dawnoftime.gardentrails.block.IBlockSpecialDisplay;
+import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
 
 import javax.annotation.Nullable;
 
 import static net.minecraft.world.level.block.Blocks.FLOWER_POT;
 import static org.dawnoftime.gardentrails.util.VoxelShapes.FLOWER_POT_SHAPE;
 
-public class FlowerPotBlockGT extends BlockGT implements IBlockSpecialDisplay {
+public class FlowerPotBlockGT extends BlockGT implements IBlockSpecialDisplay, IBiomeColoredBlock {
     private Item itemInPot;
 
     public FlowerPotBlockGT(@Nullable Item itemInPot) {
@@ -46,8 +48,22 @@ public class FlowerPotBlockGT extends BlockGT implements IBlockSpecialDisplay {
     }
 
     @Override
+    public ColorType getColorType() {
+        // Only the cypress pot has foliage to tint
+        if (this.itemInPot != null && this.itemInPot == GTBlocksRegistry.INSTANCE.CYPRESS.get().asItem()) {
+            return ColorType.FOLIAGE;
+        }
+        return null;
+    }
+
+    @Override
     public float getDisplayScale() {
         return 0.667F;
     }
     
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
+        return true;
+    }
 }

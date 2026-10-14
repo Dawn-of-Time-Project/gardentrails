@@ -1,0 +1,13 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{"item": "minecraft:wheat_seeds"},
+		{"item": "minecraft:melon_seeds"},
+		{"item": "gardentrails:crushed_maize"},
+		{"item": "gardentrails:crushed_grape"}
+	],
+	"result": {
+		"item": "gardentrails:grains_and_seeds_mix",
+		"count": 8
+	}
+}

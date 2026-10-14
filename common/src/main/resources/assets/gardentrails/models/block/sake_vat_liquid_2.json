@@ -1,0 +1,16 @@
+{
+	"render_type": "minecraft:translucent",
+	"textures": {
+		"0": "gardentrails:block/sake_liquid",
+		"particle": "gardentrails:block/sake_liquid"
+	},
+	"elements": [
+		{
+			"from": [2, 2, 2],
+			"to": [14, 10, 14],
+			"faces": {
+				"up": { "uv": [2, 2, 14, 14], "texture": "#0" }
+			}
+		}
+	]
+}

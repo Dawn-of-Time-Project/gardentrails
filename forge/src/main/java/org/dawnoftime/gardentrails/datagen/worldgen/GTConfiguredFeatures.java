@@ -21,12 +21,19 @@ public class GTConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> COMMELINA_KEY = registerKey("commelina");
     public static final ResourceKey<ConfiguredFeature<?, ?>> CYPRESS_KEY = registerKey("cypress");
     public static final ResourceKey<ConfiguredFeature<?, ?>> RED_MAPLE_KEY = registerKey("red_maple");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORANGE_MAPLE_KEY = registerKey("orange_maple");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GREEN_MAPLE_KEY = registerKey("green_maple");
     public static final ResourceKey<ConfiguredFeature<?, ?>> BOXWOOD_BUSH_KEY = registerKey("boxwood_bush");
     public static final ResourceKey<ConfiguredFeature<?, ?>> MULBERRY_KEY = registerKey("mulberry");
     public static final ResourceKey<ConfiguredFeature<?, ?>> RICE_KEY = registerKey("rice");
     public static final ResourceKey<ConfiguredFeature<?, ?>> WILD_GRAPE_KEY = registerKey("wild_grape");
     public static final ResourceKey<ConfiguredFeature<?, ?>> WILD_MAIZE_KEY = registerKey("wild_maize");
     public static final ResourceKey<ConfiguredFeature<?, ?>> GERANIUM_PINK_KEY = registerKey("geranium_pink");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GERANIUM_ORANGE_KEY = registerKey("geranium_orange");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GERANIUM_PURPLE_KEY = registerKey("geranium_purple");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GERANIUM_PURPLEISH_KEY = registerKey("geranium_purpleish");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GERANIUM_RED_KEY = registerKey("geranium_red");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> GERANIUM_WHITE_KEY = registerKey("geranium_white");
     public static final ResourceKey<ConfiguredFeature<?, ?>> IVY_KEY = registerKey("ivy");
 
     public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
@@ -65,6 +72,26 @@ public class GTConfiguredFeatures {
                 PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
                     new SimpleBlockConfiguration(
                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.get("red").sapling().get())
+                    )
+                )
+            )
+        );
+
+        register(context, ORANGE_MAPLE_KEY, Feature.RANDOM_PATCH,
+            new RandomPatchConfiguration(32, 3, 2,
+                PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
+                    new SimpleBlockConfiguration(
+                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.get("orange").sapling().get())
+                    )
+                )
+            )
+        );
+
+        register(context, GREEN_MAPLE_KEY, Feature.RANDOM_PATCH,
+            new RandomPatchConfiguration(32, 3, 2,
+                PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
+                    new SimpleBlockConfiguration(
+                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.get("green").sapling().get())
                     )
                 )
             )
@@ -126,6 +153,56 @@ public class GTConfiguredFeatures {
                 PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                     new SimpleBlockConfiguration(
                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_PINK.get())
+                    )
+                )
+            )
+        );
+
+        register(context, GERANIUM_ORANGE_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
+            new RandomPatchConfiguration(32, 5, 2,
+                PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
+                    new SimpleBlockConfiguration(
+                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_ORANGE.get())
+                    )
+                )
+            )
+        );
+
+        register(context, GERANIUM_PURPLE_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
+            new RandomPatchConfiguration(32, 5, 2,
+                PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
+                    new SimpleBlockConfiguration(
+                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_PURPLE.get())
+                    )
+                )
+            )
+        );
+
+        register(context, GERANIUM_PURPLEISH_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
+            new RandomPatchConfiguration(32, 5, 2,
+                PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
+                    new SimpleBlockConfiguration(
+                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_PURPLEISH.get())
+                    )
+                )
+            )
+        );
+
+        register(context, GERANIUM_RED_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
+            new RandomPatchConfiguration(32, 5, 2,
+                PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
+                    new SimpleBlockConfiguration(
+                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_RED.get())
+                    )
+                )
+            )
+        );
+
+        register(context, GERANIUM_WHITE_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
+            new RandomPatchConfiguration(32, 5, 2,
+                PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
+                    new SimpleBlockConfiguration(
+                        BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_WHITE.get())
                     )
                 )
             )

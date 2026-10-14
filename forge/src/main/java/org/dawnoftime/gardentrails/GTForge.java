@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -11,6 +12,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.dawnoftime.gardentrails.datagen.DataGenerators;
+import org.dawnoftime.gardentrails.item.GTCauldronInteractions;
+import org.dawnoftime.gardentrails.item.GTDispenserBehaviors;
 import org.dawnoftime.gardentrails.loot.LootModifiers;
 import org.dawnoftime.gardentrails.worldgen.GTConfigBiomeModifier;
 
@@ -35,6 +38,11 @@ public class GTForge {
         if (FMLEnvironment.dist.isClient()) {
             modEventBus.register(GTForgeClient.class);
         }
+
+        modEventBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
+            GTCauldronInteractions.init();
+            GTDispenserBehaviors.init();
+        }));
 
         modEventBus.register(DataGenerators.class);
     }

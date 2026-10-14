@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "PPP",
+        "PPP"
+    ],
+    "key": {
+        "P": {
+            "item": "gardentrails:rotten_oak_planks"
+        }
+    },
+    "result": {
+        "item": "gardentrails:rotten_oak_trapdoor",
+        "count": 2
+    }
+}

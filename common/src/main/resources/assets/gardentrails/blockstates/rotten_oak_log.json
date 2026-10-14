@@ -1,0 +1,16 @@
+{
+    "variants": {
+        "axis=y,dusted=0": { "model": "gardentrails:block/rotten_oak_log" },
+        "axis=y,dusted=1": { "model": "gardentrails:block/rotten_oak_log" },
+        "axis=y,dusted=2": { "model": "gardentrails:block/rotten_oak_log" },
+        "axis=y,dusted=3": { "model": "gardentrails:block/rotten_oak_log" },
+        "axis=z,dusted=0": { "model": "gardentrails:block/rotten_oak_log", "x": 90 },
+        "axis=z,dusted=1": { "model": "gardentrails:block/rotten_oak_log", "x": 90 },
+        "axis=z,dusted=2": { "model": "gardentrails:block/rotten_oak_log", "x": 90 },
+        "axis=z,dusted=3": { "model": "gardentrails:block/rotten_oak_log", "x": 90 },
+        "axis=x,dusted=0": { "model": "gardentrails:block/rotten_oak_log", "x": 90, "y": 90 },
+        "axis=x,dusted=1": { "model": "gardentrails:block/rotten_oak_log", "x": 90, "y": 90 },
+        "axis=x,dusted=2": { "model": "gardentrails:block/rotten_oak_log", "x": 90, "y": 90 },
+        "axis=x,dusted=3": { "model": "gardentrails:block/rotten_oak_log", "x": 90, "y": 90 }
+    }
+}

@@ -35,11 +35,17 @@ public class GTConfigLoader {
                     case "generateMulberry"       -> INSTANCE.generateMulberry      = boolValue;
                     case "dawnOfTimeUseSilk"      -> INSTANCE.dawnOfTimeUseSilk     = boolValue;
                     case "armorOfTheAgesUseSilk"  -> INSTANCE.armorOfTheAgesUseSilk = boolValue;
+                    case "armorOfTheAgesUseQuetzalFeathers" -> INSTANCE.armorOfTheAgesUseQuetzalFeathers = boolValue;
                     case "boxwood_bush_biomes"    -> INSTANCE.boxwoodBushBiomes  = parseList(rawValue);
                     case "camellia_biomes"        -> INSTANCE.camelliaBiomes     = parseList(rawValue);
                     case "commelina_biomes"       -> INSTANCE.commelinaBiomes    = parseList(rawValue);
                     case "cypress_biomes"         -> INSTANCE.cypressBiomes      = parseList(rawValue);
                     case "geranium_pink_biomes"   -> INSTANCE.geraniumPinkBiomes = parseList(rawValue);
+                    case "geranium_orange_biomes" -> INSTANCE.geraniumOrangeBiomes = parseList(rawValue);
+                    case "geranium_purple_biomes" -> INSTANCE.geraniumPurpleBiomes = parseList(rawValue);
+                    case "geranium_purpleish_biomes" -> INSTANCE.geraniumPurpleishBiomes = parseList(rawValue);
+                    case "geranium_red_biomes" -> INSTANCE.geraniumRedBiomes = parseList(rawValue);
+                    case "geranium_white_biomes" -> INSTANCE.geraniumWhiteBiomes = parseList(rawValue);
                     case "ivy_biomes"             -> INSTANCE.ivyBiomes          = parseList(rawValue);
                     case "mulberry_biomes"        -> INSTANCE.mulberryBiomes     = parseList(rawValue);
                     case "red_maple_biomes"       -> INSTANCE.redMapleBiomes     = parseList(rawValue);
@@ -84,6 +90,9 @@ dawnOfTimeUseSilk=true
 # Requires Armor of the Ages - replaces string with silk in AotA recipes
 armorOfTheAgesUseSilk=true
 
+# Requires Armor of the Ages - Quetzalcoatl armor recipes use Garden Trails green and red feathers
+armorOfTheAgesUseQuetzalFeathers=true
+
 # Plant biome lists
 # Comma-separated biome IDs. Empty = plant does not spawn.
 # Use full biome IDs: namespace:biome_name (e.g., minecraft:forest, byg:jacaranda_forest)
@@ -94,6 +103,11 @@ camellia_biomes=minecraft:jungle,minecraft:sparse_jungle,minecraft:bamboo_jungle
 commelina_biomes=minecraft:swamp,minecraft:mangrove_swamp,minecraft:flower_forest
 cypress_biomes=minecraft:savanna,minecraft:savanna_plateau,minecraft:windswept_savanna
 geranium_pink_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
+geranium_orange_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
+geranium_purple_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
+geranium_purpleish_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
+geranium_red_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
+geranium_white_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
 ivy_biomes=minecraft:forest,minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest
 mulberry_biomes=minecraft:taiga,minecraft:old_growth_pine_taiga,minecraft:old_growth_spruce_taiga
 red_maple_biomes=minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest

@@ -3,7 +3,7 @@ package org.dawnoftime.gardentrails.block.plants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.ChatFormatting;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -165,7 +165,8 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
     @Override
     public void appendHoverText(final ItemStack stack, @Nullable final BlockGetter worldIn, final List<Component> tooltip, final TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(Component.translatable("lore.gardentrails.column").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        TooltipHelper.lore(tooltip, "lore.gardentrails.cypress.grow", TooltipHelper.name("block.gardentrails.cypress"));
+        TooltipHelper.lore(tooltip, "lore.gardentrails.cypress.shrink");
     }
 
     @Override
@@ -195,6 +196,11 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
                 size++;
             }
         }
+        return true;
+    }
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
         return true;
     }
 }

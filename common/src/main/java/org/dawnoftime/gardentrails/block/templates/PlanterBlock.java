@@ -56,4 +56,9 @@ public class PlanterBlock extends BlockGT {
     public @NotNull BlockState mirror(BlockState state, @NotNull Mirror mirrorIn) {
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
+        return true;
+    }
 }

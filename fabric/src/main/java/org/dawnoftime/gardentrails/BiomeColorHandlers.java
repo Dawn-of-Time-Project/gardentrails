@@ -40,6 +40,7 @@ public class BiomeColorHandlers {
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_RED);
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_WHITE);
         registerBiomeColoredBlockOnly(() -> GTBlocksRegistry.INSTANCE.CAMELLIA.get());
+        registerBiomeColoredBlock(() -> GTBlocksRegistry.POT_BLOCKS.get("cypress_flower_pot"));
     }
 
     private static void registerBiomeColoredBlockOnly(Supplier<Block> blockSupplier) {

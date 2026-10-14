@@ -55,11 +55,6 @@ public class Foods {
             .saturationMod(1.5f)
             .effect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 500, 0), 1.0f)
             .build();
-    public static final FoodProperties SAKE = (new FoodProperties.Builder())
-            .nutrition(0)
-            .saturationMod(0.0f)
-            .alwaysEat()
-            .build();
     public static final FoodProperties FERMENTED_MULBERRY_JUICE = (new FoodProperties.Builder())
             .nutrition(3)
             .saturationMod(0.6f)

@@ -8,6 +8,8 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 import org.dawnoftime.gardentrails.block.plants.*;
 import org.dawnoftime.gardentrails.block.trees.*;
@@ -58,10 +60,23 @@ public abstract class GTBlocksRegistry {
     public final Supplier<Block> CHERRY_DRYING_TRAY = register("cherry_drying_tray", () -> new DryerBlock(Block.Properties.copy(Blocks.CHERRY_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
     public final Supplier<Block> DARK_OAK_DRYING_TRAY = register("dark_oak_drying_tray", () -> new DryerBlock(Block.Properties.copy(Blocks.DARK_OAK_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
     public final Supplier<Block> SPRUCE_DRYING_TRAY = register("spruce_drying_tray", () -> new DryerBlock(Block.Properties.copy(Blocks.SPRUCE_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> SAKE_VAT = register("sake_vat", () -> new SakeVatBlock(Block.Properties.copy(Blocks.SPRUCE_PLANKS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE);
     public Supplier<ColoredGrowingBushBlock> CAMELLIA;
     public Supplier<MulberryBlock> MULBERRY;
-    public final Supplier<WaterDoubleCropsBlock> RICE = registerWithItem("rice", () -> new WaterDoubleCropsBlock(2), (block) -> new SoilSeedsItem(block, Foods.RICE), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<WaterDoubleCropsBlock> RICE = registerWithItem("rice", () -> new WaterDoubleCropsBlock(2), (block) -> new SoilSeedsItem(block, Foods.RICE, "lore.gardentrails.rice", "block.minecraft.cauldron"), BlockTags.MINEABLE_WITH_AXE);
     public final Supplier<Block> STICK_BUNDLE = register("stick_bundle", () -> new StickBundleBlock(Block.Properties.copy(Blocks.OAK_WOOD).strength(2.0F, 3.0F).sound(SoundType.GRASS).noOcclusion()).setBurnable(), BlockTags.MINEABLE_WITH_AXE);
+    // Declared before the rotten log: the rotten log turns into it once brushed
+    // Properties come from the planks: the vanilla log properties read an axis state these blocks do not have
+    public final Supplier<Block> SOAKED_OAK_LOG = register("soaked_oak_log", () -> new SoakedLogBlock(Block.Properties.copy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> ROTTEN_OAK_LOG = register("rotten_oak_log", () -> new MoldyLogBlock(SOAKED_OAK_LOG.get(), Block.Properties.copy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> ROTTEN_OAK_PLANKS = register("rotten_oak_planks", () -> new Block(Block.Properties.copy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> ROTTEN_OAK_STAIRS = register("rotten_oak_stairs", () -> new StairBlockGT(ROTTEN_OAK_PLANKS.get().defaultBlockState(), Block.Properties.copy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> ROTTEN_OAK_SLAB = register("rotten_oak_slab", () -> new SlabBlock(Block.Properties.copy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> ROTTEN_OAK_EDGE = register("rotten_oak_edge", () -> new EdgeBlock(Block.Properties.copy(Blocks.OAK_PLANKS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> ROTTEN_OAK_PLATE = register("rotten_oak_plate", () -> new PlateBlock(Block.Properties.copy(Blocks.OAK_PLANKS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> ROTTEN_OAK_FENCE = register("rotten_oak_fence", () -> new FenceBlock(Block.Properties.copy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> ROTTEN_OAK_FENCE_GATE = register("rotten_oak_fence_gate", () -> new FenceGateBlock(Block.Properties.copy(Blocks.OAK_PLANKS), WoodType.OAK), BlockTags.MINEABLE_WITH_AXE);
+    public final Supplier<Block> ROTTEN_OAK_TRAPDOOR = register("rotten_oak_trapdoor", () -> new TrapDoorBlockGT(Block.Properties.copy(Blocks.OAK_PLANKS).noOcclusion(), BlockSetType.OAK), BlockTags.MINEABLE_WITH_AXE);
     public static final List<String> MAPLE_VARIANT_IDS = List.of("red", "orange", "green");
     public final Map<String, MapleVariant> MAPLE_VARIANTS = new LinkedHashMap<>();
     public Supplier<SoilCropsBlock> COMMELINA;
@@ -107,6 +122,14 @@ public abstract class GTBlocksRegistry {
             () -> new PergolaPlantBlock(Block.Properties.copy(Blocks.OXIDIZED_COPPER).noOcclusion(), () -> OXIDIZED_COPPER_PERGOLA.get()), null);
     public final Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA_GRAPE = registerWithItem("oxidized_copper_pergola_grape",
             () -> new PergolaCropBlock(Block.Properties.copy(Blocks.OXIDIZED_COPPER).noOcclusion(), 4, 6, 0, 2, 2, () -> OXIDIZED_COPPER_PERGOLA.get()), null);
+
+    // --- Lattice ---
+    public final Supplier<LatticeBlock> IRON_LATTICE = register("iron_lattice",
+            () -> new LatticeBlock(Block.Properties.copy(Blocks.IRON_BARS).noOcclusion()));
+    public final Supplier<LatticeBlock> COPPER_LATTICE = register("copper_lattice",
+            () -> new LatticeBlock(Block.Properties.copy(Blocks.COPPER_BLOCK).noOcclusion()));
+    public final Supplier<LatticeBlock> OXIDIZED_COPPER_LATTICE = register("oxidized_copper_lattice",
+            () -> new LatticeBlock(Block.Properties.copy(Blocks.OXIDIZED_COPPER).noOcclusion()));
 
     public void postRegister() {
         CYPRESS = registerWithFlowerPotItem("cypress", () -> new CypressBlock(Block.Properties.copy(Blocks.SPRUCE_LEAVES).randomTicks()).setBurnable(), (block) -> new PotAndBlockItem(block, new Item.Properties()));
