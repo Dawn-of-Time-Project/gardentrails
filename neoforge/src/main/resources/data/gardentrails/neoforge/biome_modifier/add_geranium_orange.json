@@ -1,1 +1,5 @@
-{ "type": "gardentrails:config_driven", "plant": "geranium_orange", "feature": "gardentrails:geranium_orange_placed" }
+{
+  "type": "gardentrails:config_driven",
+  "plant": "geranium_orange",
+  "feature": "gardentrails:geranium_orange_placed"
+}

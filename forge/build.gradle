@@ -1,0 +1,93 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev.legacyforge'
+}
+
+mixin {
+    add(sourceSets.main, "${mod_id}.refmap.json")
+
+    config("${mod_id}.mixins.json")
+    config("${mod_id}.forge.mixins.json")
+}
+
+legacyForge {
+    version = "${minecraft_version}-${forge_version}"
+
+    validateAccessTransformers = true
+
+    def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath) //["src/main/resources/META-INF/accesstransformer.cfg"]
+    }
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+    runs {
+        client {
+            client()
+        }
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+        server {
+            server()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+repositories {
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
+}
+
+dependencies {
+    compileOnly project(":common")
+
+    // Dev-only: armoroftheages (runtime test dep) requires YACL, so keep it available in the dev env
+    modRuntimeOnly("maven.modrinth:yacl:3.6.6+1.20.1-forge")
+
+    // Mod compatibility
+
+    modRuntimeOnly("maven.modrinth:u6dRKJwZ:p5mYHvjx")
+    modRuntimeOnly("maven.modrinth:cloth-config:t8TXrZvZ")
+    modRuntimeOnly("maven.modrinth:architectury-api:1MKTLiiG")
+    modRuntimeOnly("maven.modrinth:geckolib:LwI6czff")
+
+    compileOnly "mezz.jei:jei-1.20.1-common-api:15.62.0.219"
+    compileOnly "mezz.jei:jei-1.20.1-forge-api:15.62.0.219"
+    modRuntimeOnly("mezz.jei:jei-1.20.1-forge:15.62.0.219")
+
+    modRuntimeOnly("maven.modrinth:lets-do-vinery:YpD6ue8A")
+    modRuntimeOnly("maven.modrinth:farmers-delight:NcRp00OO")
+    modRuntimeOnly("maven.modrinth:critters-and-companions:acDDSIG3")
+    modRuntimeOnly("maven.modrinth:armor-of-the-ages:Bc9cFnLg")
+
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
+    implementation 'org.jetbrains:annotations:26.0.2'
+}
+
+jar {
+    finalizedBy('reobfJar')
+    manifest.attributes([
+            "MixinConfigs": "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
+    ])
+}
+
+publishMods {
+    // Point to the reobfuscated JAR produced by a local IntelliJ/Gradle build.
+    // Run "build" in IntelliJ (forge > tasks > build > build) BEFORE running publishMods.
+    // publishMods will NOT trigger a rebuild — it only uploads the pre-built file.
+    file = layout.buildDirectory.file("libs/gardentrails-forge-${minecraft_version}-${project.version}.jar")
+    modLoaders.add("forge")
+}

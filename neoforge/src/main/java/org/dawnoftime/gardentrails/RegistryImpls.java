@@ -7,7 +7,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.core.Holder;
+import org.dawnoftime.gardentrails.advancement.KillSilkmothTrigger;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import org.dawnoftime.gardentrails.entity.QuetzalEntity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -105,6 +113,21 @@ public class RegistryImpls {
     }
 
 
+    public static class NeoForgeMobEffectsRegistry extends GTMobEffectsRegistry {
+        public static final DeferredRegister<MobEffect> MOB_EFFECTS_REGISTRY = DeferredRegister.create(Registries.MOB_EFFECT, GTCommon.MOD_ID);
+
+        @Override
+        public Supplier<Holder<MobEffect>> register(String name, Supplier<MobEffect> effect) {
+            DeferredHolder<MobEffect, MobEffect> holder = MOB_EFFECTS_REGISTRY.register(name, effect);
+            return () -> holder;
+        }
+    }
+
+    public static class NeoForgeCriteriaRegistry {
+        public static final DeferredRegister<CriterionTrigger<?>> TRIGGERS_REGISTRY = DeferredRegister.create(Registries.TRIGGER_TYPE, GTCommon.MOD_ID);
+        public static final DeferredHolder<CriterionTrigger<?>, KillSilkmothTrigger> KILL_SILKMOTH = TRIGGERS_REGISTRY.register(KillSilkmothTrigger.ID.getPath(), () -> GTCriteriaRegistry.KILL_SILKMOTH);
+    }
+
     public static class NeoForgeFeaturesRegistry extends GTFeaturesRegistry {
         public static final DeferredRegister<Feature<?>> FEATURES_REGISTRY = DeferredRegister.create(Registries.FEATURE, GTCommon.MOD_ID);
 
@@ -119,6 +142,8 @@ public class RegistryImpls {
         public static final DeferredRegister<Item> ITEMS_REGISTRY = DeferredRegister.create(Registries.ITEM, GTCommon.MOD_ID);
 
         public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), 0xDBD8BD, 0xFEFEFC, new Item.Properties()));
+        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), 0xFFFFFF, 0xFFFFFF, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+
         public NeoForgeItemsRegistry() {
             postRegister();
         }
@@ -198,6 +223,9 @@ public class RegistryImpls {
         GTEntitiesRegistry.INSTANCE = new NeoForgeEntitiesRegistry();
         NeoForgeEntitiesRegistry.ENTITY_TYPES_REGISTRY.register(bus);
 
+        GTMobEffectsRegistry.INSTANCE = new NeoForgeMobEffectsRegistry();
+        NeoForgeMobEffectsRegistry.MOB_EFFECTS_REGISTRY.register(bus);
+
         GTBlocksRegistry.INSTANCE = new NeoForgeBlocksRegistry();
         GTItemsRegistry.INSTANCE = new NeoForgeItemsRegistry();
         GTBlockEntitiesRegistry.INSTANCE = new NeoForgeBlockEntitiesRegistry();
@@ -208,6 +236,7 @@ public class RegistryImpls {
         GTCreativeModeTabsRegistry.INSTANCE = new NeoForgeCreativeModeTabsRegistry();
 
         // Register all deffered registries
+        NeoForgeCriteriaRegistry.TRIGGERS_REGISTRY.register(bus);
         NeoForgeBlocksRegistry.BLOCKS_REGISTRY.register(bus);
         NeoForgeBlocksRegistry.BLOCK_ITEMS_REGISTRY.register(bus);
         NeoForgeItemsRegistry.ITEMS_REGISTRY.register(bus);
@@ -217,7 +246,11 @@ public class RegistryImpls {
         NeoForgeRecipeTypesRegistry.RECIPE_TYPES_REGISTRY.register(bus);
         NeoForgeCreativeModeTabsRegistry.CREATIVE_MODE_TABS_REGISTRY.register(bus);
 
+        // The vanilla brushable block entity only accepts vanilla blocks, so the moldy log must be added to it
+        bus.addListener((net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent event) -> event.modify(BlockEntityType.BRUSHABLE_BLOCK, GTBlocksRegistry.INSTANCE.ROTTEN_OAK_LOG.get()));
         bus.addListener((EntityAttributeCreationEvent event) -> event.put(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), SilkmothEntity.createAttributes().build()));
+        bus.addListener((EntityAttributeCreationEvent event) -> event.put(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), QuetzalEntity.createAttributes().build()));
+        bus.addListener((RegisterSpawnPlacementsEvent event) -> event.register(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, QuetzalEntity::checkQuetzalSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR));
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if(event.getTab() == GTCreativeModeTabsRegistry.INSTANCE.GT_TAB.get()) {
                 GTCreativeModeTabsRegistry.addOrderedItems(event::accept);

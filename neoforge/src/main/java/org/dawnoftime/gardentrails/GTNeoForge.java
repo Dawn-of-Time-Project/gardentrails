@@ -4,13 +4,14 @@ import com.mojang.serialization.MapCodec;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.dawnoftime.gardentrails.datagen.DataGenerators;
+import org.dawnoftime.gardentrails.item.GTCauldronInteractions;
+import org.dawnoftime.gardentrails.item.GTDispenserBehaviors;
 import org.dawnoftime.gardentrails.loot.LootModifiers;
 import org.dawnoftime.gardentrails.worldgen.GTConfigBiomeModifier;
 
@@ -31,11 +32,9 @@ public class GTNeoForge {
         BIOME_MODIFIER_SERIALIZERS.register(eventBus);
         LootModifiers.register(eventBus);
 
-        if (FMLEnvironment.dist.isClient()) {
-            eventBus.register(GTNeoForgeClient.class);
-            eventBus.register(BiomeColorHandlers.class);
-        }
-
-        eventBus.register(DataGenerators.class);
+        eventBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(() -> {
+            GTCauldronInteractions.init();
+            GTDispenserBehaviors.init();
+        }));
     }
 }

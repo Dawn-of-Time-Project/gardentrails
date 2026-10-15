@@ -1,18 +1,18 @@
-﻿{
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"I I",
-		"iIi"
-	],
-	"key": {
-		"I": {
-			"item": "minecraft:bamboo_planks"
-		},
-		"i": {
-			"item": "minecraft:iron_ingot"
-		}
-	},
-	"result": {
-		"id": "gardentrails:bamboo_drying_tray"
-	}
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I I",
+    "iIi"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:bamboo_planks"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "id": "gardentrails:bamboo_drying_tray"
+  }
 }

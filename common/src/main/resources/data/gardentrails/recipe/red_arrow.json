@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  F",
+    " S ",
+    "P  "
+  ],
+  "key": {
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "P": {
+      "item": "gardentrails:red_feather"
+    }
+  },
+  "result": {
+    "id": "gardentrails:red_arrow",
+    "count": 4
+  }
+}

@@ -1,14 +1,18 @@
-﻿{
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "I I",
-        "iIi"
-    ],
-    "key": {
-        "I": { "item": "minecraft:acacia_planks" },
-        "i": { "item": "minecraft:iron_ingot" }
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I I",
+    "iIi"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:acacia_planks"
     },
-    "result": {
-        "id": "gardentrails:acacia_drying_tray"
+    "i": {
+      "item": "minecraft:iron_ingot"
     }
+  },
+  "result": {
+    "id": "gardentrails:acacia_drying_tray"
+  }
 }

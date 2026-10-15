@@ -17,38 +17,43 @@ public class GTConfigLoader {
             return;
         }
         try {
-            for (String raw : Files.readAllLines(file)) {
+            List<String> lines = Files.readAllLines(file);
+            for (String raw : lines) {
                 String line = raw.strip();
                 if (line.isEmpty() || line.startsWith("#")) continue;
                 int eq = line.indexOf('=');
                 if (eq < 0) continue;
                 String key = line.substring(0, eq).strip();
-                String val = line.substring(eq + 1).strip();
+                String rawValue = line.substring(eq + 1).strip();
+                boolean boolValue = Boolean.parseBoolean(rawValue);
                 switch (key) {
-                    case "generateChestLoot"         -> INSTANCE.generateChestLoot         = Boolean.parseBoolean(val);
-                    case "generateSilk"              -> INSTANCE.generateSilk              = Boolean.parseBoolean(val);
-                    case "generateGrapes"            -> INSTANCE.generateGrapes            = Boolean.parseBoolean(val);
-                    case "generateMaize"             -> INSTANCE.generateMaize             = Boolean.parseBoolean(val);
-                    case "generateRice"              -> INSTANCE.generateRice              = Boolean.parseBoolean(val);
-                    case "generateMulberry"          -> INSTANCE.generateMulberry          = Boolean.parseBoolean(val);
-                    case "boxwood_bush_biomes"       -> INSTANCE.boxwoodBushBiomes       = parseList(val);
-                    case "camellia_biomes"           -> INSTANCE.camelliaBiomes           = parseList(val);
-                    case "commelina_biomes"          -> INSTANCE.commelinaBiomes          = parseList(val);
-                    case "cypress_biomes"            -> INSTANCE.cypressBiomes            = parseList(val);
-                    case "geranium_pink_biomes"      -> INSTANCE.geraniumPinkBiomes       = parseList(val);
-                    case "geranium_orange_biomes"    -> INSTANCE.geraniumOrangeBiomes     = parseList(val);
-                    case "geranium_purple_biomes"    -> INSTANCE.geraniumPurpleBiomes     = parseList(val);
-                    case "geranium_purpleish_biomes" -> INSTANCE.geraniumPurpleishBiomes  = parseList(val);
-                    case "geranium_red_biomes"       -> INSTANCE.geraniumRedBiomes        = parseList(val);
-                    case "geranium_white_biomes"     -> INSTANCE.geraniumWhiteBiomes      = parseList(val);
-                    case "ivy_biomes"                -> INSTANCE.ivyBiomes                = parseList(val);
-                    case "mulberry_biomes"           -> INSTANCE.mulberryBiomes           = parseList(val);
-                    case "red_maple_biomes"          -> INSTANCE.redMapleBiomes           = parseList(val);
-                    case "orange_maple_biomes"       -> INSTANCE.orangeMapleBiomes        = parseList(val);
-                    case "green_maple_biomes"        -> INSTANCE.greenMapleBiomes         = parseList(val);
-                    case "rice_biomes"               -> INSTANCE.riceBiomes               = parseList(val);
-                    case "wild_grape_biomes"         -> INSTANCE.wildGrapeBiomes          = parseList(val);
-                    case "wild_maize_biomes"         -> INSTANCE.wildMaizeBiomes          = parseList(val);
+                    case "generateChestLoot"      -> INSTANCE.generateChestLoot     = boolValue;
+                    case "generateSilk"           -> INSTANCE.generateSilk          = boolValue;
+                    case "generateGrapes"         -> INSTANCE.generateGrapes        = boolValue;
+                    case "generateMaize"          -> INSTANCE.generateMaize         = boolValue;
+                    case "generateRice"           -> INSTANCE.generateRice          = boolValue;
+                    case "generateMulberry"       -> INSTANCE.generateMulberry      = boolValue;
+                    case "dawnOfTimeUseSilk"      -> INSTANCE.dawnOfTimeUseSilk     = boolValue;
+                    case "armorOfTheAgesUseSilk"  -> INSTANCE.armorOfTheAgesUseSilk = boolValue;
+                    case "armorOfTheAgesUseQuetzalFeathers" -> INSTANCE.armorOfTheAgesUseQuetzalFeathers = boolValue;
+                    case "boxwood_bush_biomes"    -> INSTANCE.boxwoodBushBiomes  = parseList(rawValue);
+                    case "camellia_biomes"        -> INSTANCE.camelliaBiomes     = parseList(rawValue);
+                    case "commelina_biomes"       -> INSTANCE.commelinaBiomes    = parseList(rawValue);
+                    case "cypress_biomes"         -> INSTANCE.cypressBiomes      = parseList(rawValue);
+                    case "geranium_pink_biomes"   -> INSTANCE.geraniumPinkBiomes = parseList(rawValue);
+                    case "geranium_orange_biomes" -> INSTANCE.geraniumOrangeBiomes = parseList(rawValue);
+                    case "geranium_purple_biomes" -> INSTANCE.geraniumPurpleBiomes = parseList(rawValue);
+                    case "geranium_purpleish_biomes" -> INSTANCE.geraniumPurpleishBiomes = parseList(rawValue);
+                    case "geranium_red_biomes" -> INSTANCE.geraniumRedBiomes = parseList(rawValue);
+                    case "geranium_white_biomes" -> INSTANCE.geraniumWhiteBiomes = parseList(rawValue);
+                    case "ivy_biomes"             -> INSTANCE.ivyBiomes          = parseList(rawValue);
+                    case "mulberry_biomes"        -> INSTANCE.mulberryBiomes     = parseList(rawValue);
+                    case "red_maple_biomes"       -> INSTANCE.redMapleBiomes     = parseList(rawValue);
+                    case "orange_maple_biomes"    -> INSTANCE.orangeMapleBiomes  = parseList(rawValue);
+                    case "green_maple_biomes"     -> INSTANCE.greenMapleBiomes   = parseList(rawValue);
+                    case "rice_biomes"            -> INSTANCE.riceBiomes         = parseList(rawValue);
+                    case "wild_grape_biomes"      -> INSTANCE.wildGrapeBiomes    = parseList(rawValue);
+                    case "wild_maize_biomes"      -> INSTANCE.wildMaizeBiomes    = parseList(rawValue);
                 }
             }
         } catch (IOException e) {
@@ -69,18 +74,29 @@ public class GTConfigLoader {
 # Garden Trails configuration
 # Restart required after changes
 
-# Loot settings
+# Master toggle for chest loot injection
 generateChestLoot=true
+
+# Individual items (only if generateChestLoot=true)
 generateSilk=true
 generateGrapes=true
 generateMaize=true
 generateRice=true
 generateMulberry=true
 
+# Requires Dawn of Time - replaces white wool with silk in DoT recipes
+dawnOfTimeUseSilk=true
+
+# Requires Armor of the Ages - replaces string with silk in AotA recipes
+armorOfTheAgesUseSilk=true
+
+# Requires Armor of the Ages - Quetzalcoatl armor recipes use Garden Trails green and red feathers
+armorOfTheAgesUseQuetzalFeathers=true
+
 # Plant biome lists
-# Comma-separated biome IDs. Empty value = plant does not spawn.
-# Full namespace required: minecraft:forest, byg:jacaranda_forest, etc.
-# Biome IDs from uninstalled mods are silently ignored.
+# Comma-separated biome IDs. Empty = plant does not spawn.
+# Use full biome IDs: namespace:biome_name (e.g., minecraft:forest, byg:jacaranda_forest)
+# IDs for biomes from mods that are not installed are ignored automatically.
 
 boxwood_bush_biomes=minecraft:forest,minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:windswept_forest
 camellia_biomes=minecraft:jungle,minecraft:sparse_jungle,minecraft:bamboo_jungle,minecraft:savanna,minecraft:taiga

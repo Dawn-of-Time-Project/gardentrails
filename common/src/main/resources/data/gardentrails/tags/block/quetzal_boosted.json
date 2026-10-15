@@ -1,0 +1,31 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:crops",
+    "#minecraft:saplings",
+    {
+      "id": "#c:crops",
+      "required": false
+    },
+    "gardentrails:rice",
+    "gardentrails:maize",
+    "gardentrails:commelina",
+    "gardentrails:camellia",
+    "gardentrails:mulberry",
+    "gardentrails:maple_red_sapling",
+    "gardentrails:maple_orange_sapling",
+    "gardentrails:maple_green_sapling",
+    "gardentrails:iron_pergola_vine",
+    "gardentrails:iron_pergola_ivy",
+    "gardentrails:iron_pergola_grape",
+    "gardentrails:copper_pergola_vine",
+    "gardentrails:copper_pergola_ivy",
+    "gardentrails:copper_pergola_grape",
+    "gardentrails:oxidized_copper_pergola_vine",
+    "gardentrails:oxidized_copper_pergola_ivy",
+    "gardentrails:oxidized_copper_pergola_grape",
+    "gardentrails:iron_lattice",
+    "gardentrails:copper_lattice",
+    "gardentrails:oxidized_copper_lattice"
+  ]
+}

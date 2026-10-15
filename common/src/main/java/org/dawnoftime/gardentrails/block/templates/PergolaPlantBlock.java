@@ -8,13 +8,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -22,8 +23,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.dawnoftime.gardentrails.GTConstants;
-import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
+import org.dawnoftime.gardentrails.platform.Services;
 import org.dawnoftime.gardentrails.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,17 +32,16 @@ import java.util.function.Supplier;
 
 import static org.dawnoftime.gardentrails.util.VoxelShapes.PERGOLA_COLLISION_SHAPES;
 
-public class PergolaPlantBlock extends PergolaBlock{
+public class PergolaPlantBlock extends PergolaBlock implements BonemealableBlock {
     private static final IntegerProperty AGE_2 = BlockStateProperties.AGE_2;
-    private final Supplier<PergolaBlock> basePergola;
 
-    public PergolaPlantBlock(Properties properties,
-                             Supplier<PergolaBlock> basePergola,
-                             Supplier<PergolaBlock> vineVariant,
-                             Supplier<PergolaBlock> ivyVariant,
-                             Supplier<PergolaBlock> grapeVariant) {
-        super(properties, vineVariant, ivyVariant, grapeVariant);
-        this.basePergola = basePergola;
+    // The bare pergola this plant variant belongs to (used when reverting on harvest)
+    private final Supplier<PergolaBlock> barePergola;
+
+    public PergolaPlantBlock(Properties properties, Supplier<PergolaBlock> barePergola) {
+        // Plant variants don't need plant suppliers themselves — pass null
+        super(properties, null, null, null);
+        this.barePergola = barePergola;
         this.registerDefaultState(this.defaultBlockState().setValue(AXIS_Y, false).setValue(AXIS_X, false).setValue(AXIS_Z, false).setValue(AGE_2, 0));
     }
 
@@ -79,13 +78,13 @@ public class PergolaPlantBlock extends PergolaBlock{
             if(level.getRawBrightness(pos, 0) >= 8) {
                 int age = state.getValue(AGE_2);
                 if(age < 2){
-                    if (random.nextInt(GTConstants.CLIMBING_GROWTH_CHANCE) == 0) { //Probability "can grow"
+                    if (random.nextInt(16) == 0) { //Probability "can grow"
                         level.setBlock(pos, state.setValue(AGE_2, age + 1), 2);
                     }
-                } else if (random.nextInt(GTConstants.CLIMBING_SPREAD_CHANCE) == 0) { //Probability "can spread"
+                } else if (random.nextInt(5) == 0) { //Probability "can spread"
                     BlockPos adjacentPos = randomSpread(pos, random);
                     BlockState adjacentState = level.getBlockState(adjacentPos);
-                    if(adjacentState.getBlock() == this.basePergola.get()) {
+                    if(adjacentState.getBlock() == barePergola.get()) {
                         level.setBlock(adjacentPos, this.copyShapeToPergola(adjacentState, this), 2);
                     }
                 }
@@ -94,17 +93,42 @@ public class PergolaPlantBlock extends PergolaBlock{
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if(player.isCrouching() && level instanceof ServerLevel serverLevel) {
             ItemStack heldItemStack = player.getItemInHand(hand);
             ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
             List<ItemStack> drops = Utils.getLootList(serverLevel, state, heldItemStack, blockId.getPath() + "_" + state.getValue(AGE_2));
             Utils.dropLootFromList(level, pos, drops, 1.0F);
-            level.setBlock(pos, this.copyShapeToPergola(state, this.basePergola.get()), 2);
+            level.setBlock(pos, this.copyShapeToPergola(state, barePergola.get()), 2);
             level.playSound(null, pos, SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
             return ItemInteractionResult.SUCCESS;
         }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
 
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+    @Override
+    public void spawnAfterBreak(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull ItemStack stack, boolean dropExperience) {
+        super.spawnAfterBreak(state, level, pos, stack, dropExperience);
+        // The pergola comes from the block loot table, the plant from its own loot table (plant name and age)
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        List<ItemStack> drops = Utils.getLootList(level, state, stack, blockId.getPath() + "_" + state.getValue(AGE_2));
+        Utils.dropLootFromList(level, pos, drops, 1.0F);
+    }
+
+    @Override
+    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state) {
+        return state.getValue(AGE_2) < 2;
+    }
+
+    @Override
+    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state) {
+        return true;
+    }
+
+    @Override
+    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state) {
+        // Bonemeal bypasses the light and moon cycle conditions of the random tick
+        int age = state.getValue(AGE_2);
+        level.setBlock(pos, state.setValue(AGE_2, age + 1), 2);
     }
 }

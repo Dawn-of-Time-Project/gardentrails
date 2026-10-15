@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gardentrails:cooked_rice"
+    },
+    {
+      "item": "gardentrails:mold"
+    }
+  ],
+  "result": {
+    "id": "gardentrails:moldy_rice"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  A",
+    "UB ",
+    "RG "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "B": {
+      "item": "minecraft:bone"
+    },
+    "U": {
+      "item": "gardentrails:blue_feather"
+    },
+    "R": {
+      "item": "gardentrails:red_feather"
+    },
+    "G": {
+      "item": "gardentrails:green_feather"
+    }
+  },
+  "result": {
+    "id": "gardentrails:quetzal_arrow",
+    "count": 4
+  }
+}

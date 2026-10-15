@@ -10,16 +10,17 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.dawnoftime.gardentrails.GTConstants;
+import org.dawnoftime.gardentrails.platform.Services;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.dawnoftime.gardentrails.recipe.DryerRecipe;
 import org.dawnoftime.gardentrails.recipe.SimpleContainerRecipeInput;
 import org.dawnoftime.gardentrails.registry.GTBlockEntitiesRegistry;
 import org.dawnoftime.gardentrails.registry.GTRecipeTypesRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -154,8 +155,8 @@ public class DryerBlockEntity extends BlockEntity {
                     itemStack.shrink(recipe.ingredientCount());
                 }
                 final float timeVariation = new Random().nextFloat() * 2.0F - 1.0F;
-                final int range = timeVariation >= 0 ? GTConstants.DRYING_TIME_VARIATION : 10000 / (100 + GTConstants.DRYING_TIME_VARIATION);
-                this.remainingTicks[index] = (int) (recipe.dryingTime() * (100 + timeVariation * range) / 100);
+                final int range = 30;
+                this.remainingTicks[index] = (int) (recipe.getDryingTime() * (100 + timeVariation * range) / 100);
 
                 this.setChanged();
                 BlockState state = level.getBlockState(worldPosition);

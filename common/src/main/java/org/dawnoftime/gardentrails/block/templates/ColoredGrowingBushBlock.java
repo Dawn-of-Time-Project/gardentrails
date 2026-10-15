@@ -4,7 +4,7 @@ import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 
 public class ColoredGrowingBushBlock extends GrowingBushBlock implements IBiomeColoredBlock {
 
-    public ColoredGrowingBushBlock(SoilCropsBlock.PlantType plantType, int cutAge) {
+    public ColoredGrowingBushBlock(PlantType plantType, int cutAge) {
         super(plantType, cutAge);
     }
 

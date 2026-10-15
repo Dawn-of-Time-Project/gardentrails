@@ -1,14 +1,13 @@
 plugins {
-    id 'fabric-loom' version '1.11-SNAPSHOT' apply false
-    id 'net.neoforged.moddev' version '2.0.115' apply false
-    id "me.modmuss50.mod-publish-plugin" version "1.1.0" apply false
+    id 'fabric-loom' version '1.11.8' apply(false)
+    id 'net.neoforged.moddev' version '2.0.105' apply(false)
+    id "me.modmuss50.mod-publish-plugin" version "2.2.1" apply(false)
 }
 
+// Reads patch_notes.md at the root — write it before each ./gradlew publishMods
 def patchNoteProvider = providers.provider {
     def file = rootProject.layout.projectDirectory.file("patch_notes.md").asFile
-    if (!file.exists()) {
-        throw new GradleException("Impossible to find 'patch_notes.md'")
-    }
+    if (!file.exists()) throw new GradleException("patch_notes.md not found! Create the file before publishing.")
     file.text
 }
 
@@ -24,6 +23,8 @@ configure([project(":fabric"), project(":neoforge")]) {
             projectId = "1334659"
             accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
             minecraftVersions.add(project.property("minecraft_version"))
+            client = true
+            server = true
             changelogType = "markdown"
         }
 

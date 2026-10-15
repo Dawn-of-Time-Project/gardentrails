@@ -1,4 +1,4 @@
-﻿{
+{
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "SBB",
@@ -6,10 +6,18 @@
     "PBB"
   ],
   "key": {
-    "S": { "item": "minecraft:stone" },
-    "M": { "item": "gardentrails:mulberry" },
-    "P": { "item": "minecraft:flower_pot" },
-    "B": { "item": "minecraft:glass_bottle" }
+    "S": {
+      "item": "minecraft:stone"
+    },
+    "M": {
+      "item": "gardentrails:mulberry"
+    },
+    "P": {
+      "item": "minecraft:flower_pot"
+    },
+    "B": {
+      "item": "minecraft:glass_bottle"
+    }
   },
   "result": {
     "id": "gardentrails:mulberry_juice",

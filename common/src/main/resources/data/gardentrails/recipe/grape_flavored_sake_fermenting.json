@@ -1,0 +1,21 @@
+{
+  "type": "gardentrails:fermenting",
+  "fermentingTime": 1200,
+  "ingredients": [
+    {
+      "item": "minecraft:potion",
+      "remainder": "minecraft:glass_bottle",
+      "potion": "minecraft:water"
+    },
+    {
+      "item": "gardentrails:fermented_rice"
+    },
+    {
+      "item": "gardentrails:crushed_grape"
+    }
+  ],
+  "result": {
+    "id": "gardentrails:grape_flavored_sake",
+    "count": 1
+  }
+}

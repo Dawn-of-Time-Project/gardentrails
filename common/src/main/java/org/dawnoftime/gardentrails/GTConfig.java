@@ -3,12 +3,16 @@ package org.dawnoftime.gardentrails;
 import java.util.List;
 
 public class GTConfig {
-    public boolean generateChestLoot = true;
-    public boolean generateSilk = true;
-    public boolean generateGrapes = true;
-    public boolean generateMaize = true;
-    public boolean generateRice = true;
-    public boolean generateMulberry = true;
+    // Non-worldgen toggles
+    public boolean generateChestLoot     = true;
+    public boolean generateSilk          = true;
+    public boolean generateGrapes        = true;
+    public boolean generateMaize         = true;
+    public boolean generateRice          = true;
+    public boolean generateMulberry      = true;
+    public boolean dawnOfTimeUseSilk     = true;
+    public boolean armorOfTheAgesUseSilk = true;
+    public boolean armorOfTheAgesUseQuetzalFeathers = true;
 
     // Plant biome lists - empty list = plant does not spawn
     public List<String> boxwoodBushBiomes = List.of(
@@ -78,24 +82,24 @@ public class GTConfig {
 
     public List<String> getBiomesForPlant(String plant) {
         return switch (plant) {
-            case "boxwood_bush"       -> boxwoodBushBiomes;
-            case "camellia"           -> camelliaBiomes;
-            case "commelina"          -> commelinaBiomes;
-            case "cypress"            -> cypressBiomes;
-            case "geranium_pink"      -> geraniumPinkBiomes;
-            case "geranium_orange"    -> geraniumOrangeBiomes;
-            case "geranium_purple"    -> geraniumPurpleBiomes;
+            case "boxwood_bush"  -> boxwoodBushBiomes;
+            case "camellia"      -> camelliaBiomes;
+            case "commelina"     -> commelinaBiomes;
+            case "cypress"       -> cypressBiomes;
+            case "geranium_pink" -> geraniumPinkBiomes;
+            case "geranium_orange" -> geraniumOrangeBiomes;
+            case "geranium_purple" -> geraniumPurpleBiomes;
             case "geranium_purpleish" -> geraniumPurpleishBiomes;
-            case "geranium_red"       -> geraniumRedBiomes;
-            case "geranium_white"     -> geraniumWhiteBiomes;
-            case "ivy"                -> ivyBiomes;
-            case "mulberry"           -> mulberryBiomes;
-            case "red_maple"          -> redMapleBiomes;
-            case "orange_maple"       -> orangeMapleBiomes;
-            case "green_maple"        -> greenMapleBiomes;
-            case "rice"               -> riceBiomes;
-            case "wild_grape"         -> wildGrapeBiomes;
-            case "wild_maize"         -> wildMaizeBiomes;
+            case "geranium_red" -> geraniumRedBiomes;
+            case "geranium_white" -> geraniumWhiteBiomes;
+            case "ivy"           -> ivyBiomes;
+            case "mulberry"      -> mulberryBiomes;
+            case "red_maple"     -> redMapleBiomes;
+            case "orange_maple"  -> orangeMapleBiomes;
+            case "green_maple"   -> greenMapleBiomes;
+            case "rice"          -> riceBiomes;
+            case "wild_grape"    -> wildGrapeBiomes;
+            case "wild_maize"    -> wildMaizeBiomes;
             default -> {
                 System.err.println("[GardenTrails] Unknown plant key in biome modifier: " + plant);
                 yield List.of();

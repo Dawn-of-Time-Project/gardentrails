@@ -1,7 +1,12 @@
 package org.dawnoftime.gardentrails;
+import org.dawnoftime.gardentrails.registry.GTCriteriaRegistry;
+import net.minecraft.core.Holder;
 
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import org.dawnoftime.gardentrails.client.renderer.entity.layers.QuetzalOnShoulderLayer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -16,6 +21,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -33,11 +39,16 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import org.dawnoftime.gardentrails.block.IFlammable;
 import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
+import org.dawnoftime.gardentrails.client.model.entity.QuetzalModel;
 import org.dawnoftime.gardentrails.client.model.entity.SilkmothModel;
 import org.dawnoftime.gardentrails.client.renderer.blockentity.DryerRenderer;
+import org.dawnoftime.gardentrails.client.renderer.entity.GTArrowRenderer;
+import org.dawnoftime.gardentrails.client.renderer.entity.QuetzalRenderer;
 import org.dawnoftime.gardentrails.client.renderer.entity.SilkmothRenderer;
+import org.dawnoftime.gardentrails.entity.QuetzalEntity;
 import org.dawnoftime.gardentrails.entity.SilkmothEntity;
 import org.dawnoftime.gardentrails.item.IHasFlowerPot;
+import org.dawnoftime.gardentrails.item.IconItem;
 import org.dawnoftime.gardentrails.registry.*;
 
 import java.util.Map;
@@ -117,6 +128,14 @@ public class RegistryImpls {
         }
     }
 
+    public static class FabricMobEffectsRegistry extends GTMobEffectsRegistry {
+        @Override
+        public Supplier<Holder<MobEffect>> register(String name, Supplier<MobEffect> effect) {
+            Holder<MobEffect> registered = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name), effect.get());
+            return () -> registered;
+        }
+    }
+
     public static class FabricFeaturesRegistry extends GTFeaturesRegistry {
         @Override
         public <Y extends FeatureConfiguration, T extends Feature<Y>> Supplier<T> register(String name, Supplier<T> featureSupplier) {
@@ -127,6 +146,7 @@ public class RegistryImpls {
 
     public static class FabricItemsRegistry extends GTItemsRegistry {
         public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), 0xDBD8BD, 0xFEFEFC, new Item.Properties()));
+        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), 0xFFFFFF, 0xFFFFFF, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
 
         public FabricItemsRegistry() {
             postRegister();
@@ -205,12 +225,23 @@ public class RegistryImpls {
 
     public static void initClient() {
         EntityRendererRegistry.register(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), SilkmothRenderer::new);
+        EntityRendererRegistry.register(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), QuetzalRenderer::new);
+        EntityRendererRegistry.register(GTEntitiesRegistry.INSTANCE.FEATHERED_ARROW_ENTITY.get(), GTArrowRenderer::new);
         BlockEntityRenderers.register(GTBlockEntitiesRegistry.INSTANCE.DRYER.get(), DryerRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(SilkmothModel.LAYER_LOCATION, SilkmothModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(QuetzalModel.LAYER_LOCATION, QuetzalModel::createBodyLayer);
+        // Quetzal on the player shoulder
+        LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
+            if (entityRenderer instanceof PlayerRenderer playerRenderer) {
+                registrationHelper.register(new QuetzalOnShoulderLayer<>(playerRenderer, context.getModelSet()));
+            }
+        });
     }
 
     public static void init() {
         GTEntitiesRegistry.INSTANCE = new FabricEntitiesRegistry();
+        GTMobEffectsRegistry.INSTANCE = new FabricMobEffectsRegistry();
+        Registry.register(BuiltInRegistries.TRIGGER_TYPES, org.dawnoftime.gardentrails.advancement.KillSilkmothTrigger.ID, GTCriteriaRegistry.KILL_SILKMOTH);
         GTBlocksRegistry.INSTANCE = new FabricBlocksRegistry();
         GTItemsRegistry.INSTANCE = new FabricItemsRegistry();
         GTBlockEntitiesRegistry.INSTANCE = new FabricBlockEntitiesRegistry();
@@ -221,5 +252,6 @@ public class RegistryImpls {
         GTCreativeModeTabsRegistry.INSTANCE = new FabricCreativeModeTabsRegistry();
 
         FabricDefaultAttributeRegistry.register(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), SilkmothEntity.createAttributes());
+        FabricDefaultAttributeRegistry.register(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), QuetzalEntity.createAttributes());
     }
 }

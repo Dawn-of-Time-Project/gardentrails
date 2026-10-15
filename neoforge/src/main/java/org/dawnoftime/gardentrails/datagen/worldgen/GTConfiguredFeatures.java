@@ -58,7 +58,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, CYPRESS_KEY, Feature.RANDOM_PATCH,
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.CYPRESS.get())
@@ -98,7 +98,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, BOXWOOD_BUSH_KEY, Feature.RANDOM_PATCH,
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.BOXWOOD_BUSH.get())
@@ -108,7 +108,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, MULBERRY_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.MULBERRY.get())
@@ -129,7 +129,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, WILD_GRAPE_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.WILD_GRAPE.get())
@@ -139,7 +139,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, WILD_MAIZE_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.WILD_MAIZE.get())
@@ -149,7 +149,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, GERANIUM_PINK_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_PINK.get())
@@ -159,7 +159,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, GERANIUM_ORANGE_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_ORANGE.get())
@@ -169,7 +169,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, GERANIUM_PURPLE_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_PURPLE.get())
@@ -179,7 +179,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, GERANIUM_PURPLEISH_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_PURPLEISH.get())
@@ -189,7 +189,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, GERANIUM_RED_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_RED.get())
@@ -199,7 +199,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, GERANIUM_WHITE_KEY, GTFeaturesRegistry.INSTANCE.DEFAULT_CROPS.get(),
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.GERANIUM_WHITE.get())
@@ -209,7 +209,7 @@ public class GTConfiguredFeatures {
         );
 
         register(context, IVY_KEY, Feature.RANDOM_PATCH,
-                new RandomPatchConfiguration(32, 5, 2,
+                new RandomPatchConfiguration(45, 5, 3,
                         PlacementUtils.onlyWhenEmpty(GTFeaturesRegistry.INSTANCE.DOT_FEATURE.get(),
                                 new SimpleBlockConfiguration(
                                         BlockStateProvider.simple(GTBlocksRegistry.INSTANCE.IVY.get())

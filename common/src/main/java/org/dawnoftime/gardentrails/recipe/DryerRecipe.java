@@ -15,6 +15,10 @@ import javax.annotation.Nonnull;
 public record DryerRecipe(String group, Ingredient ingredient, ItemStack result, float experience,
                           int dryingTime, int ingredientCount) implements Recipe<SimpleContainerRecipeInput> {
 
+    public int getDryingTime() {
+        return this.dryingTime;
+    }
+
     @Override
     public @NotNull String getGroup() {
         return this.group;

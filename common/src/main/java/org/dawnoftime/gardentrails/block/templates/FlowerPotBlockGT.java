@@ -38,7 +38,6 @@ public class FlowerPotBlockGT extends BlockGT implements IBlockSpecialDisplay, I
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(this.itemInPot));
             level.setBlock(pos, Blocks.FLOWER_POT.defaultBlockState(), 2);
         }
-
         return super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
@@ -47,15 +46,22 @@ public class FlowerPotBlockGT extends BlockGT implements IBlockSpecialDisplay, I
     }
 
     @Override
-    public float getDisplayScale() {
-        return 0.667F;
-    }
-    
-    @Override
     public ColorType getColorType() {
+        // Only the cypress pot has foliage to tint
         if (this.itemInPot != null && this.itemInPot == GTBlocksRegistry.INSTANCE.CYPRESS.get().asItem()) {
             return ColorType.FOLIAGE;
         }
         return null;
+    }
+
+    @Override
+    public float getDisplayScale() {
+        return 0.667F;
+    }
+    
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
+        return true;
     }
 }

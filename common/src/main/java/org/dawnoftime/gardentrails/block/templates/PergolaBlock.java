@@ -1,12 +1,10 @@
 package org.dawnoftime.gardentrails.block.templates;
 
-import net.minecraft.ChatFormatting;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -21,14 +19,11 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
 import org.dawnoftime.gardentrails.registry.GTItemsRegistry;
 import org.dawnoftime.gardentrails.util.GTBlockStateProperties;
-
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -43,17 +38,19 @@ public class PergolaBlock extends BlockGT {
     public static final BooleanProperty AXIS_Y = GTBlockStateProperties.AXIS_Y;
     public static final BooleanProperty AXIS_Z = GTBlockStateProperties.AXIS_Z;
 
+    // Suppliers resolved lazily at runtime — set to null for pergola variants that don't support plants
     private final Supplier<PergolaBlock> vineVariant;
     private final Supplier<PergolaBlock> ivyVariant;
     private final Supplier<PergolaBlock> grapeVariant;
 
+    /** Full constructor: pergola that supports climbing plants. */
     public PergolaBlock(Properties properties,
                         Supplier<PergolaBlock> vineVariant,
                         Supplier<PergolaBlock> ivyVariant,
                         Supplier<PergolaBlock> grapeVariant) {
         super(properties, PERGOLA_SHAPES);
-        this.vineVariant = vineVariant;
-        this.ivyVariant = ivyVariant;
+        this.vineVariant  = vineVariant;
+        this.ivyVariant   = ivyVariant;
         this.grapeVariant = grapeVariant;
         this.registerDefaultState(this.defaultBlockState().setValue(AXIS_Y, false).setValue(AXIS_X, false).setValue(AXIS_Z, false));
     }
@@ -122,47 +119,42 @@ public class PergolaBlock extends BlockGT {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(Component.translatable("lore.gardentrails.pergola.accepts")
-            .withStyle(ChatFormatting.GOLD)
-            .append(Component.translatable("lore.gardentrails.pergola.accepts.plants")
-                .withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(Component.translatable("lore.gardentrails.pergola.usage")
-            .withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC));
+    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        TooltipHelper.label(tooltip, "lore.gardentrails.pergola.label");
+        TooltipHelper.lore(tooltip, "lore.gardentrails.pergola.accepts", TooltipHelper.names(
+                "item.gardentrails.grape_seeds", "block.gardentrails.ivy", "block.minecraft.vine"));
+        TooltipHelper.lore(tooltip, "lore.gardentrails.pergola.usage");
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (player.isCreative()) {
-            Item item = player.getItemInHand(hand).getItem();
-            return this.tryPutPlant(item, state, level, pos);
-        }
-        if (state.getValue(AXIS_Y)) {
-            BlockState stateUnder = level.getBlockState(pos.below());
-            if (stateUnder.getBlock() == Blocks.GRASS_BLOCK || stateUnder.is(BlockTags.DIRT)) {
-                Item item = player.getItemInHand(hand).getItem();
-                return this.tryPutPlant(item, state, level, pos);
-            }
-        }
-
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        // Plants can be placed anywhere on a bare pergola, in creative and in survival
+        return this.tryPutPlant(stack, state, level, pos, player);
     }
 
-    private ItemInteractionResult tryPutPlant(Item itemInHand, BlockState currentState, @NotNull Level level, @NotNull BlockPos pos) {
+    private ItemInteractionResult tryPutPlant(ItemStack stackInHand, BlockState currentState, @NotNull Level level, @NotNull BlockPos pos, Player player) {
+        // Guard: if this variant has no plant support, skip
+        if (vineVariant == null || ivyVariant == null || grapeVariant == null)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        Item itemInHand = stackInHand.getItem();
+        PergolaBlock target = null;
         if (itemInHand == Blocks.VINE.asItem()) {
-            level.setBlock(pos, this.copyShapeToPergola(currentState, this.vineVariant.get()), 2);
-            return ItemInteractionResult.SUCCESS;
+            target = vineVariant.get();
+        } else if (itemInHand == GTBlocksRegistry.INSTANCE.IVY.get().asItem()) {
+            target = ivyVariant.get();
+        } else if (itemInHand == GTItemsRegistry.INSTANCE.GRAPE_SEEDS.get()) {
+            target = grapeVariant.get();
         }
-        if (itemInHand == GTBlocksRegistry.INSTANCE.IVY.get().asItem()) {
-            level.setBlock(pos, this.copyShapeToPergola(currentState, this.ivyVariant.get()), 2);
-            return ItemInteractionResult.SUCCESS;
+        if (target == null)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        level.setBlock(pos, this.copyShapeToPergola(currentState, target), 2);
+        if (!player.isCreative()) {
+            stackInHand.shrink(1);
         }
-        if (itemInHand == GTItemsRegistry.INSTANCE.GRAPE_SEEDS.get()) {
-            level.setBlock(pos, this.copyShapeToPergola(currentState, this.grapeVariant.get()), 2);
-            return ItemInteractionResult.SUCCESS;
-        }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return ItemInteractionResult.SUCCESS;
     }
 
     public BlockState copyShapeToPergola(@NotNull BlockState currentState, PergolaBlock targetPergola) {
@@ -180,5 +172,10 @@ public class PergolaBlock extends BlockGT {
             case 3 -> pos.west();
             default -> pos.above();
         };
+    }
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
+        return true;
     }
 }

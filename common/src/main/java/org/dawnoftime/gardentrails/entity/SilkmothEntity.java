@@ -14,15 +14,17 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ambient.AmbientCreature;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.dawnoftime.gardentrails.GTConstants;
 import org.dawnoftime.gardentrails.block.templates.DoubleGrowingBushBlock;
+import org.dawnoftime.gardentrails.platform.Services;
 import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
-import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
+import org.dawnoftime.gardentrails.registry.GTCriteriaRegistry;
 import org.dawnoftime.gardentrails.registry.GTItemsRegistry;
+import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -42,7 +44,7 @@ public class SilkmothEntity extends AmbientCreature {
     }
 
     private float getNewRotationDistance() {
-        return 0.5F + GTConstants.SILKMOTH_ROTATION_RANGE * this.random.nextFloat();
+        return 0.5F + 2 * this.random.nextFloat();
     }
 
     @Override
@@ -51,11 +53,11 @@ public class SilkmothEntity extends AmbientCreature {
         this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, 0.6D, 1.0D));
     }
 
+    @Nullable
     @Override
-    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @org.jetbrains.annotations.Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType spawnReason, @Nullable SpawnGroupData data) {
         this.getEntityData().set(ROTATION_POS, this.blockPosition());
-
-        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+        return super.finalizeSpawn(world, difficultyInstance, spawnReason, data);
     }
 
     @Override
@@ -64,11 +66,11 @@ public class SilkmothEntity extends AmbientCreature {
 
         if(this.tickCount >= 24000){
             //The silkmoth dies from oldness.
-            if(!this.hasCustomName() && GTConstants.SILKMOTH_MUST_DIE)
+            if(!this.hasCustomName())
                 this.hurt(this.damageSources().starve(), 20.0F);
         }
 
-        if(this.random.nextInt(GTConstants.SILKMOTH_ROTATION_CHANGE) == 0){
+        if(this.random.nextInt(400) == 0){
             //Randomly changes the rotation pos.
             this.changeRotationPos();
         }
@@ -182,7 +184,16 @@ public class SilkmothEntity extends AmbientCreature {
     @Nullable
     @Override
     public SoundEvent getAmbientSound() {
-        return !GTConstants.SILKMOTH_MUTE && this.random.nextInt(4) == 0 ? SoundEvents.PARROT_FLY : null;
+        return this.random.nextInt(4) == 0 ? SoundEvents.PARROT_FLY : null;
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        // Fire the kill trigger when a player kills a silkmoth (server-side only)
+        if (!this.level().isClientSide() && source.getEntity() instanceof ServerPlayer player) {
+            GTCriteriaRegistry.KILL_SILKMOTH.trigger(player);
+        }
     }
 
     @Override
@@ -198,7 +209,6 @@ public class SilkmothEntity extends AmbientCreature {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-
         builder.define(ROTATION_POS, new BlockPos(this.blockPosition()));
         builder.define(CLOCKWISE, this.random.nextBoolean());
         builder.define(DISTANCE, this.getNewRotationDistance());

@@ -1,6 +1,6 @@
 {
     "schemaVersion": 1,
-    "id": "${mod_id}",
+    "id": "gardentrails",
     "version": "${version}",
     "name": "${mod_name}",
     "description": "${description}",
@@ -21,6 +21,9 @@
         ],
         "client": [
             "org.dawnoftime.gardentrails.GTFabric"
+        ],
+        "jei_mod_plugin": [
+            "org.dawnoftime.gardentrails.compat.jei.GTJeiPlugin"
         ]
     },
     "mixins": [
@@ -30,8 +33,8 @@
     "depends": {
         "fabricloader": ">=0.14",
         "fabric": "*",
-        "minecraft": "${minecraft_version}",
-        "java": ">=17"
+        "minecraft": "${minecraft_version_range}",
+        "java": ">=21"
     },
     "suggests": {
         "another-mod": "*"

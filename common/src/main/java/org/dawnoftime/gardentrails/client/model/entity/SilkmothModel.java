@@ -63,7 +63,7 @@ public class SilkmothModel<T extends SilkmothEntity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+    public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
         poseStack.pushPose();
         poseStack.translate(0.0F, 0.5F, 0.0F);
         poseStack.scale(0.5F, 0.5F, 0.5F);

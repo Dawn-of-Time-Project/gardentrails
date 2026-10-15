@@ -33,7 +33,6 @@ public class BiomeColorHandlers {
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.BOXWOOD_BUSH);
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.BOXWOOD_SMALL_HEDGE);
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.BOXWOOD_TALL_HEDGE);
-        registerBiomeColoredBlock(() -> GTBlocksRegistry.POT_BLOCKS.get("cypress_flower_pot"));
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_PINK);
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_ORANGE);
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_PURPLE);
@@ -41,13 +40,13 @@ public class BiomeColorHandlers {
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_RED);
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_WHITE);
         registerBiomeColoredBlockOnly(() -> GTBlocksRegistry.INSTANCE.CAMELLIA.get());
+        registerBiomeColoredBlock(() -> GTBlocksRegistry.POT_BLOCKS.get("cypress_flower_pot"));
     }
-    
+
     private static void registerBiomeColoredBlockOnly(Supplier<Block> blockSupplier) {
         Block block = blockSupplier.get();
         if (IBiomeColoredBlock.isBiomeColored(block)) {
             IBiomeColoredBlock coloredBlock = (IBiomeColoredBlock) block;
-
             BlockColor blockColor = (state, world, pos, tintIndex) -> {
                 if (world != null && pos != null && tintIndex == 0) {
                     int color = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
@@ -60,7 +59,6 @@ public class BiomeColorHandlers {
                     : GrassColor.getDefaultColor();
                 return brightenColor(defaultColor);
             };
-
             ColorProviderRegistry.BLOCK.register(blockColor, block);
         }
     }

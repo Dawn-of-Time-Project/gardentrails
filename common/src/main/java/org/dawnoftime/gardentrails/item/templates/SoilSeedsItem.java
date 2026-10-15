@@ -1,5 +1,7 @@
 package org.dawnoftime.gardentrails.item.templates;
 
+import net.minecraft.world.item.Item;
+
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,6 +14,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 import net.minecraft.world.level.block.Block;
@@ -22,15 +25,35 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
 import org.dawnoftime.gardentrails.block.templates.SoilCropsBlock;
 import org.dawnoftime.gardentrails.item.IHasFlowerPot;
-import org.dawnoftime.gardentrails.mixin.accessor.BlockBehaviourAccessor;
+import net.minecraft.network.chat.Component;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import org.jetbrains.annotations.NotNull;
+import java.util.List;
 import javax.annotation.Nullable;
 
 public class SoilSeedsItem extends BlockItem implements IHasFlowerPot {
     private FlowerPotBlockGT potBlock;
 
+    // Optional sake process description, null for seeds outside the sake chain
+    @Nullable private final String sakeDescKey;
+    private final String[] sakeArgKeys;
+
     public <T extends SoilCropsBlock> SoilSeedsItem(T crops, @Nullable FoodProperties food) {
+        this(crops, food, null);
+    }
+
+    public <T extends SoilCropsBlock> SoilSeedsItem(T crops, @Nullable FoodProperties food, @Nullable String sakeDescKey, String... sakeArgKeys) {
         super(crops, food != null ? new Properties().food(food) : new Properties());
+        this.sakeDescKey = sakeDescKey;
+        this.sakeArgKeys = sakeArgKeys;
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext world, @NotNull List<Component> tooltips, @NotNull TooltipFlag flagIn) {
+        super.appendHoverText(stack, world, tooltips, flagIn);
+        if (this.sakeDescKey != null) {
+            TooltipHelper.process(tooltips, "lore.gardentrails.sake_process", this.sakeDescKey, this.sakeArgKeys);
+        }
     }
 
     @Override
@@ -60,7 +83,7 @@ public class SoilSeedsItem extends BlockItem implements IHasFlowerPot {
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
 
-        if (!((BlockBehaviourAccessor)this.getBlock()).callCanSurvive(this.getBlock().defaultBlockState(), world, pos))
+        if (!this.getBlock().defaultBlockState().canSurvive(world, pos))
             return InteractionResult.FAIL;
         if (!world.getBlockState(pos).canBeReplaced(context))
             return InteractionResult.FAIL;

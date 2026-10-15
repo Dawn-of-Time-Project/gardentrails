@@ -1,4 +1,5 @@
 package org.dawnoftime.gardentrails.block.templates;
+import org.dawnoftime.gardentrails.platform.Services;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,8 +18,6 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.dawnoftime.gardentrails.platform.Services;
-
 import javax.annotation.Nullable;
 
 public class DoubleCropsBlock extends SoilCropsBlock {
@@ -128,6 +127,7 @@ public class DoubleCropsBlock extends SoilCropsBlock {
     // Only called with Bonemeal
     @Override
     public void growCrops(Level worldIn, BlockPos pos, BlockState state) {
+        // If bonemeal is applied on the top block, redirect to the bottom block
         if (!this.isBottomCrop(state)) {
             pos = pos.below();
             state = worldIn.getBlockState(pos);

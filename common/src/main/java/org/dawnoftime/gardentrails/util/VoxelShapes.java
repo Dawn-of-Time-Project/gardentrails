@@ -39,4 +39,5 @@ public class VoxelShapes {
     public static final VoxelShape[] WILD_PLANT_SHAPES = new VoxelShape[]{Block.box(2.0D, 0.0D, 2.0D, 14.0D, 14.0D, 14.0D)};
     public static final VoxelShape[] PERGOLA_SHAPES = makePergolaShapes();
     public static final VoxelShape[] PERGOLA_COLLISION_SHAPES = makePergolaCollisionShapes();
+    public static final VoxelShape[] LATTICE_SHAPES = makeLatticeShapes();
 }

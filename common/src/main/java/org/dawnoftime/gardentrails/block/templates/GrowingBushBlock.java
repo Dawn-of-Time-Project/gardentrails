@@ -1,15 +1,15 @@
 package org.dawnoftime.gardentrails.block.templates;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.server.level.ServerPlayer;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,6 +29,7 @@ import org.dawnoftime.gardentrails.util.GTBlockStateProperties;
 import org.dawnoftime.gardentrails.util.Utils;
 
 import java.util.List;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class GrowingBushBlock extends SoilCropsBlock {
     public final VoxelShape[] SHAPES;
@@ -108,10 +109,12 @@ public class GrowingBushBlock extends SoilCropsBlock {
         return ItemInteractionResult.FAIL;
     }
 
+    // Called when bonemeal is used on this block
     @Override
     public void growCrops(Level worldIn, BlockPos pos, BlockState state) {
         if (this.isMaxAge(state)) {
-            String blockName = this.builtInRegistryHolder().key().location().getPath();
+            // At max age, bonemeal triggers a loot drop (2x) instead of growing
+            String blockName = BuiltInRegistries.BLOCK.getKey(this).getPath();
             List<ItemStack> drops = Utils.getLootList((ServerLevel) worldIn, state, ItemStack.EMPTY, blockName);
             Utils.dropLootFromList(worldIn, pos, drops, 2.0f);
         } else {

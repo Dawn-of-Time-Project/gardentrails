@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -45,6 +46,20 @@ public class BlockGT extends Block implements IFlammable {
 
     public int getShapeIndex(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return 0;
+    }
+
+    /**
+     * Land mobs treat partial blocks as open air and try to walk through them.
+     * Override to return true for blocks that must be seen as obstacles by land pathfinding.
+     */
+    protected boolean blocksLandPathing(final BlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isPathfindable(final @NotNull BlockState state, final @NotNull PathComputationType type) {
+        if (type == PathComputationType.LAND && this.blocksLandPathing(state)) return false;
+        return super.isPathfindable(state, type);
     }
 
     public Block setBurnable() {

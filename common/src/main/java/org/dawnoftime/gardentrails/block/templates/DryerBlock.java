@@ -1,14 +1,13 @@
 package org.dawnoftime.gardentrails.block.templates;
 
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.Item;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -28,6 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.dawnoftime.gardentrails.blockentity.DryerBlockEntity;
 import org.dawnoftime.gardentrails.registry.GTBlockEntitiesRegistry;
 import org.dawnoftime.gardentrails.util.GTBlockStateProperties;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -39,20 +39,19 @@ public class DryerBlock extends WaterloggedBlock implements EntityBlock {
     //TODO Add redstone compatibility : ie emit redstone when dried
     public static final IntegerProperty SIZE = GTBlockStateProperties.SIZE_0_2;
 
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        TooltipHelper.label(tooltip, "lore.gardentrails.drying_tray.label");
+        TooltipHelper.lore(tooltip, "lore.gardentrails.drying_tray.accepts", TooltipHelper.names(
+                "item.gardentrails.cooked_rice", "item.gardentrails.mulberry_juice", "item.gardentrails.grape",
+                "block.gardentrails.maize", "item.gardentrails.camellia_leaves", "item.gardentrails.silk_worm_hatchery"));
+        TooltipHelper.lore(tooltip, "lore.gardentrails.drying_tray.usage");
+    }
+
     public DryerBlock(final Properties properties, VoxelShape[] shapes) {
         super(properties, shapes);
         this.registerDefaultState(this.defaultBlockState().setValue(DryerBlock.SIZE, 0));
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(Component.translatable("lore.gardentrails.drying_tray.accepts")
-            .withStyle(ChatFormatting.GOLD)
-            .append(Component.translatable("lore.gardentrails.drying_tray.accepts.items")
-                .withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(Component.translatable("lore.gardentrails.drying_tray.usage")
-            .withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC));
     }
 
     @Nullable
@@ -135,14 +134,19 @@ public class DryerBlock extends WaterloggedBlock implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if(!level.isClientSide() && hand == InteractionHand.MAIN_HAND && level.getBlockEntity(pos) instanceof DryerBlockEntity dryerEntity) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+        if(!worldIn.isClientSide() && handIn == InteractionHand.MAIN_HAND && worldIn.getBlockEntity(pos) instanceof DryerBlockEntity dryerEntity) {
             if(player.isCrouching()) {
-                return dryerEntity.dropOneItem(level, pos);
+                return dryerEntity.dropOneItem(worldIn, pos);
             }
-            ItemStack handStack = player.getItemInHand(hand);
-            return dryerEntity.tryInsertItemStack(handStack, state.getValue(DryerBlock.SIZE) == 0, level, pos, player);
+            ItemStack handStack = player.getItemInHand(handIn);
+            return dryerEntity.tryInsertItemStack(handStack, state.getValue(DryerBlock.SIZE) == 0, worldIn, pos, player);
         }
         return ItemInteractionResult.FAIL;
+    }
+
+    @Override
+    protected boolean blocksLandPathing(final BlockState state) {
+        return true;
     }
 }

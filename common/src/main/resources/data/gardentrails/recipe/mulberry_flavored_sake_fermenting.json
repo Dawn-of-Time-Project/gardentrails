@@ -1,0 +1,21 @@
+{
+  "type": "gardentrails:fermenting",
+  "fermentingTime": 1200,
+  "ingredients": [
+    {
+      "item": "minecraft:potion",
+      "remainder": "minecraft:glass_bottle",
+      "potion": "minecraft:water"
+    },
+    {
+      "item": "gardentrails:fermented_rice"
+    },
+    {
+      "item": "gardentrails:fermented_mulberry_juice"
+    }
+  ],
+  "result": {
+    "id": "gardentrails:mulberry_flavored_sake",
+    "count": 1
+  }
+}

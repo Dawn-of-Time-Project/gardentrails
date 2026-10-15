@@ -9,6 +9,7 @@
     "gardentrails:cherry_drying_tray",
     "gardentrails:dark_oak_drying_tray",
     "gardentrails:spruce_drying_tray",
+    "gardentrails:sake_vat",
     "gardentrails:maple_red_leaves",
     "gardentrails:maple_red_trunk",
     "gardentrails:maple_orange_leaves",
@@ -16,6 +17,16 @@
     "gardentrails:maple_green_leaves",
     "gardentrails:maple_green_trunk",
     "gardentrails:rice",
-    "gardentrails:stick_bundle"
+    "gardentrails:stick_bundle",
+    "gardentrails:rotten_oak_log",
+    "gardentrails:soaked_oak_log",
+    "gardentrails:rotten_oak_planks",
+    "gardentrails:rotten_oak_stairs",
+    "gardentrails:rotten_oak_slab",
+    "gardentrails:rotten_oak_edge",
+    "gardentrails:rotten_oak_plate",
+    "gardentrails:rotten_oak_fence",
+    "gardentrails:rotten_oak_fence_gate",
+    "gardentrails:rotten_oak_trapdoor"
   ]
 }

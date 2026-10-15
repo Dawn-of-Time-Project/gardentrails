@@ -24,3 +24,5 @@ build
 # other
 eclipse
 run
+/docs/
+/CLAUDE.md

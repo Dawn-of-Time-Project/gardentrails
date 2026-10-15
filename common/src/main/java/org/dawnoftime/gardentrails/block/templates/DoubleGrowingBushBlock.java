@@ -1,4 +1,5 @@
 package org.dawnoftime.gardentrails.block.templates;
+import org.dawnoftime.gardentrails.platform.Services;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,10 +19,9 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.core.registries.BuiltInRegistries;
-import org.dawnoftime.gardentrails.platform.Services;
-import org.dawnoftime.gardentrails.util.Utils;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import org.dawnoftime.gardentrails.util.Utils;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -120,12 +120,14 @@ public class DoubleGrowingBushBlock extends GrowingBushBlock {
     // Only called with Bonemeal
     @Override
     public void growCrops(Level worldIn, BlockPos pos, BlockState state) {
+        // If bonemeal is applied on the top block, redirect to the bottom block
         if (!this.isBottomCrop(state)) {
             pos = pos.below();
             state = worldIn.getBlockState(pos);
             if (state.getBlock() != this) return;
         }
         if (this.isMaxAge(state)) {
+            // At max age, bonemeal triggers a loot drop (2x) instead of growing
             String blockName = BuiltInRegistries.BLOCK.getKey(this).getPath();
             List<ItemStack> drops = Utils.getLootList((ServerLevel) worldIn, state, ItemStack.EMPTY, blockName);
             Utils.dropLootFromList(worldIn, pos, drops, 2.0f);
