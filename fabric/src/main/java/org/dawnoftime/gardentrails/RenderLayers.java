@@ -13,6 +13,21 @@ public class RenderLayers {
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.STICK_BUNDLE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.RICE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PINK.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_ORANGE.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PURPLE.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PURPLEISH.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_RED.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_WHITE.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.IRON_LATTICE.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.COPPER_LATTICE.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(GTBlocksRegistry.INSTANCE.OXIDIZED_COPPER_LATTICE.get(), RenderType.cutout());
+        for (var metal : new String[]{"iron", "copper", "oxidized_copper"}) {
+            for (var suffix : new String[]{"", "_vine", "_ivy", "_grape"}) {
+                var block = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(
+                        new net.minecraft.resources.ResourceLocation("gardentrails", metal + "_pergola" + suffix));
+                BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout());
+            }
+        }
         for(MapleVariant variant : GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.values()) {
             BlockRenderLayerMap.INSTANCE.putBlock(variant.trunk().get(), RenderType.cutout());
             BlockRenderLayerMap.INSTANCE.putBlock(variant.leaves().get(), RenderType.cutout());

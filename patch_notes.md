@@ -1,4 +1,4 @@
-## 🌱 Garden Trails Patch Notes v0.1.13
+## 🌱 Garden Trails Patch Notes v0.1.13 (bis)
 
 ![new blocks](https://i.imgur.com/PnG9gNy.jpeg)
 
@@ -49,6 +49,7 @@
 ### Fixes
 - Fixed the orange and green maple trees never spawning on Fabric
 - Fixed the cypress flower pot item not being tinted in hand and inventory
+- Fixed render layer issues with plants and pergolas/lattices for Fabric version
 
 ### Removed
 - Removed the four old sake bottles with their models, recipes and cumulative effects
