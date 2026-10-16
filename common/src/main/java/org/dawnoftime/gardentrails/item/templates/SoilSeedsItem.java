@@ -1,5 +1,11 @@
 package org.dawnoftime.gardentrails.item.templates;
 
+import org.dawnoftime.gardentrails.util.RegistrationContext;
+
+import org.dawnoftime.gardentrails.util.Foods;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 import net.minecraft.world.item.Item;
 
 import net.minecraft.advancements.CriteriaTriggers;
@@ -38,22 +44,24 @@ public class SoilSeedsItem extends BlockItem implements IHasFlowerPot {
     @Nullable private final String sakeDescKey;
     private final String[] sakeArgKeys;
 
-    public <T extends SoilCropsBlock> SoilSeedsItem(T crops, @Nullable FoodProperties food) {
+    public <T extends SoilCropsBlock> SoilSeedsItem(T crops, @Nullable Foods.Food food) {
         this(crops, food, null);
     }
 
-    public <T extends SoilCropsBlock> SoilSeedsItem(T crops, @Nullable FoodProperties food, @Nullable String sakeDescKey, String... sakeArgKeys) {
-        super(crops, food != null ? new Properties().food(food) : new Properties());
+    public <T extends SoilCropsBlock> SoilSeedsItem(T crops, @Nullable Foods.Food food, @Nullable String sakeDescKey, String... sakeArgKeys) {
+        super(crops, food != null ? food.applyTo(RegistrationContext.item()) : RegistrationContext.item());
         this.sakeDescKey = sakeDescKey;
         this.sakeArgKeys = sakeArgKeys;
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext world, @NotNull List<Component> tooltips, @NotNull TooltipFlag flagIn) {
-        super.appendHoverText(stack, world, tooltips, flagIn);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> adder, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, adder, flag);
+        List<Component> tooltips = new ArrayList<>();
         if (this.sakeDescKey != null) {
             TooltipHelper.process(tooltips, "lore.gardentrails.sake_process", this.sakeDescKey, this.sakeArgKeys);
         }
+        tooltips.forEach(adder);
     }
 
     @Override

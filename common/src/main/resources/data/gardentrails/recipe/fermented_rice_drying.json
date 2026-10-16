@@ -1,10 +1,8 @@
 {
   "type": "gardentrails:dryer",
   "dryingTime": 1200,
-  "experience": 1.0,
-  "ingredient": {
-    "item": "gardentrails:moldy_rice"
-  },
+  "experience": 1,
+  "ingredient": "gardentrails:moldy_rice",
   "result": {
     "id": "gardentrails:fermented_rice",
     "count": 4

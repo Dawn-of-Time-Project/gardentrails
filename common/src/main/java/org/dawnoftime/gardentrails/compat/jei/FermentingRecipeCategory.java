@@ -29,14 +29,12 @@ public class FermentingRecipeCategory implements IRecipeCategory<FermentingRecip
     private static final int WIDTH = 130;
     private static final int HEIGHT = 40;
 
-    private final IDrawable background;
     private final IDrawable icon;
     private final IDrawable slot;
     private final IDrawableAnimated arrow;
     private final Component title = Component.translatable("gardentrails.jei.category.fermenting");
 
     public FermentingRecipeCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(GTBlocksRegistry.INSTANCE.SAKE_VAT.get()));
         this.slot = guiHelper.getSlotDrawable();
         this.arrow = guiHelper.createAnimatedRecipeArrow(100);
@@ -53,8 +51,13 @@ public class FermentingRecipeCategory implements IRecipeCategory<FermentingRecip
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return this.background;
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
     }
 
     @Override

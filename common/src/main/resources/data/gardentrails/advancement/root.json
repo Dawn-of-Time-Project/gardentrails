@@ -9,7 +9,7 @@
     "description": {
       "translate": "advancements.gardentrails.root.description"
     },
-    "background": "minecraft:textures/block/moss_block.png",
+    "background": "minecraft:block/moss_block",
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

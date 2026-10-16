@@ -1,7 +1,9 @@
 package org.dawnoftime.gardentrails.entity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -55,19 +57,19 @@ public class SilkmothEntity extends AmbientCreature {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType spawnReason, @Nullable SpawnGroupData data) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, EntitySpawnReason spawnReason, @Nullable SpawnGroupData data) {
         this.getEntityData().set(ROTATION_POS, this.blockPosition());
         return super.finalizeSpawn(world, difficultyInstance, spawnReason, data);
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
 
         if(this.tickCount >= 24000){
             //The silkmoth dies from oldness.
             if(!this.hasCustomName())
-                this.hurt(this.damageSources().starve(), 20.0F);
+                this.hurtServer(serverLevel, this.damageSources().starve(), 20.0F);
         }
 
         if(this.random.nextInt(400) == 0){
@@ -77,7 +79,7 @@ public class SilkmothEntity extends AmbientCreature {
 
         // ~3 silk worm egg drops over a full lifetime (24000 ticks)
         if(this.random.nextInt(8000) == 0){
-            this.spawnAtLocation(GTItemsRegistry.INSTANCE.SILK_WORM_EGGS.get());
+            this.spawnAtLocation(serverLevel, GTItemsRegistry.INSTANCE.SILK_WORM_EGGS.get());
         }
 
         BlockPos pos = this.getEntityData().get(ROTATION_POS);
@@ -145,7 +147,7 @@ public class SilkmothEntity extends AmbientCreature {
     }
 
     @Override
-    public boolean causeFallDamage(float p_225503_1_, float p_225503_2_, DamageSource damageSource) {
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {
         return false;
     }
 
@@ -215,20 +217,20 @@ public class SilkmothEntity extends AmbientCreature {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.getEntityData().set(ROTATION_POS, new BlockPos(compound.getInt("RotationX"), compound.getInt("RotationY"), compound.getInt("RotationZ")));
-        this.getEntityData().set(CLOCKWISE, compound.getBoolean("RotationClockwise"));
-        this.getEntityData().set(DISTANCE, compound.getFloat("RotationDistance"));
+    protected void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.getEntityData().set(ROTATION_POS, new BlockPos(input.getIntOr("RotationX", 0), input.getIntOr("RotationY", 0), input.getIntOr("RotationZ", 0)));
+        this.getEntityData().set(CLOCKWISE, input.getBooleanOr("RotationClockwise", false));
+        this.getEntityData().set(DISTANCE, input.getFloatOr("RotationDistance", this.getNewRotationDistance()));
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("RotationX", this.getEntityData().get(ROTATION_POS).getX());
-        compound.putInt("RotationY", this.getEntityData().get(ROTATION_POS).getY());
-        compound.putInt("RotationZ", this.getEntityData().get(ROTATION_POS).getZ());
-        compound.putBoolean("RotationClockwise", this.getEntityData().get(CLOCKWISE));
-        compound.putFloat("RotationDistance", this.getEntityData().get(DISTANCE));
+    protected void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putInt("RotationX", this.getEntityData().get(ROTATION_POS).getX());
+        output.putInt("RotationY", this.getEntityData().get(ROTATION_POS).getY());
+        output.putInt("RotationZ", this.getEntityData().get(ROTATION_POS).getZ());
+        output.putBoolean("RotationClockwise", this.getEntityData().get(CLOCKWISE));
+        output.putFloat("RotationDistance", this.getEntityData().get(DISTANCE));
     }
 }

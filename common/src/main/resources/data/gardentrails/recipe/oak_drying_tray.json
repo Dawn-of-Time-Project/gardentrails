@@ -5,12 +5,8 @@
     "iIi"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:oak_planks"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
+    "I": "minecraft:oak_planks",
+    "i": "minecraft:iron_ingot"
   },
   "result": {
     "id": "gardentrails:oak_drying_tray"

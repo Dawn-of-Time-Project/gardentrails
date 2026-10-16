@@ -5,12 +5,8 @@
     "iIi"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:cherry_planks"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
+    "I": "minecraft:cherry_planks",
+    "i": "minecraft:iron_ingot"
   },
   "result": {
     "id": "gardentrails:cherry_drying_tray"

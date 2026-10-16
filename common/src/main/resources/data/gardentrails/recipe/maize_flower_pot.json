@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:flower_pot"
-    },
-    {
-      "item": "gardentrails:maize"
-    }
+    "minecraft:flower_pot",
+    "gardentrails:maize"
   ],
   "result": {
     "id": "gardentrails:maize_flower_pot",

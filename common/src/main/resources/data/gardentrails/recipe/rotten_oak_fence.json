@@ -5,12 +5,8 @@
     "PSP"
   ],
   "key": {
-    "P": {
-      "item": "gardentrails:rotten_oak_planks"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    }
+    "P": "gardentrails:rotten_oak_planks",
+    "S": "minecraft:stick"
   },
   "result": {
     "id": "gardentrails:rotten_oak_fence",

@@ -1,4 +1,6 @@
 package org.dawnoftime.gardentrails.block.templates;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import org.dawnoftime.gardentrails.platform.Services;
 
 import net.minecraft.core.BlockPos;
@@ -61,7 +63,7 @@ public class DoubleCropsBlock extends SoilCropsBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         if(this.isBottomCrop(stateIn)) {
             if(facing == Direction.UP) {
                 if(facingState.getBlock() == this && !this.isBottomCrop(facingState)) {

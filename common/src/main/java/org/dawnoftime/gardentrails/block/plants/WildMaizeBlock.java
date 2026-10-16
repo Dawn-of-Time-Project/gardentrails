@@ -1,5 +1,7 @@
 package org.dawnoftime.gardentrails.block.plants;
 
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -35,7 +37,7 @@ public class WildMaizeBlock extends WildPlantBlock implements IBlockGeneration {
 
     @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        Vec3 vec3d = state.getOffset(worldIn, pos);
+        Vec3 vec3d = state.getOffset(pos);
         return VS.move(vec3d.x, vec3d.y, vec3d.z);
     }
 
@@ -82,7 +84,7 @@ public class WildMaizeBlock extends WildPlantBlock implements IBlockGeneration {
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         if(facing.getAxis().isHorizontal())
             return stateIn;
 

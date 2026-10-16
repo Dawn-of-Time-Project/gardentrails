@@ -1,6 +1,9 @@
 package org.dawnoftime.gardentrails.block.plants;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,7 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -36,7 +38,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import static org.dawnoftime.gardentrails.util.VoxelShapes.CYPRESS_SHAPES;
 
-public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeColoredBlock {
+public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeColoredBlock, IBlockTooltip {
     public static final IntegerProperty SIZE = GTBlockStateProperties.SIZE_0_5;
 
     public CypressBlock(final Properties properties) {
@@ -60,7 +62,7 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(final @NotNull ItemStack heldItemStack, final @NotNull BlockState state, final @NotNull Level worldIn, final @NotNull BlockPos pos, final @NotNull Player player, final @NotNull InteractionHand handIn, final @NotNull BlockHitResult hit) {
+    protected @NotNull InteractionResult useItemOn(final @NotNull ItemStack heldItemStack, final @NotNull BlockState state, final @NotNull Level worldIn, final @NotNull BlockPos pos, final @NotNull Player player, final @NotNull InteractionHand handIn, final @NotNull BlockHitResult hit) {
         if (player.isCrouching()) {
             //We remove the highest CypressBlock
             final BlockPos topPos = this.getHighestCypressPos(worldIn, pos);
@@ -71,7 +73,7 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
                         Block.dropResources(state, worldIn, pos, null, player, heldItemStack);
                     }
                 }
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         } else if (!heldItemStack.isEmpty() && heldItemStack.getItem() == this.asItem()) {
             //We put a CypressBlock on top of the cypress
@@ -83,7 +85,7 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
                         heldItemStack.shrink(1);
                     }
                 }
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
         return super.useItemOn(heldItemStack, state, worldIn, pos, player, handIn, hit);
@@ -117,7 +119,7 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
     }
 
     @Override
-    public BlockState updateShape(final BlockState stateIn, final Direction facing, final BlockState facingState, final LevelAccessor worldIn, final BlockPos currentPos, final BlockPos facingPos) {
+    public BlockState updateShape(final BlockState stateIn, final LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, final BlockPos currentPos, final Direction facing, final BlockPos facingPos, final BlockState facingState, RandomSource random) {
         if (!facing.getAxis().isVertical()) {
             return stateIn;
         }
@@ -164,8 +166,7 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack, final Item.TooltipContext worldIn, final List<Component> tooltip, final TooltipFlag flagIn) {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+    public void appendTooltip(List<Component> tooltip) {
         TooltipHelper.lore(tooltip, "lore.gardentrails.cypress.grow", TooltipHelper.name("block.gardentrails.cypress"));
         TooltipHelper.lore(tooltip, "lore.gardentrails.cypress.shrink");
     }

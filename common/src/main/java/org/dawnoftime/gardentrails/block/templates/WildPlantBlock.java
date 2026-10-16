@@ -30,7 +30,7 @@ public class WildPlantBlock extends BlockGT {
 
     @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        Vec3 vector = state.getOffset(worldIn, pos);
+        Vec3 vector = state.getOffset(pos);
         return super.getShape(state, worldIn, pos, context).move(vector.x, vector.y, vector.z);
     }
 

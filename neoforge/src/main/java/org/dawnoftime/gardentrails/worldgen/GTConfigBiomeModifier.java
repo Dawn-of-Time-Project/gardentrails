@@ -29,7 +29,7 @@ public record GTConfigBiomeModifier(
         if (phase != Phase.ADD) return;
         List<String> allowed = GTConfigLoader.INSTANCE.getBiomesForPlant(plantKey);
         String biomeId = biome.unwrapKey()
-            .map(k -> k.location().toString())
+            .map(k -> k.identifier().toString())
             .orElse("");
         if (allowed.contains(biomeId)) {
             BiomeGenerationSettingsBuilder generation = builder.getGenerationSettings();

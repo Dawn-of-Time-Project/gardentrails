@@ -5,12 +5,8 @@
     "iIi"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:acacia_planks"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
+    "I": "minecraft:acacia_planks",
+    "i": "minecraft:iron_ingot"
   },
   "result": {
     "id": "gardentrails:acacia_drying_tray"

@@ -5,16 +5,14 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.dawnoftime.gardentrails.GTCommon;
 import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
 public class GTBlockTagGenerator extends BlockTagsProvider {
-    public GTBlockTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, GTCommon.MOD_ID, existingFileHelper);
+    public GTBlockTagGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(output, lookupProvider, GTCommon.MOD_ID);
     }
 
     @Override

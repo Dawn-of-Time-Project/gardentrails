@@ -1,14 +1,15 @@
 package org.dawnoftime.gardentrails.block.templates;
 
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -72,12 +73,12 @@ public class PergolaCropBlock extends PergolaBlock implements BonemealableBlock 
         return true;
     }
 
-    private boolean canGrowMoonCycle(final Level worldIn, int currentAge) {
+    private boolean canGrowMoonCycle(final Level worldIn, final BlockPos pos, int currentAge) {
         if (currentAge < 2) {
             return false;
         }
         currentAge -= 2;
-        final int currentPhase = worldIn.dimensionType().moonPhase(worldIn.getDayTime());
+        final int currentPhase = worldIn.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, pos).index();
         return (currentPhase - this.moonPhasePerAge[currentAge] + 8) % 8 < 4;
     }
 
@@ -94,7 +95,7 @@ public class PergolaCropBlock extends PergolaBlock implements BonemealableBlock 
                         level.setBlock(pos, state.setValue(AGE_6, age + 1), 2);
                     }
                 } else {
-                    if (this.canGrowMoonCycle(level, age)) {
+                    if (this.canGrowMoonCycle(level, pos, age)) {
                         if (random.nextInt(16) == 0) { //Probability "can grow")
                             level.setBlock(pos, state.setValue(AGE_6, 2 + ((age - 1) % 5)), 2);
                         }
@@ -112,26 +113,26 @@ public class PergolaCropBlock extends PergolaBlock implements BonemealableBlock 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (state.getValue(AGE_6) > 2) {
             if (dropPlant(state, level, pos, player.getItemInHand(hand))) {
                 level.setBlock(pos, state.setValue(AGE_6, 2), 2);
                 level.playSound(null, pos, SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
         if (player.isCrouching()) {
             dropPlant(state, level, pos, player.getItemInHand(hand));
             level.setBlock(pos, this.copyShapeToPergola(state, barePergola.get()), 2);
             level.playSound(null, pos, SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     private boolean dropPlant(BlockState state, Level level, BlockPos pos, ItemStack heldItemStack) {
         if (level instanceof ServerLevel serverLevel) {
-            ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+            Identifier blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
             List<ItemStack> drops = Utils.getLootList(serverLevel, state, heldItemStack, blockId.getPath() + "_" + state.getValue(AGE_6));
             return Utils.dropLootFromList(level, pos, drops, 1.0F);
         } else {

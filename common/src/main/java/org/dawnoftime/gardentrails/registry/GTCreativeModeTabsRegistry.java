@@ -2,7 +2,7 @@ package org.dawnoftime.gardentrails.registry;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
@@ -144,7 +144,7 @@ public abstract class GTCreativeModeTabsRegistry {
         output.accept(GTItemsRegistry.INSTANCE.QUETZAL_ARROW.get());
 
         // ── Entities ──────────────────────────────────────────────────────────────
-        output.accept(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, "quetzal_spawn_egg")));
-        output.accept(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, "silkmoth_spawn_egg")));
+        output.accept(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "quetzal_spawn_egg")));
+        output.accept(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "silkmoth_spawn_egg")));
     }
 }

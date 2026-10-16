@@ -6,9 +6,7 @@
     "I I"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:copper_ingot"
-    }
+    "I": "minecraft:copper_ingot"
   },
   "result": {
     "id": "gardentrails:oxidized_copper_lattice",

@@ -1,10 +1,8 @@
 {
   "type": "gardentrails:dryer",
   "dryingTime": 1200,
-  "experience": 1.0,
-  "ingredient": {
-    "item": "gardentrails:camellia_leaves"
-  },
+  "experience": 1,
+  "ingredient": "gardentrails:camellia_leaves",
   "result": {
     "id": "gardentrails:tea_leaves",
     "count": 4

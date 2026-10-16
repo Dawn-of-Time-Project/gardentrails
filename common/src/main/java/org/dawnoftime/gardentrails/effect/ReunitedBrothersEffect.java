@@ -3,7 +3,7 @@ package org.dawnoftime.gardentrails.effect;
 import net.minecraft.world.effect.MobEffect;
 import org.dawnoftime.gardentrails.GTCommon;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -13,6 +13,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 public class ReunitedBrothersEffect extends MobEffect {
     public ReunitedBrothersEffect() {
         super(MobEffectCategory.BENEFICIAL, 0xD4A017);
-        this.addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, "effect.reunited_brothers"), 0.2D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        this.addAttributeModifier(Attributes.MOVEMENT_SPEED, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "effect.reunited_brothers"), 0.2D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
     }
 }

@@ -5,12 +5,8 @@
     "iIi"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:mangrove_planks"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
+    "I": "minecraft:mangrove_planks",
+    "i": "minecraft:iron_ingot"
   },
   "result": {
     "id": "gardentrails:mangrove_drying_tray"

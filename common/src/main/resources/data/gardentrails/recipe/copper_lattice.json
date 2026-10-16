@@ -6,12 +6,8 @@
     "I I"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:copper_ingot"
-    },
-    "i": {
-      "item": "minecraft:honeycomb"
-    }
+    "I": "minecraft:copper_ingot",
+    "i": "minecraft:honeycomb"
   },
   "result": {
     "id": "gardentrails:copper_lattice",

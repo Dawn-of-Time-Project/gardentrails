@@ -1,5 +1,6 @@
 package org.dawnoftime.gardentrails.block.templates;
 
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import static org.dawnoftime.gardentrails.util.VoxelShapes.PLANTER_SHAPES;
 
 public class PlanterBlock extends BlockGT {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
 
     public PlanterBlock(Properties properties) {

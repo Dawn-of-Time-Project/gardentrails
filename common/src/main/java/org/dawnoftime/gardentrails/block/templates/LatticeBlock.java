@@ -1,5 +1,6 @@
 package org.dawnoftime.gardentrails.block.templates;
 
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.item.Item;
 
 import org.dawnoftime.gardentrails.util.TooltipHelper;
@@ -9,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -39,7 +40,7 @@ import java.util.List;
 
 import static org.dawnoftime.gardentrails.util.VoxelShapes.LATTICE_SHAPES;
 
-public class LatticeBlock extends WaterloggedBlock implements IBlockClimbingPlant, BonemealableBlock {
+public class LatticeBlock extends WaterloggedBlock implements IBlockClimbingPlant, BonemealableBlock, IBlockTooltip {
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
     public static final BooleanProperty EAST = BlockStateProperties.EAST;
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
@@ -151,9 +152,9 @@ public class LatticeBlock extends WaterloggedBlock implements IBlockClimbingPlan
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (this.tryPlacingPlant(state, level, pos, player, hand)) {
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         return this.harvestPlant(state, level, pos, player, hand);
     }
@@ -177,8 +178,7 @@ public class LatticeBlock extends WaterloggedBlock implements IBlockClimbingPlan
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendTooltip(List<Component> tooltip) {
         TooltipHelper.label(tooltip, "lore.gardentrails.pergola.label");
         TooltipHelper.lore(tooltip, "lore.gardentrails.pergola.accepts", TooltipHelper.names(
                 "item.gardentrails.grape_seeds", "block.gardentrails.ivy", "block.minecraft.vine"));

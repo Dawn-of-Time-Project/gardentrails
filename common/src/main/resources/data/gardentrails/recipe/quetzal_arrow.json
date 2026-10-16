@@ -6,21 +6,11 @@
     "RG "
   ],
   "key": {
-    "A": {
-      "item": "minecraft:amethyst_shard"
-    },
-    "B": {
-      "item": "minecraft:bone"
-    },
-    "U": {
-      "item": "gardentrails:blue_feather"
-    },
-    "R": {
-      "item": "gardentrails:red_feather"
-    },
-    "G": {
-      "item": "gardentrails:green_feather"
-    }
+    "A": "minecraft:amethyst_shard",
+    "B": "minecraft:bone",
+    "U": "gardentrails:blue_feather",
+    "R": "gardentrails:red_feather",
+    "G": "gardentrails:green_feather"
   },
   "result": {
     "id": "gardentrails:quetzal_arrow",

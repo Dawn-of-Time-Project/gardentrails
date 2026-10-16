@@ -1,12 +1,16 @@
 package org.dawnoftime.gardentrails.item;
 
+import net.minecraft.world.InteractionResult;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +60,7 @@ public class SakeItem extends Item {
         if (player instanceof ServerPlayer serverPlayer) {
             CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, stack);
         }
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             // Drink count of this sake: 1 + number of full boost durations still remaining
             MobEffectInstance active = entity.getEffect(this.boost);
             int drinkCount = 1;
@@ -67,18 +71,18 @@ public class SakeItem extends Item {
             }
             entity.addEffect(new MobEffectInstance(this.boost, duration, 0));
             if (this.debuff.value().isInstantenous()) {
-                this.debuff.value().applyInstantenousEffect(null, null, entity, 0, 1.0D);
+                this.debuff.value().applyInstantenousEffect((ServerLevel) level, null, null, entity, 0, 1.0D);
             } else {
                 entity.addEffect(new MobEffectInstance(this.debuff, this.debuffTicks, 0));
             }
             if (drinkCount >= 2) {
-                entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, NAUSEA_TICKS, 0));
+                entity.addEffect(new MobEffectInstance(MobEffects.NAUSEA, NAUSEA_TICKS, 0));
             }
             if (drinkCount >= 3) {
                 entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, BLINDNESS_TICKS, 0));
             }
             if (drinkCount >= 4) {
-                MobEffects.HARM.value().applyInstantenousEffect(null, null, entity, 1, 1.0D);
+                MobEffects.INSTANT_DAMAGE.value().applyInstantenousEffect((ServerLevel) level, null, null, entity, 1, 1.0D);
             }
         }
         if (player != null) {
@@ -105,19 +109,21 @@ public class SakeItem extends Item {
     }
 
     @Override
-    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
-        return UseAnim.DRINK;
+    public @NotNull ItemUseAnimation getUseAnimation(@NotNull ItemStack stack) {
+        return ItemUseAnimation.DRINK;
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         return ItemUtils.startUsingInstantly(level, player, hand);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltips, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, context, tooltips, flag);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> adder, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, adder, flag);
+        List<Component> tooltips = new ArrayList<>();
         TooltipHelper.lore(tooltips, this.loreKey);
         TooltipHelper.lore(tooltips, "lore.gardentrails.sake_stacking");
+        tooltips.forEach(adder);
     }
 }

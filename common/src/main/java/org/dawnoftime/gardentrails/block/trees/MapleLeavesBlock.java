@@ -1,5 +1,8 @@
 package org.dawnoftime.gardentrails.block.trees;
 
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -31,7 +34,7 @@ public class MapleLeavesBlock extends BlockGT {
 
     @Override
     public BlockState playerWillDestroy(final Level worldIn, final BlockPos blockPosIn, final BlockState blockStateIn, final Player playerEntityIn) {
-        if(!worldIn.isClientSide) {
+        if(!worldIn.isClientSide()) {
             final float currentX = -blockStateIn.getValue(MapleLeavesBlock.MULTIBLOCK_X);
             final float currentY = -blockStateIn.getValue(MapleLeavesBlock.MULTIBLOCK_Y);
             final float currentZ = -blockStateIn.getValue(MapleLeavesBlock.MULTIBLOCK_Z);
@@ -63,7 +66,7 @@ public class MapleLeavesBlock extends BlockGT {
     }
 
     @Override
-    public BlockState updateShape(final BlockState stateIn, final Direction facing, final BlockState facingState, final LevelAccessor worldIn, final BlockPos currentPos, final BlockPos facingPos) {
+    public BlockState updateShape(final BlockState stateIn, final LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, final BlockPos currentPos, final Direction facing, final BlockPos facingPos, final BlockState facingState, RandomSource random) {
         final Direction currentFacing = stateIn.getValue(MapleTrunkBlock.FACING);
         final float multiblockX = stateIn.getValue(MapleLeavesBlock.MULTIBLOCK_X);
         final float multiblockY = stateIn.getValue(MapleLeavesBlock.MULTIBLOCK_Y);
@@ -154,7 +157,7 @@ public class MapleLeavesBlock extends BlockGT {
     }
 
     @Override
-    public boolean propagatesSkylightDown(final BlockState p_200123_1_, final BlockGetter p_200123_2_, final BlockPos p_200123_3_) {
+    public boolean propagatesSkylightDown(final BlockState p_200123_1_) {
         return true;
     }
 }

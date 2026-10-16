@@ -3,7 +3,8 @@ package org.dawnoftime.gardentrails;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -39,6 +40,9 @@ import org.dawnoftime.gardentrails.entity.SilkmothEntity;
 import org.dawnoftime.gardentrails.item.IHasFlowerPot;
 import org.dawnoftime.gardentrails.registry.*;
 
+import java.util.Set;
+import org.dawnoftime.gardentrails.util.QuetzalShoulderSync;
+import org.dawnoftime.gardentrails.util.RegistrationContext;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -49,7 +53,7 @@ public class RegistryImpls {
 
         @Override
         public <T extends BlockEntity> Supplier<BlockEntityType<T>> register(String name, BiFunction<BlockPos, BlockState, T> factoryIn, Supplier<Block[]> validBlocksSupplier) {
-            return BLOCK_ENTITY_TYPES_REGISTRY.register(name, () -> BlockEntityType.Builder.of(factoryIn::apply, validBlocksSupplier.get()).build(null));
+            return BLOCK_ENTITY_TYPES_REGISTRY.register(name, () -> new BlockEntityType<>(factoryIn::apply, Set.of(validBlocksSupplier.get())));
         }
     }
 
@@ -63,9 +67,9 @@ public class RegistryImpls {
 
         @Override
         public <T extends Block, Y extends Item> Supplier<T> registerWithItem(String id, Supplier<T> block, Function<T, Y> item, TagKey<Block>... tags) {
-            DeferredHolder<Block, T> registryBlock = BLOCKS_REGISTRY.register(id, block);
+            DeferredHolder<Block, T> registryBlock = BLOCKS_REGISTRY.register(id, () -> RegistrationContext.block(id, block));
             if(item != null) {
-                BLOCK_ITEMS_REGISTRY.register(id, () -> item.apply(registryBlock.get()));
+                BLOCK_ITEMS_REGISTRY.register(id, () -> RegistrationContext.blockItem(id, () -> item.apply(registryBlock.get())));
             }
             if(tags.length == 0){
                 addBlockTag(registryBlock, BlockTags.MINEABLE_WITH_PICKAXE);
@@ -79,7 +83,7 @@ public class RegistryImpls {
 
         @Override
         public <T extends Block, Y extends Item & IHasFlowerPot> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item) {
-            DeferredHolder<Block, T> registryBlock = BLOCKS_REGISTRY.register(blockID, block);
+            DeferredHolder<Block, T> registryBlock = BLOCKS_REGISTRY.register(blockID, () -> RegistrationContext.block(blockID, block));
             if (item != null) {
                 final String potName = blockID + "_flower_pot";
 
@@ -89,14 +93,14 @@ public class RegistryImpls {
                     return potBlock;
                 }, BlockTags.MINEABLE_WITH_PICKAXE);
 
-                BLOCK_ITEMS_REGISTRY.register(itemID, () -> {
+                BLOCK_ITEMS_REGISTRY.register(itemID, () -> RegistrationContext.blockItem(itemID, () -> {
                     var item1 = item.apply(registryBlock.get());
                     FlowerPotBlockGT potBlock = potBlockObject.get();
 
                     item1.setPotBlock(potBlock);
                     potBlock.setItemInPot(item1);
                     return item1;
-                });
+                }));
             }
             addBlockTag(registryBlock, BlockTags.SWORD_EFFICIENT);
             return registryBlock;
@@ -108,7 +112,7 @@ public class RegistryImpls {
         public static final DeferredRegister<EntityType<?>> ENTITY_TYPES_REGISTRY = DeferredRegister.create(Registries.ENTITY_TYPE, GTCommon.MOD_ID);
         @Override
         public <T extends Entity> Supplier<EntityType<T>> register(String name, Supplier<EntityType.Builder<T>> builder) {
-            return ENTITY_TYPES_REGISTRY.register(name, () -> builder.get().build(name));
+            return ENTITY_TYPES_REGISTRY.register(name, () -> builder.get().build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name))));
         }
     }
 
@@ -141,8 +145,8 @@ public class RegistryImpls {
     public static class NeoForgeItemsRegistry extends GTItemsRegistry {
         public static final DeferredRegister<Item> ITEMS_REGISTRY = DeferredRegister.create(Registries.ITEM, GTCommon.MOD_ID);
 
-        public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), 0xDBD8BD, 0xFEFEFC, new Item.Properties()));
-        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), 0xFFFFFF, 0xFFFFFF, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+        public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new SpawnEggItem(RegistrationContext.item().spawnEgg(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get())));
+        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new SpawnEggItem(RegistrationContext.item().rarity(net.minecraft.world.item.Rarity.UNCOMMON).spawnEgg(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get())));
 
         public NeoForgeItemsRegistry() {
             postRegister();
@@ -150,7 +154,7 @@ public class RegistryImpls {
 
         @Override
         public <T extends Item> Supplier<Item> register(String name, Supplier<T> itemSupplier) {
-            return ITEMS_REGISTRY.register(name, itemSupplier);
+            return ITEMS_REGISTRY.register(name, () -> RegistrationContext.item(name, itemSupplier));
         }
 
         @Override
@@ -194,7 +198,7 @@ public class RegistryImpls {
 
         @Override
         public <T extends Recipe<?>> Supplier<RecipeType<T>> register(String name) {
-            return RECIPE_TYPES_REGISTRY.register(name, () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name)));
+            return RECIPE_TYPES_REGISTRY.register(name, () -> RecipeType.simple(Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name)));
         }
     }
 
@@ -209,17 +213,38 @@ public class RegistryImpls {
 
     public static class NeoForgeTagsRegistry extends GTTags {
         @Override
-        public TagKey<Block> registerBlock(ResourceLocation id) {
+        public TagKey<Block> registerBlock(Identifier id) {
             return TagKey.create(Registries.BLOCK, id);
         }
 
         @Override
-        public TagKey<Item> registerItem(ResourceLocation id) {
+        public TagKey<Item> registerItem(Identifier id) {
             return TagKey.create(Registries.ITEM, id);
         }
     }
 
+    public static class NeoForgeQuetzalShoulderSync extends QuetzalShoulderSync {
+        public static final DeferredRegister<net.neoforged.neoforge.attachment.AttachmentType<?>> ATTACHMENTS_REGISTRY = DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.ATTACHMENT_TYPES, GTCommon.MOD_ID);
+        public static final Supplier<net.neoforged.neoforge.attachment.AttachmentType<Integer>> SHOULDER = ATTACHMENTS_REGISTRY.register("quetzal_shoulder",
+                () -> net.neoforged.neoforge.attachment.AttachmentType.builder(() -> 0).sync(net.minecraft.network.codec.ByteBufCodecs.VAR_INT).build());
+
+        @Override
+        public int getMask(net.minecraft.world.entity.player.Player player) {
+            // Reading must not create the attachment: creating it triggers a sync, which fails for a player that is not connected yet
+            Integer mask = player.getExistingDataOrNull(SHOULDER.get());
+            return mask == null ? 0 : mask;
+        }
+
+        @Override
+        public void setMask(net.minecraft.world.entity.player.Player player, int mask) {
+            player.setData(SHOULDER.get(), mask);
+        }
+    }
+
     public static void init(IEventBus bus) {
+        QuetzalShoulderSync.INSTANCE = new NeoForgeQuetzalShoulderSync();
+        NeoForgeQuetzalShoulderSync.ATTACHMENTS_REGISTRY.register(bus);
+
         GTEntitiesRegistry.INSTANCE = new NeoForgeEntitiesRegistry();
         NeoForgeEntitiesRegistry.ENTITY_TYPES_REGISTRY.register(bus);
 

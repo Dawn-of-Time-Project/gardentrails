@@ -2,7 +2,7 @@ package org.dawnoftime.gardentrails.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
@@ -72,7 +72,7 @@ public class GTLootModifierProvider extends GlobalLootModifierProvider {
     private GTLootModifiersNeoForge buildLootTable(String lootTableName, Item item, float probability) {
         return new GTLootModifiersNeoForge(
                 new LootItemCondition[] {
-                        LootTableIdCondition.builder(ResourceLocation.tryParse(lootTableName)).build(),
+                        LootTableIdCondition.builder(Identifier.tryParse(lootTableName)).build(),
                         LootItemRandomChanceCondition.randomChance(probability).build()
                 },
                 item

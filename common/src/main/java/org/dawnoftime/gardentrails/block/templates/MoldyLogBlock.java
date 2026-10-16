@@ -1,4 +1,7 @@
 package org.dawnoftime.gardentrails.block.templates;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.Registries;
@@ -14,7 +17,7 @@ import org.dawnoftime.gardentrails.util.TooltipHelper;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -37,8 +40,8 @@ import org.dawnoftime.gardentrails.GTCommon;
  * It reuses the vanilla brushable system (animation, particles, sounds, item display) and turns into
  * {@code turnsInto} when the brushing is over. Unlike suspicious sand it never falls.
  */
-public class MoldyLogBlock extends BrushableBlock {
-    public static final ResourceKey<LootTable> MOLD_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, "archaeology/rotten_oak_log"));
+public class MoldyLogBlock extends BrushableBlock implements IBlockTooltip {
+    public static final ResourceKey<LootTable> MOLD_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "archaeology/rotten_oak_log"));
 
     public MoldyLogBlock(Block turnsInto, Properties properties) {
         super(turnsInto, SoundEvents.BRUSH_GRAVEL, SoundEvents.BRUSH_GRAVEL_COMPLETED, properties);
@@ -46,8 +49,7 @@ public class MoldyLogBlock extends BrushableBlock {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendTooltip(List<Component> tooltip) {
         TooltipHelper.process(tooltip, "lore.gardentrails.sake_process", "lore.gardentrails.rotten_oak_log", "item.minecraft.brush", "item.gardentrails.mold");
     }
 
@@ -81,7 +83,7 @@ public class MoldyLogBlock extends BrushableBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         return state;
     }
 
@@ -89,7 +91,7 @@ public class MoldyLogBlock extends BrushableBlock {
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         // Only keeps the vanilla brushing progress reset, the block never falls
         if (level.getBlockEntity(pos) instanceof BrushableBlockEntity blockEntity) {
-            blockEntity.checkReset();
+            blockEntity.checkReset(level);
         }
     }
 

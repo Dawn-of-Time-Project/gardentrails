@@ -1,15 +1,14 @@
 package org.dawnoftime.gardentrails.block.templates;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.server.level.ServerPlayer;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -86,9 +85,9 @@ public class GrowingBushBlock extends SoilCropsBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (super.useItemOn(stack, state, level, pos, player, hand, hitResult) == ItemInteractionResult.SUCCESS)
-            return ItemInteractionResult.SUCCESS;
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (super.useItemOn(stack, state, level, pos, player, hand, hitResult) == InteractionResult.SUCCESS)
+            return InteractionResult.SUCCESS;
 
         if(this.isMaxAge(state) && !player.isCreative()) {
             if(!level.isClientSide()) {
@@ -101,12 +100,12 @@ public class GrowingBushBlock extends SoilCropsBlock {
                     ));
                 }
 
-                ResourceLocation resourceLocation = this.builtInRegistryHolder().key().location();
+                Identifier resourceLocation = this.builtInRegistryHolder().key().identifier();
                 this.harvestWithoutBreaking(state, level, pos, itemStackHand, resourceLocation.getPath(), holdShears ? 1.5F : 1.0F);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return ItemInteractionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
     // Called when bonemeal is used on this block

@@ -5,9 +5,7 @@
     "I"
   ],
   "key": {
-    "I": {
-      "item": "gardentrails:boxwood_small_hedge"
-    }
+    "I": "gardentrails:boxwood_small_hedge"
   },
   "result": {
     "id": "gardentrails:boxwood_tall_hedge",

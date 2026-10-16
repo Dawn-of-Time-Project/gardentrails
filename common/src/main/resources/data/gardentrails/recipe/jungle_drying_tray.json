@@ -5,12 +5,8 @@
     "iIi"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:jungle_planks"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
+    "I": "minecraft:jungle_planks",
+    "i": "minecraft:iron_ingot"
   },
   "result": {
     "id": "gardentrails:jungle_drying_tray"

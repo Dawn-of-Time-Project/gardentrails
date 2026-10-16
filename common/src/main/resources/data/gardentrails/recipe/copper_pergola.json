@@ -5,12 +5,8 @@
     "CH"
   ],
   "key": {
-    "C": {
-      "item": "minecraft:copper_ingot"
-    },
-    "H": {
-      "item": "minecraft:honeycomb"
-    }
+    "C": "minecraft:copper_ingot",
+    "H": "minecraft:honeycomb"
   },
   "result": {
     "id": "gardentrails:copper_pergola",

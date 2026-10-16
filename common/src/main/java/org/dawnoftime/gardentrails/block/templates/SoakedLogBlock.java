@@ -17,7 +17,7 @@ public class SoakedLogBlock extends RotatedPillarBlock {
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
-        if (!level.isClientSide && oldState.getBlock() instanceof MoldyLogBlock && oldState.getValue(AXIS) != state.getValue(AXIS)) {
+        if (!level.isClientSide() && oldState.getBlock() instanceof MoldyLogBlock && oldState.getValue(AXIS) != state.getValue(AXIS)) {
             level.setBlock(pos, state.setValue(AXIS, oldState.getValue(AXIS)), 3);
         }
     }

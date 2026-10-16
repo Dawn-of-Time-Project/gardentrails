@@ -6,12 +6,8 @@
     " i "
   ],
   "key": {
-    "i": {
-      "item": "minecraft:stick"
-    },
-    "I": {
-      "item": "minecraft:string"
-    }
+    "i": "minecraft:stick",
+    "I": "minecraft:string"
   },
   "result": {
     "id": "gardentrails:stick_bundle"

@@ -6,12 +6,8 @@
     "  S"
   ],
   "key": {
-    "S": {
-      "item": "gardentrails:silk"
-    },
-    "B": {
-      "item": "minecraft:slime_ball"
-    }
+    "S": "gardentrails:silk",
+    "B": "minecraft:slime_ball"
   },
   "result": {
     "id": "crittersandcompanions:silk_lead",

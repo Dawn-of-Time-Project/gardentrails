@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public class BushBlockGT extends BushBlock implements IBlockGeneration, IFlammable, BonemealableBlock {
     // Not used: the blocks of this mod are registered without a block type codec
     @Override
-    protected MapCodec<? extends BushBlock> codec() {
+    public MapCodec<BushBlock> codec() {
         return null;
     }
 

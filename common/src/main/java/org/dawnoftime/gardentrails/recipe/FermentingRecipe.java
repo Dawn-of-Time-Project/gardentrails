@@ -1,16 +1,17 @@
 package org.dawnoftime.gardentrails.recipe;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategories;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
 import org.dawnoftime.gardentrails.registry.GTRecipeSerializersRegistry;
 import org.dawnoftime.gardentrails.registry.GTRecipeTypesRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,10 @@ import java.util.List;
 
 public record FermentingRecipe(List<FermentingIngredient> ingredients, ItemStack result, int fermentingTime) implements Recipe<SimpleContainerRecipeInput> {
     public static final int INGREDIENT_COUNT = 3;
+
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
+        return this.result;
+    }
 
     public int getFermentingTime() {
         return this.fermentingTime;
@@ -77,38 +82,28 @@ public record FermentingRecipe(List<FermentingIngredient> ingredients, ItemStack
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(@NotNull HolderLookup.Provider registries) {
-        return this.result;
-    }
-
-    @Override
     public @NotNull ItemStack assemble(@NotNull SimpleContainerRecipeInput input, @NotNull HolderLookup.Provider registries) {
         return this.result.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
-    }
-
-    @Override
-    public @NotNull RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<FermentingRecipe> getSerializer() {
         return GTRecipeSerializersRegistry.INSTANCE.FERMENTING.get();
     }
 
     @Override
-    public @NotNull RecipeType<?> getType() {
+    public @NotNull RecipeType<FermentingRecipe> getType() {
         return GTRecipeTypesRegistry.INSTANCE.FERMENTING.get();
     }
 
     @Override
-    public @NotNull NonNullList<Ingredient> getIngredients() {
-        return NonNullList.create();
+    public @NotNull PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
     }
 
     @Override
-    public @NotNull ItemStack getToastSymbol() {
-        return new ItemStack(GTBlocksRegistry.INSTANCE.SAKE_VAT.get());
+    public @NotNull RecipeBookCategory recipeBookCategory() {
+        return RecipeBookCategories.CRAFTING_MISC;
     }
 
     @Override

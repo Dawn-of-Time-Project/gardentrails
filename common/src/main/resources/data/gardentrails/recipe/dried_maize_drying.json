@@ -1,10 +1,8 @@
 {
   "type": "gardentrails:dryer",
   "dryingTime": 800,
-  "experience": 1.0,
-  "ingredient": {
-    "item": "gardentrails:maize"
-  },
+  "experience": 1,
+  "ingredient": "gardentrails:maize",
   "result": {
     "id": "gardentrails:dried_maize",
     "count": 4

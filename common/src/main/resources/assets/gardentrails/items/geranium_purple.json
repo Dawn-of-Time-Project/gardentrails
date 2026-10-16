@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "gardentrails:item/geranium_purple",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 7143204
+      }
+    ]
+  }
+}

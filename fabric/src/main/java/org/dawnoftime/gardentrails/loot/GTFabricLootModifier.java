@@ -20,7 +20,7 @@ public final class GTFabricLootModifier {
 
     public static void modifyLootTables() {
         LootTableEvents.MODIFY.register((key, builder, source, lookup) -> {
-            switch (key.location().toString()) {
+            switch (key.identifier().toString()) {
                 case LootTablesToModify.SHIPWRECK_TREASURE -> buildLootTable(GTItemsRegistry.INSTANCE.SILK.get(), 1.0f, builder);
                 case LootTablesToModify.VILLAGE_PLAINS_HOUSE -> buildLootTable(GTItemsRegistry.INSTANCE.GRAPE.get(), 0.5f, builder);
                 case LootTablesToModify.VILLAGE_SAVANNA_HOUSE -> buildLootTable(GTBlocksRegistry.INSTANCE.MAIZE.get().asItem(), 0.5f, builder);

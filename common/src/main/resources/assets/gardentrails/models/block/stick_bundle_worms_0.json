@@ -1,7 +1,7 @@
 {
 	"render_type": "minecraft:cutout",
 	"textures": {
-		"2": "gardentrails:item/silk_worm"
+		"2": "gardentrails:block/silk_worm"
 	},
 	"elements": [
 		{

@@ -1,5 +1,7 @@
 package org.dawnoftime.gardentrails.util;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -61,11 +63,11 @@ public class GTBlockStateProperties {
             return this.cycle ? 6 : 2;
         }
 
-        public boolean canGrow(Level level, int currentAge) {
+        public boolean canGrow(Level level, BlockPos pos, int currentAge) {
             if (!this.cycle || currentAge < 2 || currentAge > 6) {
                 return false;
             }
-            int phase = level.dimensionType().moonPhase(level.getDayTime());
+            int phase = level.environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, pos).index();
             return (phase - this.moonPhasePerAge[currentAge - 2] + 8) % 8 < 4;
         }
 

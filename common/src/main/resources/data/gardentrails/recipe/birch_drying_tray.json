@@ -5,12 +5,8 @@
     "iIi"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:birch_planks"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
+    "I": "minecraft:birch_planks",
+    "i": "minecraft:iron_ingot"
   },
   "result": {
     "id": "gardentrails:birch_drying_tray"

@@ -6,15 +6,9 @@
     "P  "
   ],
   "key": {
-    "F": {
-      "item": "minecraft:flint"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    },
-    "P": {
-      "item": "gardentrails:blue_feather"
-    }
+    "F": "minecraft:flint",
+    "S": "minecraft:stick",
+    "P": "gardentrails:blue_feather"
   },
   "result": {
     "id": "gardentrails:blue_arrow",

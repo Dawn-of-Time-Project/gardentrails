@@ -1,49 +1,64 @@
 package org.dawnoftime.gardentrails.client.renderer.entity.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.dawnoftime.gardentrails.client.model.entity.QuetzalModel;
 import org.dawnoftime.gardentrails.client.renderer.entity.QuetzalRenderer;
-import org.dawnoftime.gardentrails.entity.QuetzalEntity;
-import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
+import org.dawnoftime.gardentrails.client.renderer.entity.state.QuetzalRenderState;
+import org.dawnoftime.gardentrails.util.QuetzalShoulder;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Renders a quetzal sitting on a player shoulder. The vanilla parrot layer only accepts the parrot entity type,
- * so this one does the same for the quetzal.
+ * Renders a quetzal sitting on a player shoulder. The vanilla parrot layer only knows the parrot variants,
+ * so the shoulders of the quetzal are read from the synced attachment of the player entity (the render state has no room for them).
  */
-public class QuetzalOnShoulderLayer<T extends Player> extends RenderLayer<T, PlayerModel<T>> {
-    private final QuetzalModel<QuetzalEntity> model;
+public class QuetzalOnShoulderLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
+    private final QuetzalModel model;
 
-    public QuetzalOnShoulderLayer(RenderLayerParent<T, PlayerModel<T>> parent, EntityModelSet modelSet) {
+    public QuetzalOnShoulderLayer(RenderLayerParent<AvatarRenderState, PlayerModel> parent, EntityModelSet modelSet) {
         super(parent);
-        this.model = new QuetzalModel<>(modelSet.bakeLayer(QuetzalModel.LAYER_LOCATION));
+        this.model = new QuetzalModel(modelSet.bakeLayer(QuetzalModel.LAYER_LOCATION));
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, @NotNull T player, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.render(poseStack, buffer, packedLight, player, netHeadYaw, headPitch, true);
-        this.render(poseStack, buffer, packedLight, player, netHeadYaw, headPitch, false);
-    }
-
-    private void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T player, float netHeadYaw, float headPitch, boolean leftShoulder) {
-        CompoundTag tag = leftShoulder ? player.getShoulderEntityLeft() : player.getShoulderEntityRight();
-        if (EntityType.byString(tag.getString("id")).filter(type -> type == GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get()).isEmpty()) {
+    public void submit(@NotNull PoseStack poseStack, @NotNull SubmitNodeCollector collector, int packedLight, @NotNull AvatarRenderState state, float yRot, float xRot) {
+        Level level = Minecraft.getInstance().level;
+        if (level == null) {
             return;
         }
+        Entity entity = level.getEntity(state.id);
+        if (!(entity instanceof Player player)) {
+            return;
+        }
+        if (QuetzalShoulder.isOnLeft(player)) {
+            this.submitOnShoulder(poseStack, collector, packedLight, state, yRot, xRot, true);
+        }
+        if (QuetzalShoulder.isOnRight(player)) {
+            this.submitOnShoulder(poseStack, collector, packedLight, state, yRot, xRot, false);
+        }
+    }
+
+    private void submitOnShoulder(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, AvatarRenderState state, float yRot, float xRot, boolean leftShoulder) {
         poseStack.pushPose();
-        poseStack.translate(leftShoulder ? 0.4F : -0.4F, player.isCrouching() ? -1.3F : -1.5F, 0.0F);
-        VertexConsumer consumer = buffer.getBuffer(this.model.renderType(QuetzalRenderer.QUETZAL_TEXTURE));
-        this.model.renderOnShoulder(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, netHeadYaw, headPitch, leftShoulder);
+        poseStack.translate(leftShoulder ? 0.4F : -0.4F, state.isCrouching ? -1.3F : -1.5F, 0.0F);
+        QuetzalRenderState quetzalState = new QuetzalRenderState();
+        quetzalState.onShoulder = true;
+        quetzalState.leftShoulder = leftShoulder;
+        quetzalState.ageInTicks = state.ageInTicks;
+        quetzalState.yRot = yRot;
+        quetzalState.xRot = xRot;
+        collector.submitModel(this.model, quetzalState, poseStack, this.model.renderType(QuetzalRenderer.QUETZAL_TEXTURE),
+                packedLight, OverlayTexture.NO_OVERLAY, state.outlineColor, null);
         poseStack.popPose();
     }
 }

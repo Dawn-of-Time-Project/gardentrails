@@ -1,12 +1,16 @@
 package org.dawnoftime.gardentrails.block.templates;
 
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ScheduledTickAccess;
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.item.Item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -35,13 +39,12 @@ import java.util.List;
 
 import static net.minecraft.world.Containers.dropItemStack;
 
-public class DryerBlock extends WaterloggedBlock implements EntityBlock {
+public class DryerBlock extends WaterloggedBlock implements EntityBlock, IBlockTooltip {
     //TODO Add redstone compatibility : ie emit redstone when dried
     public static final IntegerProperty SIZE = GTBlockStateProperties.SIZE_0_2;
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+    public void appendTooltip(List<Component> tooltip) {
         TooltipHelper.label(tooltip, "lore.gardentrails.drying_tray.label");
         TooltipHelper.lore(tooltip, "lore.gardentrails.drying_tray.accepts", TooltipHelper.names(
                 "item.gardentrails.cooked_rice", "item.gardentrails.mulberry_juice", "item.gardentrails.grape",
@@ -92,20 +95,6 @@ public class DryerBlock extends WaterloggedBlock implements EntityBlock {
     }
 
     @Override
-    public void onRemove(final BlockState oldState, final Level worldIn, final BlockPos pos, final BlockState newState, final boolean isMoving) {
-        if(oldState.getBlock() != newState.getBlock()) {
-            final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if(tileEntity instanceof DryerBlockEntity dryerBlockEntity) {
-                dryerBlockEntity.itemHandler.removeAllItems().forEach(h -> {
-                    dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), h);
-                    dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), h);
-                });
-            }
-        }
-        super.onRemove(oldState, worldIn, pos, newState, isMoving);
-    }
-
-    @Override
     public boolean canSurvive(final BlockState state, final LevelReader worldIn, BlockPos pos) {
         pos = pos.below();
         final BlockState stateDown = worldIn.getBlockState(pos);
@@ -116,8 +105,8 @@ public class DryerBlock extends WaterloggedBlock implements EntityBlock {
     }
 
     @Override
-    public @NotNull BlockState updateShape(BlockState stateIn, final @NotNull Direction facing, final @NotNull BlockState facingState, final @NotNull LevelAccessor worldIn, final @NotNull BlockPos currentPos, final @NotNull BlockPos facingPos) {
-        stateIn = super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+    public @NotNull BlockState updateShape(BlockState stateIn, final @NotNull LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, final @NotNull BlockPos currentPos, final @NotNull Direction facing, final @NotNull BlockPos facingPos, final @NotNull BlockState facingState, RandomSource random) {
+        stateIn = super.updateShape(stateIn, worldIn, scheduledTickAccess, currentPos, facing, facingPos, facingState, random);
         if(facing == Direction.DOWN && !this.canSurvive(stateIn, worldIn, currentPos)) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -134,7 +123,7 @@ public class DryerBlock extends WaterloggedBlock implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
         if(!worldIn.isClientSide() && handIn == InteractionHand.MAIN_HAND && worldIn.getBlockEntity(pos) instanceof DryerBlockEntity dryerEntity) {
             if(player.isCrouching()) {
                 return dryerEntity.dropOneItem(worldIn, pos);
@@ -142,7 +131,7 @@ public class DryerBlock extends WaterloggedBlock implements EntityBlock {
             ItemStack handStack = player.getItemInHand(handIn);
             return dryerEntity.tryInsertItemStack(handStack, state.getValue(DryerBlock.SIZE) == 0, worldIn, pos, player);
         }
-        return ItemInteractionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @Override

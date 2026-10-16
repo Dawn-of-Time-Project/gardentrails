@@ -1,29 +1,27 @@
 package org.dawnoftime.gardentrails.client.model.entity;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.resources.Identifier;
 import org.dawnoftime.gardentrails.GTCommon;
-import org.dawnoftime.gardentrails.entity.SilkmothEntity;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class SilkmothModel<T extends SilkmothEntity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, "silkmoth"), "main");
-    private final ModelPart root;
+public class SilkmothModel extends EntityModel<LivingEntityRenderState> {
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "silkmoth"), "main");
+    private final ModelPart rootPart;
     private final ModelPart wingLeft;
     private final ModelPart wingRight;
     private final ModelPart head;
 
     public SilkmothModel(ModelPart root) {
-        this.root = root.getChild("root");
+        super(root);
+        this.rootPart = root;
 
-        ModelPart body = this.root.getChild("body");
+        ModelPart body = root.getChild("root").getChild("body");
         this.wingLeft = body.getChild("wingLeft");
         this.wingRight = body.getChild("wingRight");
         this.head = body.getChild("head");
@@ -54,20 +52,17 @@ public class SilkmothModel<T extends SilkmothEntity> extends EntityModel<T> {
     }
 
     @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(LivingEntityRenderState state) {
+        super.setupAnim(state);
+        // The model is drawn at half size, 8 pixels above the entity origin
+        this.rootPart.y = 8.0F;
+        this.rootPart.xScale = 0.5F;
+        this.rootPart.yScale = 0.5F;
+        this.rootPart.zScale = 0.5F;
         float flap = 5.0F;
-        float d = Math.abs((ageInTicks % flap) / flap - 0.5F) ;
+        float d = Math.abs((state.ageInTicks % flap) / flap - 0.5F);
         this.wingLeft.zRot = (float) (Math.PI * (0.2F - d));
         this.wingRight.zRot = (float) (Math.PI * (-0.2F + d));
-        this.head.xRot = headPitch * 0.018F;
-    }
-
-    @Override
-    public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        poseStack.pushPose();
-        poseStack.translate(0.0F, 0.5F, 0.0F);
-        poseStack.scale(0.5F, 0.5F, 0.5F);
-        root.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        poseStack.popPose();
+        this.head.xRot = state.xRot * 0.018F;
     }
 }

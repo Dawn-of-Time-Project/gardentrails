@@ -4,7 +4,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+import net.minecraft.world.level.block.Block;
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Single place defining how every Garden Trails tooltip looks.
@@ -19,6 +24,15 @@ public final class TooltipHelper {
     private static final ChatFormatting NAME_COLOR = ChatFormatting.AQUA;
 
     private TooltipHelper() {
+    }
+
+    // Forwards the lines of a block implementing IBlockTooltip to the item tooltip
+    public static void appendBlockTooltip(Block block, Consumer<Component> adder) {
+        if (block instanceof IBlockTooltip tooltipBlock) {
+            List<Component> lines = new ArrayList<>();
+            tooltipBlock.appendTooltip(lines);
+            lines.forEach(adder);
+        }
     }
 
     // Adds one GRAY line. Args can be plain values or components built with name() / names()

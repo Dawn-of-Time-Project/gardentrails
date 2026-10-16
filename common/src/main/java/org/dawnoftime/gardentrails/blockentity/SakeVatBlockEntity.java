@@ -1,10 +1,13 @@
 package org.dawnoftime.gardentrails.blockentity;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.dawnoftime.gardentrails.recipe.SimpleContainerRecipeInput;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -58,10 +61,15 @@ public class SakeVatBlockEntity extends BlockEntity {
     }
 
     private List<FermentingRecipe> allRecipes() {
-        if (this.level == null) {
+        // Custom recipes are no longer synchronized to clients since 1.21.2, only the server knows them
+        if (!(this.level instanceof ServerLevel serverLevel)) {
             return List.of();
         }
-        return this.level.getRecipeManager().getAllRecipesFor(GTRecipeTypesRegistry.INSTANCE.FERMENTING.get()).stream().map(RecipeHolder::value).toList();
+        return serverLevel.recipeAccess().getRecipes().stream()
+                .map(RecipeHolder::value)
+                .filter(FermentingRecipe.class::isInstance)
+                .map(FermentingRecipe.class::cast)
+                .toList();
     }
 
     /** Pure check, same answer on both sides as the content is synchronized. */
@@ -167,40 +175,39 @@ public class SakeVatBlockEntity extends BlockEntity {
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        this.writeContent(tag, registries);
-        return tag;
+        return this.saveCustomOnly(registries);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        this.writeContent(tag, registries);
-    }
-
-    private void writeContent(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
         for (int i = 0; i < this.ingredients.getContainerSize(); i++) {
             if (!this.ingredients.getItem(i).isEmpty()) {
-                tag.put("ingredient_" + i, this.ingredients.getItem(i).save(registries));
+                output.store("ingredient_" + i, ItemStack.CODEC, this.ingredients.getItem(i));
             }
         }
         if (!this.result.isEmpty()) {
-            tag.put("result", this.result.save(registries));
+            output.store("result", ItemStack.CODEC, this.result);
         }
-        tag.putLong("finish_time", this.finishTime);
+        output.putLong("finish_time", this.finishTime);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
         this.ingredients.clearContent();
         for (int i = 0; i < this.ingredients.getContainerSize(); i++) {
-            if (tag.contains("ingredient_" + i)) {
-                final int slot = i;
-                ItemStack.parse(registries, tag.getCompound("ingredient_" + i)).ifPresent(stack -> this.ingredients.setItem(slot, stack));
-            }
+            final int slot = i;
+            input.read("ingredient_" + i, ItemStack.CODEC).ifPresent(stack -> this.ingredients.setItem(slot, stack));
         }
-        this.result = tag.contains("result") ? ItemStack.parse(registries, tag.getCompound("result")).orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
-        this.finishTime = tag.contains("finish_time") ? tag.getLong("finish_time") : -1;
+        this.result = input.read("result", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.finishTime = input.getLongOr("finish_time", -1L);
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        if (this.level != null) {
+            this.dropContent(this.level, pos);
+        }
     }
 }

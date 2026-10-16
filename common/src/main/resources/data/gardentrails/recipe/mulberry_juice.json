@@ -6,18 +6,10 @@
     "PBB"
   ],
   "key": {
-    "S": {
-      "item": "minecraft:stone"
-    },
-    "M": {
-      "item": "gardentrails:mulberry"
-    },
-    "P": {
-      "item": "minecraft:flower_pot"
-    },
-    "B": {
-      "item": "minecraft:glass_bottle"
-    }
+    "S": "minecraft:stone",
+    "M": "gardentrails:mulberry",
+    "P": "minecraft:flower_pot",
+    "B": "minecraft:glass_bottle"
   },
   "result": {
     "id": "gardentrails:mulberry_juice",

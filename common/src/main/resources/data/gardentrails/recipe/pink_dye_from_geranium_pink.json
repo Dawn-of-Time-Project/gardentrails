@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "group": "pink_dye",
   "ingredients": [
-    {
-      "item": "gardentrails:geranium_pink"
-    }
+    "gardentrails:geranium_pink"
   ],
   "result": {
     "id": "minecraft:pink_dye"

@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:flower_pot"
-    },
-    {
-      "item": "gardentrails:geranium_white"
-    }
+    "minecraft:flower_pot",
+    "gardentrails:geranium_white"
   ],
   "result": {
     "id": "gardentrails:geranium_white_flower_pot",

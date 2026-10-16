@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "group": "red_dye",
   "ingredients": [
-    {
-      "item": "gardentrails:geranium_red"
-    }
+    "gardentrails:geranium_red"
   ],
   "result": {
     "id": "minecraft:red_dye"

@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
 import org.dawnoftime.gardentrails.item.IHasFlowerPot;
 
-public class PotAndBlockItem extends BlockItem implements IHasFlowerPot {
+public class PotAndBlockItem extends GTBlockItem implements IHasFlowerPot {
     private FlowerPotBlockGT potBlock;
 
     public PotAndBlockItem(Block block, Properties properties) {

@@ -1,5 +1,6 @@
 package org.dawnoftime.gardentrails.block.templates;
-import net.minecraft.world.ItemInteractionResult;
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import com.mojang.serialization.MapCodec;
 
@@ -17,7 +18,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -35,7 +35,7 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -50,10 +50,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class SakeVatBlock extends AbstractCauldronBlock implements EntityBlock {
+public class SakeVatBlock extends AbstractCauldronBlock implements EntityBlock, IBlockTooltip {
     public static final IntegerProperty LEVEL = GTBlockStateProperties.LEVEL_0_3;
     public static final BooleanProperty READY = GTBlockStateProperties.READY;
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     /** Liquid surface height in pixels for each level, keep identical to the sake_vat_liquid models. */
     private static final int[] LIQUID_HEIGHTS = {0, 6, 10, 14};
@@ -137,7 +137,7 @@ public class SakeVatBlock extends AbstractCauldronBlock implements EntityBlock {
     }
 
     @Override
-    public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
+    public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Direction direction) {
         return state.getValue(LEVEL);
     }
 
@@ -148,8 +148,7 @@ public class SakeVatBlock extends AbstractCauldronBlock implements EntityBlock {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendTooltip(List<Component> tooltip) {
         TooltipHelper.label(tooltip, "lore.gardentrails.sake_process");
         TooltipHelper.lore(tooltip, "lore.gardentrails.sake_vat.base", TooltipHelper.name("item.minecraft.potion.effect.water"), TooltipHelper.name("item.gardentrails.fermented_rice"));
         TooltipHelper.lore(tooltip, "lore.gardentrails.sake_vat.ingredients", TooltipHelper.names("item.gardentrails.cooked_rice", "item.gardentrails.fermented_mulberry_juice", "item.gardentrails.crushed_grape", "item.gardentrails.crushed_maize", "item.gardentrails.tea_leaves"));
@@ -157,23 +156,23 @@ public class SakeVatBlock extends AbstractCauldronBlock implements EntityBlock {
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (hand != InteractionHand.MAIN_HAND || !(level.getBlockEntity(pos) instanceof SakeVatBlockEntity vat)) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (state.getValue(READY) && stack.is(Items.GLASS_BOTTLE)) {
             if (!level.isClientSide()) {
                 vat.extractBottle(player, hand);
             }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide());
+            return InteractionResult.SUCCESS;
         }
         if (vat.canAccept(stack)) {
             if (!level.isClientSide()) {
                 vat.accept(stack, player, hand);
             }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide());
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
@@ -199,14 +198,6 @@ public class SakeVatBlock extends AbstractCauldronBlock implements EntityBlock {
             double z = pos.getZ() + 0.2 + random.nextDouble() * 0.6;
             level.addParticle(ParticleTypes.BUBBLE_POP, x, y, z, 0.0, 0.0, 0.0);
         }
-    }
-
-    @Override
-    public void onRemove(@NotNull BlockState oldState, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        if (oldState.getBlock() != newState.getBlock() && level.getBlockEntity(pos) instanceof SakeVatBlockEntity vat) {
-            vat.dropContent(level, pos);
-        }
-        super.onRemove(oldState, level, pos, newState, isMoving);
     }
 
     @Override

@@ -20,8 +20,14 @@ neoForge {
             ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
         }
         client { client() }
-        data {
-            data()
+        clientData {
+            clientData()
+            programArguments.addAll '--mod', mod_id, '--all',
+                '--output', file('src/generated/resources/').absolutePath,
+                '--existing', file('src/main/resources/').absolutePath
+        }
+        serverData {
+            serverData()
             programArguments.addAll '--mod', mod_id, '--all',
                 '--output', file('src/generated/resources/').absolutePath,
                 '--existing', file('src/main/resources/').absolutePath
@@ -48,23 +54,20 @@ repositories {
 dependencies {
     compileOnly project(":common")
 
-    compileOnly "mezz.jei:jei-1.21.1-common-api:19.64.0.454"
-    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.64.0.454"
-    runtimeOnly "mezz.jei:jei-1.21.1-neoforge:19.64.0.454"
+    compileOnly "mezz.jei:jei-1.21.11-common-api:27.48.0.106"
+    compileOnly "mezz.jei:jei-1.21.11-neoforge-api:27.48.0.106"
+    runtimeOnly "mezz.jei:jei-1.21.11-neoforge:27.48.0.106"
 
     // Dev-only: armoroftheages requires YACL
-    runtimeOnly "maven.modrinth:yacl:7TVdVtxF"
+    runtimeOnly "maven.modrinth:yacl:HZs9mrWM"
 
     // Mod compatibility
-    runtimeOnly "maven.modrinth:cloth-config:izKINKFg"
-    runtimeOnly "maven.modrinth:architectury-api:1IiqEQGl"
-    runtimeOnly "maven.modrinth:geckolib:Grwn5rUB"
-    runtimeOnly "maven.modrinth:lets-do-vinery:DLINXOWN"
-    runtimeOnly "maven.modrinth:farmers-delight:XTVZDOol"
-    runtimeOnly "maven.modrinth:critters-and-companions:aeDUpTJS"
-    runtimeOnly "maven.modrinth:armor-of-the-ages:EvVBQ12Y"
-    runtimeOnly "maven.modrinth:dawn-of-time:tr4M1qvF"
-    runtimeOnly "maven.modrinth:fusion-connected-textures:AYDaLPK8"
+    runtimeOnly "maven.modrinth:cloth-config:Wsus0EWg"
+    runtimeOnly "maven.modrinth:architectury-api:EvL9NK2R"
+    runtimeOnly "maven.modrinth:geckolib:FpONDAt3"
+    runtimeOnly "maven.modrinth:armor-of-the-ages:qfrUfbaf"
+    runtimeOnly "maven.modrinth:dawn-of-time:H6CluobL"
+    runtimeOnly "maven.modrinth:fusion-connected-textures:1.3.16-neoforge-mc1.21.11"
 }
 
 publishMods {

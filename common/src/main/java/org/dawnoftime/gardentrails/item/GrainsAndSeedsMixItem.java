@@ -1,11 +1,14 @@
 package org.dawnoftime.gardentrails.item;
 
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 import net.minecraft.world.item.Item;
 
 import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +32,7 @@ import java.util.List;
  * on every tameable entity listed in the gardentrails:tameable_birds entity type tag.
  */
 public class GrainsAndSeedsMixItem extends BoneMealItem {
-    public static final TagKey<EntityType<?>> TAMEABLE_BIRDS = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, "tameable_birds"));
+    public static final TagKey<EntityType<?>> TAMEABLE_BIRDS = TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "tameable_birds"));
     private static final int TAME_CHANCE = 5;
 
     public GrainsAndSeedsMixItem(Properties properties) {
@@ -44,7 +47,7 @@ public class GrainsAndSeedsMixItem extends BoneMealItem {
                 stack.shrink(1);
             }
             level.playSound(null, animal.getX(), animal.getY(), animal.getZ(), SoundEvents.PARROT_EAT, animal.getSoundSource(), 1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.2F);
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 if (level.random.nextInt(TAME_CHANCE) == 0) {
                     animal.tame(player);
                     level.broadcastEntityEvent(animal, (byte) 7);
@@ -52,14 +55,16 @@ public class GrainsAndSeedsMixItem extends BoneMealItem {
                     level.broadcastEntityEvent(animal, (byte) 6);
                 }
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.interactLivingEntity(stack, player, target, hand);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext level, @NotNull List<Component> tooltips, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltips, flag);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> adder, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, adder, flag);
+        List<Component> tooltips = new ArrayList<>();
         TooltipHelper.lore(tooltips, "lore.gardentrails.grains_and_seeds_mix");
+        tooltips.forEach(adder);
     }
 }

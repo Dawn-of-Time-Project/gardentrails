@@ -5,9 +5,7 @@
     "P"
   ],
   "key": {
-    "P": {
-      "item": "gardentrails:rotten_oak_planks"
-    }
+    "P": "gardentrails:rotten_oak_planks"
   },
   "result": {
     "id": "gardentrails:rotten_oak_plate",

@@ -1,7 +1,6 @@
 package org.dawnoftime.gardentrails;
 
 import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.GrassColor;
@@ -16,7 +15,7 @@ import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
 
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = GTCommon.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = GTCommon.MOD_ID, value = Dist.CLIENT)
 public class BiomeColorHandlers {
     private static final float BRIGHTNESS_FACTOR = 1.5f;
 
@@ -48,22 +47,6 @@ public class BiomeColorHandlers {
         registerBiomeColoredBlockOnly(event, () -> GTBlocksRegistry.INSTANCE.CAMELLIA.get());
     }
 
-    @SubscribeEvent
-    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.CYPRESS);
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.BOXWOOD_BUSH);
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.BOXWOOD_SMALL_HEDGE);
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.BOXWOOD_TALL_HEDGE);
-        registerBiomeColoredItem(event, () -> GTBlocksRegistry.POT_BLOCKS.get("cypress_flower_pot"));
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.GERANIUM_PINK);
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.GERANIUM_ORANGE);
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.GERANIUM_PURPLE);
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.GERANIUM_PURPLEISH);
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.GERANIUM_RED);
-        registerBiomeColoredItem(event, GTBlocksRegistry.INSTANCE.GERANIUM_WHITE);
-        // No camellia here -- camellia item is seeds, not a block item
-    }
-
     private static void registerBiomeColoredBlockOnly(RegisterColorHandlersEvent.Block event, Supplier<Block> blockSupplier) {
         Block block = blockSupplier.get();
         if (IBiomeColoredBlock.isBiomeColored(block)) {
@@ -77,7 +60,7 @@ public class BiomeColorHandlers {
                     return brightenColor(color);
                 }
                 int defaultColor = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                        ? FoliageColor.getDefaultColor()
+                        ? FoliageColor.FOLIAGE_DEFAULT
                         : GrassColor.getDefaultColor();
                 return brightenColor(defaultColor);
             };
@@ -99,31 +82,12 @@ public class BiomeColorHandlers {
                     return brightenColor(color);
                 }
                 int defaultColor = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                        ? FoliageColor.getDefaultColor()
+                        ? FoliageColor.FOLIAGE_DEFAULT
                         : GrassColor.getDefaultColor();
                 return brightenColor(defaultColor);
             };
 
             event.register(blockColor, block);
-        }
-    }
-
-    private static void registerBiomeColoredItem(RegisterColorHandlersEvent.Item event, Supplier<Block> blockSupplier) {
-        Block block = blockSupplier.get();
-        if (IBiomeColoredBlock.isBiomeColored(block)) {
-            IBiomeColoredBlock coloredBlock = (IBiomeColoredBlock) block;
-
-            ItemColor itemColor = (stack, tintIndex) -> {
-                if (tintIndex == 0) {
-                    int color = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                            ? FoliageColor.getDefaultColor()
-                            : GrassColor.getDefaultColor();
-                    return brightenColor(color);
-                }
-                return 0xFFFFFF;
-            };
-
-            event.register(itemColor, block.asItem());
         }
     }
 }

@@ -1,9 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "gardentrails:grape"
-    }
+    "gardentrails:grape"
   ],
   "result": {
     "id": "vinery:red_grape_seeds",

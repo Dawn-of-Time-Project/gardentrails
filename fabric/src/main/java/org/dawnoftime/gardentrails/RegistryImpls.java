@@ -5,7 +5,10 @@ import net.minecraft.core.Holder;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import org.dawnoftime.gardentrails.client.renderer.entity.layers.QuetzalOnShoulderLayer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -18,7 +21,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
@@ -52,6 +55,8 @@ import org.dawnoftime.gardentrails.item.IconItem;
 import org.dawnoftime.gardentrails.registry.*;
 
 import java.util.Map;
+import org.dawnoftime.gardentrails.util.QuetzalShoulderSync;
+import org.dawnoftime.gardentrails.util.RegistrationContext;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -60,7 +65,7 @@ public class RegistryImpls {
     public static class FabricBlockEntitiesRegistry extends GTBlockEntitiesRegistry {
         @Override
         public <T extends BlockEntity> Supplier<BlockEntityType<T>> register(String name, BiFunction<BlockPos, BlockState, T> factoryIn, Supplier<Block[]> validBlocksSupplier) {
-            BlockEntityType<T> blockEntity = (BlockEntityType<T>) Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name), FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>) factoryIn::apply, validBlocksSupplier.get()).build());
+            BlockEntityType<T> blockEntity = (BlockEntityType<T>) Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), FabricBlockEntityTypeBuilder.create((FabricBlockEntityTypeBuilder.Factory<BlockEntity>) factoryIn::apply, validBlocksSupplier.get()).build());
             return () -> blockEntity;
         }
     }
@@ -80,9 +85,9 @@ public class RegistryImpls {
         @SafeVarargs
         @Override
         public final <T extends Block, Y extends Item> Supplier<T> registerWithItem(String id, Supplier<T> block, Function<T, Y> item, TagKey<Block>... tags) {
-            T registryBlock = Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, id), block.get());
+            T registryBlock = Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, id), RegistrationContext.block(id, block));
             if(item != null) {
-                Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, id), item.apply(registryBlock));
+                Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, id), RegistrationContext.blockItem(id, () -> item.apply(registryBlock)));
             }
             if(tags.length == 0){
                 addBlockTag(() -> registryBlock, BlockTags.MINEABLE_WITH_PICKAXE);
@@ -96,7 +101,7 @@ public class RegistryImpls {
 
         @Override
         public <T extends Block, Y extends Item & IHasFlowerPot> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item) {
-            T toReturn = Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, blockID), block.get());
+            T toReturn = Registry.register(BuiltInRegistries.BLOCK, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, blockID), RegistrationContext.block(blockID, block));
             if(item != null) {
                 final String potName = blockID + "_flower_pot";
 
@@ -106,13 +111,13 @@ public class RegistryImpls {
                     return potBlock;
                 }, BlockTags.MINEABLE_WITH_PICKAXE);
 
-                Y item1 = item.apply(toReturn);
+                Y item1 = RegistrationContext.blockItem(itemID, () -> item.apply(toReturn));
                 FlowerPotBlockGT potBlock = potBlockObject.get();
 
                 item1.setPotBlock(potBlock);
                 potBlock.setItemInPot(item1);
 
-                Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, itemID), item1);
+                Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, itemID), item1);
             }
             // Flower can be broken with sword, and in the ItemRegistry, pot can be broken with Pickaxe.
             addBlockTag(() -> toReturn, BlockTags.SWORD_EFFICIENT);
@@ -123,7 +128,7 @@ public class RegistryImpls {
     public static class FabricEntitiesRegistry extends GTEntitiesRegistry {
         @Override
         public <T extends Entity> Supplier<EntityType<T>> register(String name, Supplier<EntityType.Builder<T>> builder) {
-            var entity = Registry.register(BuiltInRegistries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name), builder.get().build(name));
+            var entity = Registry.register(BuiltInRegistries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), builder.get().build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name))));
             return () -> entity;
         }
     }
@@ -131,7 +136,7 @@ public class RegistryImpls {
     public static class FabricMobEffectsRegistry extends GTMobEffectsRegistry {
         @Override
         public Supplier<Holder<MobEffect>> register(String name, Supplier<MobEffect> effect) {
-            Holder<MobEffect> registered = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name), effect.get());
+            Holder<MobEffect> registered = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), effect.get());
             return () -> registered;
         }
     }
@@ -139,14 +144,14 @@ public class RegistryImpls {
     public static class FabricFeaturesRegistry extends GTFeaturesRegistry {
         @Override
         public <Y extends FeatureConfiguration, T extends Feature<Y>> Supplier<T> register(String name, Supplier<T> featureSupplier) {
-            var feature = Registry.register(BuiltInRegistries.FEATURE, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name), featureSupplier.get());
+            var feature = Registry.register(BuiltInRegistries.FEATURE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), featureSupplier.get());
             return () -> feature;
         }
     }
 
     public static class FabricItemsRegistry extends GTItemsRegistry {
-        public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), 0xDBD8BD, 0xFEFEFC, new Item.Properties()));
-        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), 0xFFFFFF, 0xFFFFFF, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+        public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new SpawnEggItem(RegistrationContext.item().spawnEgg(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get())));
+        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new SpawnEggItem(RegistrationContext.item().rarity(net.minecraft.world.item.Rarity.UNCOMMON).spawnEgg(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get())));
 
         public FabricItemsRegistry() {
             postRegister();
@@ -154,7 +159,7 @@ public class RegistryImpls {
 
         @Override
         public <T extends Item> Supplier<Item> register(String name, Supplier<T> itemSupplier) {
-            T item = Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name), itemSupplier.get());
+            T item = Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), RegistrationContext.item(name, itemSupplier));
             return () -> item;
         }
 
@@ -188,7 +193,7 @@ public class RegistryImpls {
     public static class FabricRecipeSerializersRegistry extends GTRecipeSerializersRegistry {
         @Override
         public <T extends RecipeSerializer<? extends Recipe<?>>> Supplier<T> register(String name, Supplier<T> recipeSerializer) {
-            var recipe = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name), recipeSerializer.get());
+            var recipe = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), recipeSerializer.get());
             return () -> recipe;
         }
     }
@@ -204,7 +209,7 @@ public class RegistryImpls {
     public static class FabricCreativeModeTabsRegistry extends GTCreativeModeTabsRegistry {
         @Override
         public <T extends CreativeModeTab> Supplier<CreativeModeTab> register(String name, Supplier<ItemStack> iconSupplier, Component title) {
-            var group = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name), FabricItemGroup.builder().icon(iconSupplier).title(title).displayItems((itemDisplayParameters, output) -> {
+            var group = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), FabricItemGroup.builder().icon(iconSupplier).title(title).displayItems((itemDisplayParameters, output) -> {
                 GTCreativeModeTabsRegistry.addOrderedItems(output::accept);
             }).build());
             return () -> group;
@@ -213,12 +218,12 @@ public class RegistryImpls {
 
     public static class FabricTagsRegistry extends GTTags {
         @Override
-        public TagKey<Block> registerBlock(ResourceLocation id) {
+        public TagKey<Block> registerBlock(Identifier id) {
             return TagKey.create(Registries.BLOCK, id);
         }
 
         @Override
-        public TagKey<Item> registerItem(ResourceLocation id) {
+        public TagKey<Item> registerItem(Identifier id) {
             return TagKey.create(Registries.ITEM, id);
         }
     }
@@ -232,13 +237,30 @@ public class RegistryImpls {
         EntityModelLayerRegistry.registerModelLayer(QuetzalModel.LAYER_LOCATION, QuetzalModel::createBodyLayer);
         // Quetzal on the player shoulder
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
-            if (entityRenderer instanceof PlayerRenderer playerRenderer) {
-                registrationHelper.register(new QuetzalOnShoulderLayer<>(playerRenderer, context.getModelSet()));
+            if (entityRenderer instanceof AvatarRenderer<?> avatarRenderer) {
+                registrationHelper.register(new QuetzalOnShoulderLayer((RenderLayerParent<AvatarRenderState, PlayerModel>) avatarRenderer, context.getModelSet()));
             }
         });
     }
 
+    public static class FabricQuetzalShoulderSync extends QuetzalShoulderSync {
+        private static final net.fabricmc.fabric.api.attachment.v1.AttachmentType<Integer> SHOULDER = net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry.create(
+                Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "quetzal_shoulder"),
+                builder -> builder.initializer(() -> 0).syncWith(net.minecraft.network.codec.ByteBufCodecs.VAR_INT, net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate.all()));
+
+        @Override
+        public int getMask(net.minecraft.world.entity.player.Player player) {
+            return player.getAttachedOrElse(SHOULDER, 0);
+        }
+
+        @Override
+        public void setMask(net.minecraft.world.entity.player.Player player, int mask) {
+            player.setAttached(SHOULDER, mask);
+        }
+    }
+
     public static void init() {
+        QuetzalShoulderSync.INSTANCE = new FabricQuetzalShoulderSync();
         GTEntitiesRegistry.INSTANCE = new FabricEntitiesRegistry();
         GTMobEffectsRegistry.INSTANCE = new FabricMobEffectsRegistry();
         Registry.register(BuiltInRegistries.TRIGGER_TYPES, org.dawnoftime.gardentrails.advancement.KillSilkmothTrigger.ID, GTCriteriaRegistry.KILL_SILKMOTH);

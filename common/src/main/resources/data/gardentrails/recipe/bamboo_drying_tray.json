@@ -5,12 +5,8 @@
     "iIi"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:bamboo_planks"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
+    "I": "minecraft:bamboo_planks",
+    "i": "minecraft:iron_ingot"
   },
   "result": {
     "id": "gardentrails:bamboo_drying_tray"

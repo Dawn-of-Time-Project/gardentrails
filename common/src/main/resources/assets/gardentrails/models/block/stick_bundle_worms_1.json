@@ -3,7 +3,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"1": "gardentrails:block/stick_bundle",
-		"2": "gardentrails:item/silk_worm",
+		"2": "gardentrails:block/silk_worm",
 		"particle": "gardentrails:block/stick_bundle"
 	},
 	"elements": [

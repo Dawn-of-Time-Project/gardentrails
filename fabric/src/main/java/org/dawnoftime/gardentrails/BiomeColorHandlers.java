@@ -2,7 +2,6 @@ package org.dawnoftime.gardentrails;
 
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.FoliageColor;
@@ -55,7 +54,7 @@ public class BiomeColorHandlers {
                     return brightenColor(color);
                 }
                 int defaultColor = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                    ? FoliageColor.getDefaultColor()
+                    ? FoliageColor.FOLIAGE_DEFAULT
                     : GrassColor.getDefaultColor();
                 return brightenColor(defaultColor);
             };
@@ -76,23 +75,12 @@ public class BiomeColorHandlers {
                     return brightenColor(color);
                 }
                 int defaultColor = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                    ? FoliageColor.getDefaultColor()
+                    ? FoliageColor.FOLIAGE_DEFAULT
                     : GrassColor.getDefaultColor();
                 return brightenColor(defaultColor);
             };
             
-            ItemColor itemColor = (stack, tintIndex) -> {
-                if (tintIndex == 0) {
-                    int color = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                        ? FoliageColor.getDefaultColor()
-                        : GrassColor.getDefaultColor();
-                    return brightenColor(color);
-                }
-                return 0xFFFFFF;
-            };
-            
             ColorProviderRegistry.BLOCK.register(blockColor, block);
-            ColorProviderRegistry.ITEM.register(itemColor, block.asItem());
         }
     }
 }

@@ -1,4 +1,6 @@
 package org.dawnoftime.gardentrails.block.templates;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import org.dawnoftime.gardentrails.platform.Services;
 
 import net.minecraft.core.BlockPos;
@@ -74,7 +76,7 @@ public class DoubleGrowingBushBlock extends GrowingBushBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         Half half = stateIn.getValue(HALF);
         if(facing.getAxis() == Direction.Axis.Y && half == Half.BOTTOM == (facing == Direction.UP)) {
             if(facingState.getBlock() == this && facingState.getValue(HALF) != half) {
@@ -83,7 +85,7 @@ public class DoubleGrowingBushBlock extends GrowingBushBlock {
                 return stateIn;
             return Blocks.AIR.defaultBlockState();
         } else {
-            return half == Half.BOTTOM && facing == Direction.DOWN && this.canSurvive(stateIn, worldIn, currentPos.below()) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+            return half == Half.BOTTOM && facing == Direction.DOWN && this.canSurvive(stateIn, worldIn, currentPos.below()) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, worldIn, scheduledTickAccess, currentPos, facing, facingPos, facingState, random);
         }
     }
 

@@ -29,14 +29,12 @@ public class DryingRecipeCategory implements IRecipeCategory<DryerRecipe> {
     private static final int WIDTH = 100;
     private static final int HEIGHT = 40;
 
-    private final IDrawable background;
     private final IDrawable icon;
     private final IDrawable slot;
     private final IDrawableAnimated arrow;
     private final Component title = Component.translatable("gardentrails.jei.category.drying");
 
     public DryingRecipeCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(GTBlocksRegistry.INSTANCE.OAK_DRYING_TRAY.get()));
         this.slot = guiHelper.getSlotDrawable();
         this.arrow = guiHelper.createAnimatedRecipeArrow(100);
@@ -53,8 +51,13 @@ public class DryingRecipeCategory implements IRecipeCategory<DryerRecipe> {
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return this.background;
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryerRecipe> {
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull DryerRecipe recipe, @NotNull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 10, 8)
-                .addIngredients(recipe.getIngredients().get(0));
+                .addIngredients(recipe.ingredient());
 
         final ItemStack result = recipe.getResultItem(Minecraft.getInstance().level.registryAccess());
         builder.addSlot(RecipeIngredientRole.OUTPUT, 74, 8)

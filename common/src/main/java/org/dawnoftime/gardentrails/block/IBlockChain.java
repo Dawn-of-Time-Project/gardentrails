@@ -10,7 +10,7 @@ public interface IBlockChain {
 
     static boolean canBeChained(BlockState state, boolean tryConnectUnder) {
         Block block = state.getBlock();
-        if(block == Blocks.CHAIN) {
+        if(block == Blocks.IRON_CHAIN) {
             return state.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y;
         }
         if(block instanceof IBlockChain)

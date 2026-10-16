@@ -12,7 +12,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import org.dawnoftime.gardentrails.entity.QuetzalEntity;
 import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
@@ -54,7 +54,7 @@ public class BiomeModifiers {
 
     private static void registerFromConfig(ResourceKey<PlacedFeature> featureKey, List<String> biomeIds) {
         for (String id : biomeIds) {
-            ResourceLocation loc = ResourceLocation.tryParse(id);
+            Identifier loc = Identifier.tryParse(id);
             if (loc == null) {
                 System.err.println("[GardenTrails] Invalid biome ID in config, skipping: " + id);
                 continue;

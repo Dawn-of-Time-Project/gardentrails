@@ -1,4 +1,6 @@
 package org.dawnoftime.gardentrails.compat.jei;
+import org.dawnoftime.gardentrails.recipe.DryerRecipe;
+import org.dawnoftime.gardentrails.recipe.FermentingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 import mezz.jei.api.IModPlugin;
@@ -7,7 +9,7 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.dawnoftime.gardentrails.GTCommon;
@@ -23,10 +25,10 @@ import java.util.function.Supplier;
  */
 @JeiPlugin
 public class GTJeiPlugin implements IModPlugin {
-    private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, "jei_plugin");
+    private static final Identifier UID = Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "jei_plugin");
 
     @Override
-    public @NotNull ResourceLocation getPluginUid() {
+    public @NotNull Identifier getPluginUid() {
         return UID;
     }
 
@@ -39,14 +41,16 @@ public class GTJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        final var level = Minecraft.getInstance().level;
-        if (level == null) {
+        // Custom recipes are not synchronized to clients since 1.21.2, only the integrated server is readable for now
+        final var server = Minecraft.getInstance().getSingleplayerServer();
+        if (server == null) {
             return;
         }
+        final var holders = server.getRecipeManager().getRecipes();
         registration.addRecipes(DryingRecipeCategory.RECIPE_TYPE,
-                level.getRecipeManager().getAllRecipesFor(GTRecipeTypesRegistry.INSTANCE.DRYING.get()).stream().map(RecipeHolder::value).toList());
+                holders.stream().map(RecipeHolder::value).filter(DryerRecipe.class::isInstance).map(DryerRecipe.class::cast).toList());
         registration.addRecipes(FermentingRecipeCategory.RECIPE_TYPE,
-                level.getRecipeManager().getAllRecipesFor(GTRecipeTypesRegistry.INSTANCE.FERMENTING.get()).stream().map(RecipeHolder::value).toList());
+                holders.stream().map(RecipeHolder::value).filter(FermentingRecipe.class::isInstance).map(FermentingRecipe.class::cast).toList());
     }
 
     @Override

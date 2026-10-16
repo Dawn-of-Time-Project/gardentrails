@@ -1,7 +1,7 @@
 package org.dawnoftime.gardentrails.entity;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import org.dawnoftime.gardentrails.GTCommon;
 
@@ -14,12 +14,12 @@ public enum GTArrowVariant {
 
     private final String id;
     private final double baseDamage;
-    private final ResourceLocation entityTexture;
+    private final Identifier entityTexture;
 
     GTArrowVariant(String id, double baseDamage) {
         this.id = id;
         this.baseDamage = baseDamage;
-        this.entityTexture = ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, "textures/entity/projectiles/" + id + ".png");
+        this.entityTexture = Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "textures/entity/projectiles/" + id + ".png");
     }
 
     public String getId() {
@@ -30,13 +30,13 @@ public enum GTArrowVariant {
         return this.baseDamage;
     }
 
-    public ResourceLocation getEntityTexture() {
+    public Identifier getEntityTexture() {
         return this.entityTexture;
     }
 
     // Looked up lazily in the item registry, safe to call once registries are filled
     public Item getItem() {
-        return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, this.id));
+        return BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, this.id));
     }
 
     public static GTArrowVariant byId(String id) {

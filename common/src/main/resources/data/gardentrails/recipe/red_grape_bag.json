@@ -7,9 +7,7 @@
     "###"
   ],
   "key": {
-    "#": {
-      "item": "gardentrails:grape"
-    }
+    "#": "gardentrails:grape"
   },
   "result": {
     "id": "vinery:red_grape_bag"

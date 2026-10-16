@@ -5,12 +5,8 @@
     "III"
   ],
   "key": {
-    "x": {
-      "item": "gardentrails:geranium_red"
-    },
-    "I": {
-      "item": "minecraft:flower_pot"
-    }
+    "x": "gardentrails:geranium_red",
+    "I": "minecraft:flower_pot"
   },
   "result": {
     "id": "gardentrails:planter_geranium_red",

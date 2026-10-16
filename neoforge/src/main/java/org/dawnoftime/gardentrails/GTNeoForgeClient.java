@@ -1,7 +1,8 @@
 package org.dawnoftime.gardentrails;
 
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.world.entity.player.PlayerModelType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -16,7 +17,7 @@ import org.dawnoftime.gardentrails.client.renderer.entity.layers.QuetzalOnShould
 import org.dawnoftime.gardentrails.registry.GTBlockEntitiesRegistry;
 import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
 
-@EventBusSubscriber(modid = GTCommon.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = GTCommon.MOD_ID, value = Dist.CLIENT)
 public class GTNeoForgeClient {
 
     @SubscribeEvent
@@ -28,10 +29,10 @@ public class GTNeoForgeClient {
     // Quetzal on the player shoulder, for both skin models
     @SubscribeEvent
     public static void addLayers(EntityRenderersEvent.AddLayers event) {
-        for (PlayerSkin.Model skin : PlayerSkin.Model.values()) {
-            PlayerRenderer renderer = event.getSkin(skin);
+        for (PlayerModelType skin : event.getSkins()) {
+            AvatarRenderer<AbstractClientPlayer> renderer = event.getPlayerRenderer(skin);
             if (renderer != null) {
-                renderer.addLayer(new QuetzalOnShoulderLayer<>(renderer, event.getEntityModels()));
+                renderer.addLayer(new QuetzalOnShoulderLayer(renderer, event.getEntityModels()));
             }
         }
     }

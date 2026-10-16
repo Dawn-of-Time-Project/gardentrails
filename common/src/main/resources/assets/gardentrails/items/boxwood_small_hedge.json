@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "gardentrails:item/boxwood_small_hedge",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 7143204
+      }
+    ]
+  }
+}

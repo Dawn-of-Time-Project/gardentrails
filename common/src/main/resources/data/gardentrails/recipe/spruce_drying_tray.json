@@ -5,12 +5,8 @@
     "iIi"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:spruce_planks"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
+    "I": "minecraft:spruce_planks",
+    "i": "minecraft:iron_ingot"
   },
   "result": {
     "id": "gardentrails:spruce_drying_tray"

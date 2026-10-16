@@ -6,12 +6,8 @@
     "  S"
   ],
   "key": {
-    "S": {
-      "item": "gardentrails:silk"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    }
+    "S": "gardentrails:silk",
+    "I": "minecraft:iron_ingot"
   },
   "result": {
     "id": "crittersandcompanions:grappling_hook",

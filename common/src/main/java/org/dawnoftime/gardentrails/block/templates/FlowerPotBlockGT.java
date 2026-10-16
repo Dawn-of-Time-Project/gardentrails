@@ -1,5 +1,7 @@
 package org.dawnoftime.gardentrails.block.templates;
 
+import org.dawnoftime.gardentrails.util.RegistrationContext;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -24,7 +26,7 @@ public class FlowerPotBlockGT extends BlockGT implements IBlockSpecialDisplay, I
     private Item itemInPot;
 
     public FlowerPotBlockGT(@Nullable Item itemInPot) {
-        super(Properties.ofFullCopy(FLOWER_POT), FLOWER_POT_SHAPE);
+        super(RegistrationContext.copy(FLOWER_POT), FLOWER_POT_SHAPE);
         this.itemInPot = itemInPot;
     }
 

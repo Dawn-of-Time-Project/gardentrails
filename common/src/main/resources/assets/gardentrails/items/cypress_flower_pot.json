@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "gardentrails:item/cypress_flower_pot",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 7143204
+      }
+    ]
+  }
+}

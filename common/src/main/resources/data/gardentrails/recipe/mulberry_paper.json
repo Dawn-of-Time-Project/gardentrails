@@ -4,9 +4,7 @@
     "III"
   ],
   "key": {
-    "I": {
-      "item": "gardentrails:mulberry_leaves"
-    }
+    "I": "gardentrails:mulberry_leaves"
   },
   "result": {
     "id": "minecraft:paper",

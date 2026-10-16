@@ -24,7 +24,7 @@ public class GTDispenserBehaviors {
                 BlockPos pos = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
                 if (!BoneMealItem.growCrop(stack, level, pos) && !BoneMealItem.growWaterPlant(stack, level, pos, null)) {
                     this.setSuccess(false);
-                } else if (!level.isClientSide) {
+                } else if (!level.isClientSide()) {
                     level.levelEvent(1505, pos, 0);
                 }
                 return stack;

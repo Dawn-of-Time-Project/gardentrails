@@ -52,7 +52,7 @@ public record FermentingIngredient(Optional<Item> item, Optional<TagKey<Item>> t
     public List<ItemStack> getDisplayStacks() {
         List<Item> items = this.item.isPresent()
                 ? List.of(this.item.get())
-                : BuiltInRegistries.ITEM.getTag(this.tag.get()).map(set -> set.stream().map(Holder::value).toList()).orElse(List.of());
+                : BuiltInRegistries.ITEM.get(this.tag.get()).map(set -> set.stream().map(Holder::value).toList()).orElse(List.of());
         return items.stream().map(i -> {
             ItemStack stack = new ItemStack(i);
             this.potion.ifPresent(p -> stack.set(DataComponents.POTION_CONTENTS, new PotionContents(p)));

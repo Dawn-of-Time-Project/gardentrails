@@ -4,9 +4,7 @@
     "III"
   ],
   "key": {
-    "I": {
-      "item": "gardentrails:silk_cocoons"
-    }
+    "I": "gardentrails:silk_cocoons"
   },
   "result": {
     "id": "gardentrails:silk"

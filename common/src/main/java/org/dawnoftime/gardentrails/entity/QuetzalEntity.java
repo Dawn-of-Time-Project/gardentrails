@@ -3,6 +3,8 @@ package org.dawnoftime.gardentrails.entity;
 import net.minecraft.core.BlockPos;
 import org.dawnoftime.gardentrails.mixin.PlayerShoulderAccessor;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
@@ -15,12 +17,12 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.LandOnOwnersShoulderGoal;
-import net.minecraft.world.entity.animal.ShoulderRidingEntity;
+import net.minecraft.world.entity.animal.parrot.ShoulderRidingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -142,32 +144,32 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
         this.gardenMode = enabled;
         if (enabled) {
             this.gardenAnchor = this.blockPosition();
-            this.restrictTo(this.gardenAnchor, GARDEN_FLY_RADIUS);
+            this.setHomeTo(this.gardenAnchor, GARDEN_FLY_RADIUS);
         } else {
             this.gardenAnchor = null;
-            this.clearRestriction();
+            this.clearHome();
         }
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putBoolean("GardenMode", this.gardenMode);
+    protected void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putBoolean("GardenMode", this.gardenMode);
         if (this.gardenMode && this.gardenAnchor != null) {
-            tag.putInt("GardenAnchorX", this.gardenAnchor.getX());
-            tag.putInt("GardenAnchorY", this.gardenAnchor.getY());
-            tag.putInt("GardenAnchorZ", this.gardenAnchor.getZ());
+            output.putInt("GardenAnchorX", this.gardenAnchor.getX());
+            output.putInt("GardenAnchorY", this.gardenAnchor.getY());
+            output.putInt("GardenAnchorZ", this.gardenAnchor.getZ());
         }
     }
 
     // The restriction is not saved by vanilla, so it is restored from the saved anchor
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        if (tag.getBoolean("GardenMode") && tag.contains("GardenAnchorX")) {
+    protected void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        if (input.getBooleanOr("GardenMode", false) && input.getInt("GardenAnchorX").isPresent()) {
             this.gardenMode = true;
-            this.gardenAnchor = new BlockPos(tag.getInt("GardenAnchorX"), tag.getInt("GardenAnchorY"), tag.getInt("GardenAnchorZ"));
-            this.restrictTo(this.gardenAnchor, GARDEN_FLY_RADIUS);
+            this.gardenAnchor = new BlockPos(input.getIntOr("GardenAnchorX", 0), input.getIntOr("GardenAnchorY", 0), input.getIntOr("GardenAnchorZ", 0));
+            this.setHomeTo(this.gardenAnchor, GARDEN_FLY_RADIUS);
         }
     }
 
@@ -181,7 +183,7 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
             if (!this.isSilent()) {
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PARROT_EAT, this.getSoundSource(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
             }
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 this.level().broadcastEntityEvent(this, BEAK_EVENT);
                 if (this.random.nextInt(TAME_CHANCE) == 0) {
                     this.tame(player);
@@ -190,11 +192,11 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
                     this.level().broadcastEntityEvent(this, (byte) 6);
                 }
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         // A flying bird cannot be clicked, except in garden mode so the owner can bring it back
         if ((!this.isFlying() || this.gardenMode) && this.isTame() && this.isOwnedBy(player)) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 // Cycle: follow -> sit -> garden -> follow
                 if (this.gardenMode) {
                     this.setGardenMode(false);
@@ -207,20 +209,18 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
                     this.setOrderedToSit(true);
                 }
             }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (this.isInvulnerableTo(source)) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        if (this.isInvulnerableTo(level, source)) {
             return false;
         }
-        if (!this.level().isClientSide) {
-            this.setOrderedToSit(false);
-        }
-        return super.hurt(source, amount);
+        this.setOrderedToSit(false);
+        return super.hurtServer(level, source, amount);
     }
 
     // Vanilla always fills the left shoulder first. Here the right shoulder is preferred, the left one is used only if the right one is taken.
@@ -261,7 +261,7 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
     }
 
     // Same rule as the vanilla parrot: logs, leaves, grass or air below, and enough light
-    public static boolean checkQuetzalSpawnRules(EntityType<QuetzalEntity> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkQuetzalSpawnRules(EntityType<QuetzalEntity> type, LevelAccessor level, EntitySpawnReason spawnType, BlockPos pos, RandomSource random) {
         return level.getBlockState(pos.below()).is(BlockTags.PARROTS_SPAWNABLE_ON) && isBrightEnoughToSpawn(level, pos);
     }
 
@@ -270,7 +270,6 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
         FlyingPathNavigation navigation = new FlyingPathNavigation(this, level);
         navigation.setCanOpenDoors(false);
         navigation.setCanFloat(true);
-        navigation.setCanPassDoors(true);
         return navigation;
     }
 
@@ -329,8 +328,8 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
 
     // Like the silkmoth eggs, the quetzal sheds a random feather from time to time while flying (about once per minute)
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         if (this.isFlying() && this.random.nextInt(1200) == 0) {
             Item feather = switch (this.random.nextInt(4)) {
                 case 0 -> Items.FEATHER;
@@ -338,9 +337,9 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
                 case 2 -> GTItemsRegistry.INSTANCE.GREEN_FEATHER.get();
                 default -> GTItemsRegistry.INSTANCE.RED_FEATHER.get();
             };
-            this.spawnAtLocation(feather);
+            this.spawnAtLocation(serverLevel, feather);
         }
-        if (this.gardenMode && this.isTame() && this.level() instanceof ServerLevel serverLevel && --this.boostTimer <= 0) {
+        if (this.gardenMode && this.isTame() && --this.boostTimer <= 0) {
             this.boostTimer = BOOST_PULSE_TICKS;
             this.boostSurroundingPlants(serverLevel);
         }
@@ -354,8 +353,8 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
         int maxX = center.getX() + BOOST_RADIUS_XZ;
         int minZ = center.getZ() - BOOST_RADIUS_XZ;
         int maxZ = center.getZ() + BOOST_RADIUS_XZ;
-        int minY = Math.max(center.getY() - BOOST_RADIUS_Y, level.getMinBuildHeight());
-        int maxY = Math.min(center.getY() + BOOST_RADIUS_Y, level.getMaxBuildHeight() - 1);
+        int minY = Math.max(center.getY() - BOOST_RADIUS_Y, level.getMinY());
+        int maxY = Math.min(center.getY() + BOOST_RADIUS_Y, level.getMaxY());
 
         BlockPos[] picked = new BlockPos[BOOST_PLANTS_PER_PULSE];
         int seen = 0;

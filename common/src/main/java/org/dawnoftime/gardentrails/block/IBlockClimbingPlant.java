@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -45,7 +45,7 @@ public interface IBlockClimbingPlant {
                 this.placePlant(state.setValue(AGE_6, age + 1), level, pos, 2);
                 return;
             }
-            if (plant.canGrow(level, age)) {
+            if (plant.canGrow(level, pos, age)) {
                 this.placePlant(state.setValue(AGE_6, 2 + ((age - 1) % 5)), level, pos, 2);
                 return;
             }
@@ -94,27 +94,27 @@ public interface IBlockClimbingPlant {
     /**
      * A plant older than age 2 is harvested (back to age 2), and shift + right-click removes the plant.
      */
-    default ItemInteractionResult harvestPlant(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    default InteractionResult harvestPlant(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
         if (state.getValue(AGE_6) > 2 && this.dropPlant(state, level, pos, player.getItemInHand(hand))) {
             this.placePlant(state.setValue(AGE_6, 2), level, pos, 10);
             level.playSound(null, pos, SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         if (player.isCrouching()) {
             return this.tryRemovingPlant(state, level, pos, player.getItemInHand(hand));
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     /**
      * If the state holds a plant, removes it and drops its loot.
      */
-    default ItemInteractionResult tryRemovingPlant(BlockState state, LevelAccessor level, BlockPos pos, ItemStack heldItemStack) {
+    default InteractionResult tryRemovingPlant(BlockState state, LevelAccessor level, BlockPos pos, ItemStack heldItemStack) {
         if (!state.getValue(CLIMBING_PLANT).hasNoPlant()) {
             this.placePlant(this.removePlant(state, level, pos, heldItemStack), level, pos, 10);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     /**

@@ -1,5 +1,10 @@
 package org.dawnoftime.gardentrails.item.templates;
 
+import org.dawnoftime.gardentrails.util.RegistrationContext;
+
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +32,7 @@ public class ItemGT extends Item {
     private final String[] processArgKeys;
 
     public ItemGT() {
-        this(new Properties(), new String[0], null, null, NO_ARGS);
+        this(RegistrationContext.item(), new String[0], null, null, NO_ARGS);
     }
 
     public ItemGT(Properties properties) {
@@ -35,7 +40,7 @@ public class ItemGT extends Item {
     }
 
     public ItemGT(String loreKey) {
-        this(new Properties(), loreKey, null, null);
+        this(RegistrationContext.item(), loreKey, null, null);
     }
 
     public ItemGT(Properties properties, @Nullable String loreKey) {
@@ -71,8 +76,9 @@ public class ItemGT extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext world, @NotNull List<Component> tooltips, @NotNull TooltipFlag flagIn) {
-        super.appendHoverText(stack, world, tooltips, flagIn);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> adder, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, adder, flag);
+        List<Component> tooltips = new ArrayList<>();
         for (String loreKey : this.loreKeys) {
             TooltipHelper.lore(tooltips, loreKey);
         }
@@ -83,5 +89,6 @@ public class ItemGT extends Item {
                 TooltipHelper.lore(tooltips, this.processDescKey);
             }
         }
+        tooltips.forEach(adder);
     }
 }

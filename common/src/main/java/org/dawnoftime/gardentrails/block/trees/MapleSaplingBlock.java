@@ -49,7 +49,7 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
     }
 
     @Override
-    public void tick(final BlockState state, final ServerLevel level, final BlockPos pos, final RandomSource source) {
+    public void randomTick(final BlockState state, final ServerLevel level, final BlockPos pos, final RandomSource source) {
         if(level.getMaxLocalRawBrightness(pos.above()) >= 9 && source.nextInt(7) == 0) {
             if(!level.isLoaded(pos)) {
                 return; // Forge: prevent loading unloaded chunks when checking neighbor's light
@@ -95,7 +95,7 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
     }
 
     @Override
-    public boolean propagatesSkylightDown(final BlockState p_200123_1_, final BlockGetter p_200123_2_, final BlockPos p_200123_3_) {
+    public boolean propagatesSkylightDown(final BlockState p_200123_1_) {
         return true;
     }
 

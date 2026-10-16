@@ -3,6 +3,7 @@ package org.dawnoftime.gardentrails.mixin;
 import net.minecraft.world.effect.MobEffect;
 
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -19,44 +20,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 // the same methods cannot conflict with them or crash the game.
 @Mixin(Player.class)
 public class PlayerMixin {
-    // Highest fall distance (blocks) at which the quetzal stays on the shoulder, vanilla fall damage starts above it
-    @Unique
-    private static final float GT_MAX_FALL_DISTANCE = 3.0F;
     // Duration of the quetzal effects (5 s) and the remaining time (1 s) at which they are renewed
     @Unique
     private static final int GT_EFFECT_TICKS = 100;
     @Unique
     private static final int GT_EFFECT_RENEW_TICKS = 20;
-    @Unique
-    private boolean gt$inAiStep;
-
-    @Inject(method = "aiStep", at = @At("HEAD"), require = 0)
-    private void gt$aiStepHead(CallbackInfo ci) {
-        this.gt$inAiStep = true;
-    }
-
-    // Vanilla drops the shoulder birds from aiStep after a fall of 0.5 block. Only that call is cancelled,
-    // hits, death and the other callers still make the bird fall.
-    @Inject(method = "removeEntitiesOnShoulder", at = @At("HEAD"), cancellable = true, require = 0)
-    private void gt$keepQuetzalOnShoulder(CallbackInfo ci) {
-        if (!this.gt$inAiStep) {
-            return;
-        }
-        Player player = (Player) (Object) this;
-        if (QuetzalShoulder.isOnShoulder(player) && !player.isInWater() && !player.getAbilities().flying
-                && !player.isSleeping() && !player.isInPowderSnow && player.fallDistance <= GT_MAX_FALL_DISTANCE) {
-            ci.cancel();
-        }
-    }
 
     @Inject(method = "aiStep", at = @At("RETURN"), require = 0)
     private void gt$aiStepTail(CallbackInfo ci) {
-        this.gt$inAiStep = false;
         Player player = (Player) (Object) this;
-        if (player.level().isClientSide) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
-        if (!QuetzalShoulder.isOnShoulder(player)) {
+        // The player is connected here, so the synced copy of the shoulders can be updated safely
+        QuetzalShoulder.sync(serverPlayer);
+        if (!QuetzalShoulder.isOnShoulder(serverPlayer)) {
             // The bird left the shoulder, the bonus stops right away instead of running out
             gt$removeQuetzalEffects(player, null);
             return;

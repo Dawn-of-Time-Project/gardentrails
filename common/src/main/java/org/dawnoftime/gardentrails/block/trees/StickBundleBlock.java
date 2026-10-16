@@ -1,5 +1,8 @@
 package org.dawnoftime.gardentrails.block.trees;
 
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.item.Item;
 
 import org.dawnoftime.gardentrails.util.TooltipHelper;
@@ -11,7 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -40,13 +43,12 @@ import java.util.Objects;
 
 import static org.dawnoftime.gardentrails.util.VoxelShapes.STICK_BUNDLE_SHAPES;
 
-public class StickBundleBlock extends BlockGT implements IBlockChain {
+public class StickBundleBlock extends BlockGT implements IBlockChain, IBlockTooltip {
     public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
     private static final IntegerProperty AGE = BlockStateProperties.AGE_3;
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+    public void appendTooltip(List<Component> tooltip) {
         TooltipHelper.label(tooltip, "lore.gardentrails.silk_process");
         TooltipHelper.lore(tooltip, "lore.gardentrails.stick_bundle", TooltipHelper.name("item.gardentrails.silk_worms"));
     }
@@ -82,7 +84,7 @@ public class StickBundleBlock extends BlockGT implements IBlockChain {
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         if(facing.getAxis().isHorizontal())
             return stateIn;
         if(facing == Direction.UP && stateIn.getValue(HALF) == Half.BOTTOM) {
@@ -112,7 +114,7 @@ public class StickBundleBlock extends BlockGT implements IBlockChain {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
         if(!worldIn.isClientSide()) {
             //The StickBundle is empty, we try to put worms on it.
             if(state.getValue(AGE) == 0) {
@@ -125,13 +127,13 @@ public class StickBundleBlock extends BlockGT implements IBlockChain {
                     } else {
                         worldIn.setBlock(pos.above(), this.defaultBlockState().setValue(HALF, Half.TOP).setValue(AGE, 1), 10);
                     }
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             }
 
             //The StickBundle has fully grown worms, it's time to harvest !
             if(state.getValue(AGE) == 3) {
-                List<ItemStack> drops = Utils.getLootList((ServerLevel) worldIn, state, player.getItemInHand(handIn), Objects.requireNonNull(this.builtInRegistryHolder().key()).location().getPath() + "_harvest");
+                List<ItemStack> drops = Utils.getLootList((ServerLevel) worldIn, state, player.getItemInHand(handIn), Objects.requireNonNull(this.builtInRegistryHolder().key()).identifier().getPath() + "_harvest");
                 Utils.dropLootFromList(worldIn, pos, drops, 1.0F);
                 worldIn.setBlock(pos, state.setValue(AGE, 0), 10);
                 worldIn.playSound(null, pos, SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -140,10 +142,10 @@ public class StickBundleBlock extends BlockGT implements IBlockChain {
                 } else {
                     worldIn.setBlock(pos.above(), this.defaultBlockState().setValue(HALF, Half.TOP).setValue(AGE, 0), 10);
                 }
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
@@ -152,7 +154,7 @@ public class StickBundleBlock extends BlockGT implements IBlockChain {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
         int growth = state.getValue(AGE);
         if(growth > 0 && growth < 3) {
             if(random.nextInt(25) == 0) {

@@ -2,7 +2,7 @@ package org.dawnoftime.gardentrails.registry;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
@@ -42,7 +42,7 @@ public abstract class GTFeaturesRegistry {
             () -> new DefaultCropsFeature(RandomPatchConfiguration.CODEC));
 
     public static ResourceKey<PlacedFeature> registerKey(String name) {
-                return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, name));
+                return ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name));
             }
 
     public abstract <Y extends FeatureConfiguration, T extends Feature<Y>> Supplier<T> register(final String name, final Supplier<T> featureSupplier);

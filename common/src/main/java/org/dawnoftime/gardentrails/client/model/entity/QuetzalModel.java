@@ -1,15 +1,13 @@
 package org.dawnoftime.gardentrails.client.model.entity;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.dawnoftime.gardentrails.GTCommon;
-import org.dawnoftime.gardentrails.entity.QuetzalEntity;
+import org.dawnoftime.gardentrails.client.renderer.entity.state.QuetzalRenderState;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Quaternionf;
@@ -20,8 +18,8 @@ import org.joml.Vector3f;
  * Keep it identical to the export so the model can be re-exported later. Animations go only in setupAnim.
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class QuetzalModel<T extends QuetzalEntity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, "quetzal"), "main");
+public class QuetzalModel extends EntityModel<QuetzalRenderState> {
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "quetzal"), "main");
     // About 40 degrees
     private static final float LEG_TRAIL_ANGLE = 0.70F;
     // About 15 degrees, negative because the feathers extend along +Z so a negative pitch lowers their tip
@@ -36,7 +34,6 @@ public class QuetzalModel<T extends QuetzalEntity> extends EntityModel<T> {
     private static final float SHOULDER_FEATHER_LEAN = 0.42F;
     // About 17 degrees per beak half, so the beak opens by about 34 degrees in total
     private static final float BEAK_OPEN_ANGLE = 0.30F;
-    private float beakOpen;
     private final ModelPart Body;
     private final ModelPart RightWingA;
     private final ModelPart RightWingB;
@@ -70,6 +67,7 @@ public class QuetzalModel<T extends QuetzalEntity> extends EntityModel<T> {
     private final ModelPart RightFeet;
 
     public QuetzalModel(ModelPart root) {
+        super(root);
         this.Body = root.getChild("Body");
         this.RightWingA = this.Body.getChild("RightWingA");
         this.RightWingB = this.RightWingA.getChild("RightWingB");
@@ -168,17 +166,18 @@ public class QuetzalModel<T extends QuetzalEntity> extends EntityModel<T> {
     }
 
     @Override
-    public void setupAnim(@NotNull T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.animate(entity.flapSpeed, ageInTicks, netHeadYaw, headPitch, this.beakOpen);
+    public void setupAnim(@NotNull QuetzalRenderState state) {
+        // Back to the exported pose, then add the parrot animation on top
+        super.setupAnim(state);
+        if (state.onShoulder) {
+            this.poseOnShoulder(state.yRot, state.xRot, state.leftShoulder);
+        } else {
+            this.animate(state.flapSpeed, state.flapAngle, state.yRot, state.xRot, state.beakOpen);
+        }
     }
 
-    /** Beak opening from 0 (closed) to 1 (fully open), set by the renderer with the interpolated value before each render. */
-    public void setBeakOpen(float beakOpen) {
-        this.beakOpen = beakOpen;
-    }
-
-    /** Poses and renders the model for the shoulder of a player: idle pose, no flapping, only the head follows the view. */
-    public void renderOnShoulder(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float netHeadYaw, float headPitch, boolean leftShoulder) {
+    /** Idle pose for the shoulder of a player: no flapping, only the head follows the view. */
+    private void poseOnShoulder(float netHeadYaw, float headPitch, boolean leftShoulder) {
         this.animate(0.0F, 0.0F, netHeadYaw, headPitch, 0.0F);
         // The four long tail feathers hang down and spread like a cape on the back of the player
         // From the +X side to the -X side of the model: secondary feather A, middle feather, middle feather 2, secondary feather A2
@@ -191,26 +190,9 @@ public class QuetzalModel<T extends QuetzalEntity> extends EntityModel<T> {
         // The two short white feathers (trains) follow the cape: same lean, and lowered, each one stays on its own side
         fanAroundPoint(this.LeftTrain, SHOULDER_TRAIN_DROOP, lean, 2.3268F, 14.7228F, -8.0457F);
         fanAroundPoint(this.RightTrain, SHOULDER_TRAIN_DROOP, lean, -2.1268F, 14.7228F, -8.0457F);
-        this.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, -1);
     }
 
     private void animate(float flapSpeed, float ageInTicks, float netHeadYaw, float headPitch, float beakOpen) {
-        // Back to the exported pose, then add the parrot animation on top (ageInTicks is the flap bob from the renderer)
-        this.Body.resetPose();
-        this.Head.resetPose();
-        this.LeftWingA.resetPose();
-        this.RightWingA.resetPose();
-        this.LeftLeg.resetPose();
-        this.RightLeg.resetPose();
-        this.RightTrain.resetPose();
-        this.LeftTrain.resetPose();
-        this.SecondaryMiddleFeatherA.resetPose();
-        this.SecondaryMiddleFeatherA2.resetPose();
-        this.MiddleFeatherA.resetPose();
-        this.MiddleFeatherA2.resetPose();
-        this.BeakUpper.resetPose();
-        this.BeakLower.resetPose();
-
         // The beak halves tilt in opposite directions around their rear edge (negative X rotation raises the tip)
         this.BeakUpper.xRot -= beakOpen * BEAK_OPEN_ANGLE;
         this.BeakLower.xRot += beakOpen * BEAK_OPEN_ANGLE;
@@ -271,10 +253,5 @@ public class QuetzalModel<T extends QuetzalEntity> extends EntityModel<T> {
         part.xRot = (float) java.lang.Math.atan2(matrix.m12, matrix.m22);
         part.yRot = (float) java.lang.Math.asin(-matrix.m02);
         part.zRot = (float) java.lang.Math.atan2(matrix.m01, matrix.m00);
-    }
-
-    @Override
-    public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        Body.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }

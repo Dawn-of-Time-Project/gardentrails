@@ -37,11 +37,10 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-    compileOnly "mezz.jei:jei-1.21.1-common-api:19.64.0.454"
-    modRuntimeOnly "maven.modrinth:fusion-connected-textures:pOKxWr1C"
-    modRuntimeOnly "maven.modrinth:dawn-of-time:sGJu1xI8"
-    modRuntimeOnly "maven.modrinth:armor-of-the-ages:diY1l81b"
-    modRuntimeOnly "maven.modrinth:yacl:7lgiCSAC"
+    compileOnly "mezz.jei:jei-1.21.11-common-api:27.48.0.106"
+    // Dawn of Time and Fusion are not loaded on Fabric in dev: Fusion cannot access Transformation.decomposed in the Loom dev environment
+    modRuntimeOnly "maven.modrinth:armor-of-the-ages:qDK1wh1o"
+    modRuntimeOnly "maven.modrinth:yacl:pHWDw3Vc"
     // YACL libs (Modrinth maven does not expose transitive dependencies)
     runtimeOnly "org.quiltmc.parsers:json:0.2.1"
     runtimeOnly "org.quiltmc.parsers:gson:0.2.1"
@@ -52,9 +51,6 @@ dependencies {
 loom {
     if (project(":common").file("src/main/resources/${mod_id}.accesswidener").exists()) {
         accessWidenerPath.set(project(":common").file("src/main/resources/${mod_id}.accesswidener"))
-    }
-    mixin {
-        defaultRefmapName.set("${mod_id}.refmap.json")
     }
     runs {
         client {

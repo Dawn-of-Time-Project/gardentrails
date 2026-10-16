@@ -1,5 +1,8 @@
 package org.dawnoftime.gardentrails.block.plants;
 
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.item.Item;
 
 import net.minecraft.core.BlockPos;
@@ -37,7 +40,7 @@ import static net.minecraft.tags.BlockTags.DIRT;
 import static net.minecraft.tags.BlockTags.SAND;
 import static org.dawnoftime.gardentrails.util.VoxelShapes.IVY_SHAPES;
 
-public class IvyBlock extends BlockGT implements IBlockGeneration {
+public class IvyBlock extends BlockGT implements IBlockGeneration, IBlockTooltip {
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
     public static final BooleanProperty EAST = BlockStateProperties.EAST;
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
@@ -146,7 +149,7 @@ public class IvyBlock extends BlockGT implements IBlockGeneration {
     }
 
     @Override
-    public void tick(@NotNull BlockState state, ServerLevel levelIn, @NotNull BlockPos pos, @NotNull RandomSource random) {
+    public void randomTick(@NotNull BlockState state, ServerLevel levelIn, @NotNull BlockPos pos, @NotNull RandomSource random) {
         if (levelIn.isClientSide()) {
             return;
         }
@@ -216,15 +219,14 @@ public class IvyBlock extends BlockGT implements IBlockGeneration {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendTooltip(List<Component> tooltip) {
         TooltipHelper.lore(tooltip, "lore.gardentrails.ivy",
                 TooltipHelper.names("block.minecraft.dirt", "block.minecraft.sand", "block.minecraft.gravel"),
                 TooltipHelper.name("lore.gardentrails.name.lattice"), TooltipHelper.name("lore.gardentrails.name.pergola"));
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState stateIn, Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor levelIn, @NotNull BlockPos currentPos, @NotNull BlockPos facingPos) {
+    public @NotNull BlockState updateShape(@NotNull BlockState stateIn, @NotNull LevelReader levelIn, ScheduledTickAccess scheduledTickAccess, @NotNull BlockPos currentPos, Direction facing, @NotNull BlockPos facingPos, @NotNull BlockState facingState, RandomSource random) {
         stateIn = stateIn.setValue(PERSISTENT, false);
         if (facing.getAxis().isHorizontal()) {
             if (facing == Direction.NORTH && stateIn.getValue(NORTH) && !hasFullFace(facingState, levelIn, facingPos, facing)) {

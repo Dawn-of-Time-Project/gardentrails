@@ -1,5 +1,8 @@
 package org.dawnoftime.gardentrails.block.trees;
 
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -12,7 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -23,7 +26,7 @@ import org.dawnoftime.gardentrails.block.templates.BlockGT;
 import org.jetbrains.annotations.NotNull;
 
 public class MapleTrunkBlock extends BlockGT {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public MapleTrunkBlock(final Properties properties) {
         super(properties.pushReaction(PushReaction.DESTROY));
@@ -38,7 +41,7 @@ public class MapleTrunkBlock extends BlockGT {
 
     @Override
     public BlockState playerWillDestroy(final Level worldIn, final BlockPos blockPosIn, final BlockState blockStateIn, final Player playerEntityIn) {
-        if(!worldIn.isClientSide) {
+        if(!worldIn.isClientSide()) {
             if(playerEntityIn.isCreative()) {
                 // In creative, remove the trunk silently — super handles the one sound/particle
                 worldIn.setBlock(blockPosIn, Blocks.AIR.defaultBlockState(), 35);
@@ -69,7 +72,7 @@ public class MapleTrunkBlock extends BlockGT {
     }
 
     @Override
-    public BlockState updateShape(final BlockState stateIn, final Direction facing, final BlockState facingState, final LevelAccessor worldIn, final BlockPos currentPos, final BlockPos facingPos) {
+    public BlockState updateShape(final BlockState stateIn, final LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, final BlockPos currentPos, final Direction facing, final BlockPos facingPos, final BlockState facingState, RandomSource random) {
         if(Direction.DOWN.equals(facing)) {
             final BlockState state = worldIn.getBlockState(currentPos.below());
             if(!BlockTags.DIRT.equals(state.getBlock())) {
@@ -110,7 +113,7 @@ public class MapleTrunkBlock extends BlockGT {
     }
 
     @Override
-    public boolean propagatesSkylightDown(final BlockState p_200123_1_, final BlockGetter p_200123_2_, final BlockPos p_200123_3_) {
+    public boolean propagatesSkylightDown(final BlockState p_200123_1_) {
         return true;
     }
 }

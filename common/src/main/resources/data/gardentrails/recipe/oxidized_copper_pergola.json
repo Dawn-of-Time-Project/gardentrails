@@ -5,9 +5,7 @@
     "C"
   ],
   "key": {
-    "C": {
-      "item": "minecraft:copper_ingot"
-    }
+    "C": "minecraft:copper_ingot"
   },
   "result": {
     "id": "gardentrails:oxidized_copper_pergola",

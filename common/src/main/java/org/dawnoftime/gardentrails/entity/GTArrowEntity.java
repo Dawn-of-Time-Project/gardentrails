@@ -1,12 +1,13 @@
 package org.dawnoftime.gardentrails.entity;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
@@ -57,16 +58,14 @@ public class GTArrowEntity extends AbstractArrow {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putString(VARIANT_TAG, this.getVariant().getId());
+    protected void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putString(VARIANT_TAG, this.getVariant().getId());
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        if (compound.contains(VARIANT_TAG)) {
-            this.entityData.set(DATA_VARIANT, GTArrowVariant.byId(compound.getString(VARIANT_TAG)).ordinal());
-        }
+    protected void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        input.getString(VARIANT_TAG).ifPresent(id -> this.entityData.set(DATA_VARIANT, GTArrowVariant.byId(id).ordinal()));
     }
 }

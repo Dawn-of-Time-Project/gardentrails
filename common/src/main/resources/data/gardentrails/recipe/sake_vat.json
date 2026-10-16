@@ -6,12 +6,8 @@
     "SSS"
   ],
   "key": {
-    "S": {
-      "item": "minecraft:spruce_planks"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    }
+    "S": "minecraft:spruce_planks",
+    "I": "minecraft:iron_ingot"
   },
   "result": {
     "id": "gardentrails:sake_vat",

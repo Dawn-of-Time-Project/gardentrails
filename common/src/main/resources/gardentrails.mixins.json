@@ -8,7 +8,8 @@
     "DynamicRecipes",
     "LivingEntityMixin",
     "PlayerMixin",
-    "PlayerShoulderAccessor"
+    "PlayerShoulderAccessor",
+    "ServerPlayerMixin"
   ],
   "client": [
   ],

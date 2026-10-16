@@ -1,9 +1,11 @@
 package org.dawnoftime.gardentrails.block.templates;
 
+import org.dawnoftime.gardentrails.util.RegistrationContext;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
@@ -28,7 +30,7 @@ public class SoilCropsBlock extends CropBlock implements IBlockGeneration {
     }
 
     public SoilCropsBlock(PlantType type) {
-        super(Properties.ofFullCopy(Blocks.SUNFLOWER).offsetType(OffsetType.NONE).randomTicks().sound(SoundType.CROP));
+        super(RegistrationContext.copy(Blocks.SUNFLOWER).offsetType(OffsetType.NONE).randomTicks().sound(SoundType.CROP));
         this.plantType = type;
         this.registerDefaultState(this.stateDefinition.any().setValue(this.getAgeProperty(), 0));
     }
@@ -133,7 +135,7 @@ public class SoilCropsBlock extends CropBlock implements IBlockGeneration {
     }
 
     private Block getBlockFromRegistry(String name) {
-        return BuiltInRegistries.BLOCK.get(ResourceLocation.tryParse(name));
+        return BuiltInRegistries.BLOCK.getValue(Identifier.tryParse(name));
     }
 
     public void setPlantWithAge(BlockState currentState, LevelAccessor worldIn, BlockPos pos, int newAge) {
