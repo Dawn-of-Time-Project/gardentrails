@@ -1,0 +1,32 @@
+{
+  "type": "gardentrails:default_crops",
+  "feature": {
+    "feature": {
+      "type": "gardentrails:dot_feature",
+      "to_place": {
+        "type": "minecraft:simple",
+        "state": {
+          "id": "gardentrails:mulberry",
+          "properties": {
+            "age": "0",
+            "cut": "false",
+            "half": "bottom",
+            "persistent": "false"
+          }
+        }
+      }
+    },
+    "placement": [
+      {
+        "type": "minecraft:block_predicate_filter",
+        "predicate": {
+          "type": "minecraft:matching_blocks",
+          "blocks": "minecraft:air"
+        }
+      }
+    ]
+  },
+  "tries": 32,
+  "xz_spread": 5,
+  "y_spread": 2
+}

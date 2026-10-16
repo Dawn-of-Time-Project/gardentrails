@@ -72,10 +72,10 @@ public class GTLootModifierProvider extends GlobalLootModifierProvider {
 
     private GTLootModifiersNeoForge buildLootTable(String lootTableName, Item item, float probability) {
         return new GTLootModifiersNeoForge(
-                new LootItemCondition[] {
-                        LootTableIdCondition.builder(Identifier.tryParse(lootTableName)).build(),
-                        LootItemRandomChanceCondition.randomChance(probability).build()
-                },
+                java.util.Optional.of(net.minecraft.core.Holder.direct(net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf(
+                        LootTableIdCondition.builder(Identifier.tryParse(lootTableName)),
+                        LootItemRandomChanceCondition.randomChance(probability)
+                ).build())),
                 IGlobalLootModifier.DEFAULT_PRIORITY,
                 item
         );

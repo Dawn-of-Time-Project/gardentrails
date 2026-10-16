@@ -7,22 +7,18 @@
         {
           "type": "minecraft:item",
           "name": "gardentrails:stick_bundle",
-          "conditions": [
-            {
-              "condition": "minecraft:block_state_property",
-              "block": "gardentrails:stick_bundle",
-              "properties": {
-                "half": "bottom"
-              }
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "gardentrails:stick_bundle",
+            "state": {
+              "half": "bottom"
             }
-          ]
+          }
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     },
     {
       "rolls": 1,
@@ -30,29 +26,23 @@
         {
           "type": "minecraft:item",
           "name": "gardentrails:silk_cocoons",
-          "conditions": [
-            {
-              "condition": "minecraft:block_state_property",
-              "block": "gardentrails:stick_bundle",
-              "properties": {
-                "half": "top",
-                "age": "3"
-              }
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "gardentrails:stick_bundle",
+            "state": {
+              "half": "top",
+              "age": "3"
             }
-          ],
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": 3
-            }
-          ]
+          },
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 3
+          }
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ]
 }

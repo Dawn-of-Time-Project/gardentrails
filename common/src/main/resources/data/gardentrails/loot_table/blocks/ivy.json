@@ -9,18 +9,21 @@
           "name": "gardentrails:ivy"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:block_state_property",
-          "block": "gardentrails:ivy",
-          "properties": {
-            "north": "true"
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:match_block",
+            "blocks": "gardentrails:ivy",
+            "state": {
+              "north": "true"
+            }
+          },
+          {
+            "type": "minecraft:survives_explosion"
           }
-        },
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+        ]
+      }
     },
     {
       "rolls": 1,
@@ -30,18 +33,21 @@
           "name": "gardentrails:ivy"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:block_state_property",
-          "block": "gardentrails:ivy",
-          "properties": {
-            "west": "true"
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:match_block",
+            "blocks": "gardentrails:ivy",
+            "state": {
+              "west": "true"
+            }
+          },
+          {
+            "type": "minecraft:survives_explosion"
           }
-        },
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+        ]
+      }
     },
     {
       "rolls": 1,
@@ -51,18 +57,21 @@
           "name": "gardentrails:ivy"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:block_state_property",
-          "block": "gardentrails:ivy",
-          "properties": {
-            "south": "true"
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:match_block",
+            "blocks": "gardentrails:ivy",
+            "state": {
+              "south": "true"
+            }
+          },
+          {
+            "type": "minecraft:survives_explosion"
           }
-        },
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+        ]
+      }
     },
     {
       "rolls": 1,
@@ -72,18 +81,21 @@
           "name": "gardentrails:ivy"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:block_state_property",
-          "block": "gardentrails:ivy",
-          "properties": {
-            "east": "true"
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:match_block",
+            "blocks": "gardentrails:ivy",
+            "state": {
+              "east": "true"
+            }
+          },
+          {
+            "type": "minecraft:survives_explosion"
           }
-        },
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+        ]
+      }
     }
   ]
 }

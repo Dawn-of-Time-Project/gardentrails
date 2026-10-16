@@ -50,20 +50,19 @@ repositories {
 dependencies {
     compileOnly project(":common")
 
-    compileOnly "mezz.jei:jei-26.1.2-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-26.1.2-neoforge-api:${jei_version}"
-    runtimeOnly "mezz.jei:jei-26.1.2-neoforge:${jei_version}"
+    compileOnly "mezz.jei:jei-26.3-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-26.3-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-26.3-neoforge:${jei_version}"
 
     // Dev-only: armoroftheages requires YACL
-    runtimeOnly "maven.modrinth:yacl:B1mfgQmD"
+    runtimeOnly "maven.modrinth:yacl:GL24RgOP"
 
     // Mod compatibility
-    runtimeOnly "maven.modrinth:cloth-config:TimoYzse"
-    runtimeOnly "maven.modrinth:architectury-api:fyNzvIcr"
-    runtimeOnly "maven.modrinth:geckolib:xfVfPcoC"
-    runtimeOnly "maven.modrinth:armor-of-the-ages:Xqexlxy8"
+    runtimeOnly "maven.modrinth:cloth-config:GchRXPnb"
+    runtimeOnly "maven.modrinth:architectury-api:dZ7iNvS4"
+    runtimeOnly "maven.modrinth:geckolib:2s1O42FX"
     // Dawn of Time has no 26.1.2 release yet (latest is 1.21.11), dev runtime dependency removed
-    runtimeOnly "maven.modrinth:fusion-connected-textures:8g0jpGRQ"
+    runtimeOnly "maven.modrinth:fusion-connected-textures:zPVqWQrW"
 }
 
 publishMods {

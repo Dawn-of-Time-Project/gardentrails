@@ -8,12 +8,14 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import org.dawnoftime.gardentrails.platform.Services;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class GTLootModifiersNeoForge extends LootModifier {
@@ -26,17 +28,13 @@ public class GTLootModifiersNeoForge extends LootModifier {
 
     private final Item item;
 
-    public GTLootModifiersNeoForge(LootItemCondition[] conditionsIn, int priority, Item item) {
-        super(conditionsIn, priority);
+    public GTLootModifiersNeoForge(Optional<Holder<LootItemCondition>> conditionIn, int priority, Item item) {
+        super(conditionIn, priority);
         this.item = item;
     }
 
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(@NotNull ObjectArrayList<ItemStack> generatedLoot, @NotNull LootContext lootContext) {
-        for (LootItemCondition condition : this.conditions)
-            if (!condition.test(lootContext))
-                return generatedLoot;
-
         if (Services.PLATFORM.getConfig().generateChestLoot && LootTablesToModify.SHOULD_ADD_MAP.getOrDefault(item, false))
             generatedLoot.add(new ItemStack(this.item));
 

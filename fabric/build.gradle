@@ -33,10 +33,9 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-    compileOnly "mezz.jei:jei-26.1.2-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-26.3-common-api:${jei_version}"
     // Dawn of Time and Fusion are not loaded on Fabric in dev: Fusion cannot access Transformation.decomposed in the Loom dev environment
-    runtimeOnly "maven.modrinth:armor-of-the-ages:QEBj9oGC"
-    runtimeOnly "maven.modrinth:yacl:IODousKT"
+    runtimeOnly "maven.modrinth:yacl:s9SjoFu1"
     // YACL libs (Modrinth maven does not expose transitive dependencies)
     runtimeOnly "org.quiltmc.parsers:json:0.2.1"
     runtimeOnly "org.quiltmc.parsers:gson:0.2.1"

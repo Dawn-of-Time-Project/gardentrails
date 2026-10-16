@@ -9,7 +9,9 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider;
 import org.dawnoftime.gardentrails.GTConfig;
 import org.dawnoftime.gardentrails.platform.Services;
 import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
@@ -43,12 +45,12 @@ public final class GTFabricLootModifier {
 
         if (config.generateChestLoot && shouldAdd) {
             LootPool.Builder poolBuilder = LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1f))
+                    .setRolls(Holder.<ContextIntProvider>direct(new ConstantValue(1)))
                     .when(LootItemRandomChanceCondition.randomChance(probability));
 
             poolBuilder.add(LootItem.lootTableItem(item)
                             .setWeight(1))
-                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1f)));
+                    .apply(SetItemCountFunction.setCount(Holder.<ContextIntProvider>direct(new ConstantValue(1))));
 
             tableBuilder.pool(poolBuilder.build());
         }

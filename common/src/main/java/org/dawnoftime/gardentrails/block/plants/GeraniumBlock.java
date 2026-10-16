@@ -9,6 +9,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.BonemealableBlock;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.world.level.block.Blocks;
@@ -22,7 +23,7 @@ import static org.dawnoftime.gardentrails.util.VoxelShapes.GERANIUM_SHAPE;
 public class GeraniumBlock extends BlockGT implements BonemealableBlock, IBiomeColoredBlock {
 
     public GeraniumBlock(Properties properties) {
-        super(properties.pushReaction(PushReaction.DESTROY), GERANIUM_SHAPE);
+        super(properties.pushReaction(PushReaction.POPPED), GERANIUM_SHAPE);
     }
 
     @Nullable
@@ -38,17 +39,17 @@ public class GeraniumBlock extends BlockGT implements BonemealableBlock, IBiomeC
     }
 
     @Override
-    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state) {
+    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
         return true;
     }
 
     @Override
-    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state) {
+    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
         return random.nextInt(10) == 0;
     }
 
     @Override
-    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state) {
+    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
         Block.popResource(level, pos, new ItemStack(this.asItem()));
     }
 

@@ -21,7 +21,7 @@ public class GTCauldronInteractions {
                 ItemStack washed = new ItemStack(GTItemsRegistry.INSTANCE.WASHED_RICE.get(), count);
                 player.setItemInHand(hand, ItemStack.EMPTY);
                 if (!player.getInventory().add(washed)) {
-                    player.drop(washed, false);
+                    player.drop(washed, false, net.minecraft.util.Prediction.SERVER_ONLY);
                 }
                 player.awardStat(Stats.USE_CAULDRON);
                 LayeredCauldronBlock.lowerFillLevel(state, level, pos);

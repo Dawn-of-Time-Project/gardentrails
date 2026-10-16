@@ -39,7 +39,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import com.mojang.serialization.MapCodec;
 import org.dawnoftime.gardentrails.block.IFlammable;
 import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
 import org.dawnoftime.gardentrails.client.model.entity.QuetzalModel;
@@ -143,9 +143,9 @@ public class RegistryImpls {
 
     public static class FabricFeaturesRegistry extends GTFeaturesRegistry {
         @Override
-        public <Y extends FeatureConfiguration, T extends Feature<Y>> Supplier<T> register(String name, Supplier<T> featureSupplier) {
-            var feature = Registry.register(BuiltInRegistries.FEATURE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), featureSupplier.get());
-            return () -> feature;
+        public <T extends Feature> Supplier<MapCodec<T>> register(String name, Supplier<MapCodec<T>> codecSupplier) {
+            MapCodec<T> codec = Registry.register(BuiltInRegistries.FEATURE_TYPE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), codecSupplier.get());
+            return () -> codec;
         }
     }
 

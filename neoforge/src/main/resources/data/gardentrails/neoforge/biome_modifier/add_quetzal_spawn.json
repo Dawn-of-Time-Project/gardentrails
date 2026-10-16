@@ -4,10 +4,15 @@
     "minecraft:jungle",
     "minecraft:sparse_jungle"
   ],
-  "spawners": {
-    "type": "gardentrails:quetzal",
-    "weight": 40,
-    "minCount": 1,
-    "maxCount": 2
-  }
+  "spawners": [
+    {
+      "type": "gardentrails:quetzal",
+      "weight": 40,
+      "count": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 1,
+        "max_inclusive": 2
+      }
+    }
+  ]
 }

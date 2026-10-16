@@ -9,7 +9,7 @@ import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
@@ -70,8 +70,8 @@ public class SakeItem extends Item {
                 duration += active.getDuration();
             }
             entity.addEffect(new MobEffectInstance(this.boost, duration, 0));
-            if (this.debuff.value().isInstantenous()) {
-                this.debuff.value().applyInstantenousEffect((ServerLevel) level, null, null, entity, 0, 1.0D);
+            if (this.debuff.value().isInstantaneous()) {
+                this.debuff.value().applyInstantaneousEffect((ServerLevel) level, null, null, entity, 0, 1.0D);
             } else {
                 entity.addEffect(new MobEffectInstance(this.debuff, this.debuffTicks, 0));
             }
@@ -82,7 +82,7 @@ public class SakeItem extends Item {
                 entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, BLINDNESS_TICKS, 0));
             }
             if (drinkCount >= 4) {
-                MobEffects.INSTANT_DAMAGE.value().applyInstantenousEffect((ServerLevel) level, null, null, entity, 1, 1.0D);
+                MobEffects.INSTANT_DAMAGE.value().applyInstantaneousEffect((ServerLevel) level, null, null, entity, 1, 1.0D);
             }
         }
         if (player != null) {
@@ -97,7 +97,7 @@ public class SakeItem extends Item {
                 return bottle;
             }
             if (player != null && !player.getInventory().add(bottle)) {
-                player.drop(bottle, false);
+                player.drop(bottle, false, net.minecraft.util.Prediction.SERVER_ONLY);
             }
         }
         return stack;

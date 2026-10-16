@@ -48,11 +48,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal {
+public class QuetzalEntity extends ShoulderRidingEntity {
 
     // Same taming items as the vanilla parrot, each one has a 1 in 10 chance to tame
     // Only the quetzal offering can tame a quetzal, with a 1 in 3 chance
@@ -437,7 +436,6 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
         this.playSound(SoundEvents.PARROT_STEP, 0.15F, 1.0F);
     }
 
-    @Override
     public boolean isFlying() {
         return !this.onGround();
     }

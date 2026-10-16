@@ -72,8 +72,8 @@ public class DryerRenderer implements BlockEntityRenderer<DryerBlockEntity, Drye
                 poseStack.translate(0.0D, 0.5D * slot, 0.0D);
                 poseStack.translate(0.35D, 0, 0.35D);
                 poseStack.translate((i == 1 || i == 2) ? 0.3D : 0, 0.1D, i >= 2 ? 0.3D : 0);
-                poseStack.mulPose(Axis.YN.rotationDegrees(90.0F * i));
-                poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
+                poseStack.rotateDegrees(Axis.YN, 90.0F * i);
+                poseStack.rotateDegrees(Axis.XN, 90.0F);
                 poseStack.scale(0.3F, 0.3F, 0.3F);
                 itemState.submit(poseStack, nodeCollector, renderState.lightCoords, OverlayTexture.NO_OVERLAY, 0);
                 poseStack.popPose();

@@ -25,7 +25,7 @@ public record GTConfigBiomeModifier(
     ).apply(inst, GTConfigBiomeModifier::new));
 
     @Override
-    public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+    public void modify(net.minecraft.core.RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
         if (phase != Phase.ADD) return;
         List<String> allowed = GTConfigLoader.INSTANCE.getBiomesForPlant(plantKey);
         String biomeId = biome.unwrapKey()

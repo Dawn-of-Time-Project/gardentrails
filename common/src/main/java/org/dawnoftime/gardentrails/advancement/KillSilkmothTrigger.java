@@ -2,9 +2,9 @@ package org.dawnoftime.gardentrails.advancement;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.criterion.ContextAwarePredicate;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.SimpleCriterionTrigger;
+import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.dawnoftime.gardentrails.GTCommon;
@@ -35,10 +35,10 @@ public class KillSilkmothTrigger extends SimpleCriterionTrigger<KillSilkmothTrig
         this.trigger(player, instance -> instance.matches(newCount));
     }
 
-    public record TriggerInstance(Optional<ContextAwarePredicate> player, int count) implements SimpleCriterionTrigger.SimpleInstance {
+    public record TriggerInstance(Optional<Holder<LootItemCondition>> player, int count) implements SimpleCriterionTrigger.SimpleInstance {
 
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player),
+                LootItemCondition.CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player),
                 Codec.INT.optionalFieldOf("count", 1).forGetter(TriggerInstance::count)
         ).apply(instance, TriggerInstance::new));
 

@@ -67,17 +67,17 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
     }
 
     @Override
-    public boolean isValidBonemealTarget(final LevelReader p_176473_1_, final BlockPos p_176473_2_, final BlockState p_176473_3_) {
+    public boolean isValidBonemealTarget(final LevelReader p_176473_1_, final BlockPos p_176473_2_, final BlockState p_176473_3_, final net.minecraft.world.level.block.BonemealSource source) {
         return true;
     }
 
     @Override
-    public boolean isBonemealSuccess(final Level p_180670_1_, final RandomSource p_180670_2_, final BlockPos p_180670_3_, final BlockState p_180670_4_) {
+    public boolean isBonemealSuccess(final Level p_180670_1_, final RandomSource p_180670_2_, final BlockPos p_180670_3_, final BlockState p_180670_4_, final net.minecraft.world.level.block.BonemealSource bonemealSource) {
         return p_180670_1_.getRandom().nextFloat() < 0.45D;
     }
 
     @Override
-    public void performBonemeal(final ServerLevel level, final RandomSource source, final BlockPos pos, final BlockState state) {
+    public void performBonemeal(final ServerLevel level, final RandomSource source, final BlockPos pos, final BlockState state, final net.minecraft.world.level.block.BonemealSource bonemealSource) {
         this.advanceTree(level, pos, state);
     }
 

@@ -2,7 +2,6 @@ package org.dawnoftime.gardentrails.block.templates;
 import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.cauldron.CauldronInteractions;
-import com.mojang.serialization.MapCodec;
 
 import net.minecraft.world.item.Item;
 
@@ -82,13 +81,6 @@ public class SakeVatBlock extends AbstractCauldronBlock implements EntityBlock, 
     /** Closed while the 3 slots are filled and the fermentation runs. */
     public static boolean isClosed(BlockState state) {
         return state.getValue(LEVEL) == 3 && !state.getValue(READY);
-    }
-
-    public static final MapCodec<SakeVatBlock> CODEC = simpleCodec(SakeVatBlock::new);
-
-    @Override
-    protected @NotNull MapCodec<? extends AbstractCauldronBlock> codec() {
-        return CODEC;
     }
 
     public SakeVatBlock(Properties properties) {

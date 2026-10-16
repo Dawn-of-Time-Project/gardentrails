@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Tuple;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.dawnoftime.gardentrails.GTCommon;
@@ -28,6 +28,10 @@ public class GTDynamicRecipes {
     public static JsonObject WHITE_CUSHION=null;
 
 
+    public static final String CRITTERS_ID = "crittersandcompanions";
+    public static final String FARMERS_DELIGHT_ID = "farmersdelight";
+    public static final String VINERY_ID = "vinery";
+
     public static final String AotA_ID = "armoroftheages";
     public static JsonObject RAIJIN_ARMOR_CHEST = null;
     public static JsonObject RAIJIN_ARMOR_LEGS = null;
@@ -41,6 +45,45 @@ public class GTDynamicRecipes {
     public static JsonObject QUETZALCOATL_ARMOR_FEET = null;
 
     public static void init(){
+        // Cross mod recipes of this mod. They are built only when the target mod is present, since an unknown item
+        // in a data pack recipe makes the whole recipe registry fail to load since 26.3.
+        if(Services.PLATFORM.isModLoaded(CRITTERS_ID)){
+            final Identifier silk = Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "silk");
+            addRecipe("grappling_hook", createShapedRecipe(RecipeCategory.MISC,
+                    Identifier.fromNamespaceAndPath(CRITTERS_ID, "grappling_hook"),
+                    List.of(addItem('S', silk), addItem('I', Items.IRON_INGOT)),
+                    List.of("SS ", "SI ", "  S")));
+            addRecipe("silk_lead", createShapedRecipe(RecipeCategory.MISC,
+                    Identifier.fromNamespaceAndPath(CRITTERS_ID, "silk_lead"),
+                    List.of(addItem('S', silk), addItem('B', Items.SLIME_BALL)),
+                    List.of("SS ", "SB ", "  S")));
+        }
+        if(Services.PLATFORM.isModLoaded(FARMERS_DELIGHT_ID)){
+            addRecipe("rice_bag", createShapedRecipe(RecipeCategory.BUILDING_BLOCKS,
+                    Identifier.fromNamespaceAndPath(FARMERS_DELIGHT_ID, "rice_bag"),
+                    List.of(addItem('#', Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "rice"))),
+                    List.of("###", "###", "###")));
+        }
+        if(Services.PLATFORM.isModLoaded(VINERY_ID)){
+            final JsonObject grapeBag = createShapedRecipe(RecipeCategory.MISC,
+                    Identifier.fromNamespaceAndPath(VINERY_ID, "red_grape_bag"),
+                    List.of(addItem('#', Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "grape"))),
+                    List.of("###", "###", "###"));
+            grapeBag.addProperty("group", "grape_bag");
+            addRecipe("red_grape_bag", grapeBag);
+
+            final JsonObject seeds = new JsonObject();
+            seeds.addProperty("type", "minecraft:crafting_shapeless");
+            final JsonArray ingredients = new JsonArray();
+            ingredients.add(GTCommon.MOD_ID + ":grape");
+            seeds.add("ingredients", ingredients);
+            final JsonObject seedsResult = new JsonObject();
+            seedsResult.addProperty("id", VINERY_ID + ":red_grape_seeds");
+            seedsResult.addProperty("count", 1);
+            seeds.add("result", seedsResult);
+            addRecipe("seed_from_red_grape", seeds);
+        }
+
         //Dawn of Times recipes
         if(Services.PLATFORM.isModLoaded(DoT_ID) && config.dawnOfTimeUseSilk){
 
@@ -115,7 +158,7 @@ public class GTDynamicRecipes {
             RAIJIN_ARMOR_LEGS = createShapedRecipe(RecipeCategory.COMBAT,
                     Identifier.fromNamespaceAndPath(AotA_ID, "raijin_armor_legs"),
                     List.of(
-                            addItem('R', Items.RED_DYE),
+                            addItem('R', Items.DYE.pick(net.minecraft.world.item.DyeColor.RED)),
                             addItem('D', Items.DIAMOND_LEGGINGS),
                             addItem('S', Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "silk"))
                     ),
@@ -232,14 +275,14 @@ public class GTDynamicRecipes {
     Add recipe to the list with a specific id
      */
     public static void addRecipe(final Identifier recipeId, final JsonObject json){
-        GTCommon.dynamicRecipes.add(new Tuple<>(recipeId, json));
+        GTCommon.dynamicRecipes.add(Pair.of(recipeId, json));
     }
 
     /**
      Add recipe to the list with the mod id
      */
     public static void addRecipe(final String recipeId, final JsonObject json){
-        GTCommon.dynamicRecipes.add(new Tuple<>(Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, recipeId), json));
+        GTCommon.dynamicRecipes.add(Pair.of(Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, recipeId), json));
     }
 
     public static @NotNull JsonObject createShapedRecipe(@NotNull final RecipeCategory category, final Item result,

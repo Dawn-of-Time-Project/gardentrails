@@ -3,10 +3,8 @@ package org.dawnoftime.gardentrails.registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import org.dawnoftime.gardentrails.worldgen.feature.DefaultCropsConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.dawnoftime.gardentrails.GTCommon;
 import org.dawnoftime.gardentrails.worldgen.feature.DefaultCropsFeature;
@@ -35,15 +33,13 @@ public abstract class GTFeaturesRegistry {
     public static final ResourceKey<PlacedFeature> IVY_PLACED_KEY = registerKey("ivy_placed");
     public static GTFeaturesRegistry INSTANCE;
 
-    public final Supplier<Feature<SimpleBlockConfiguration>> DOT_FEATURE = register("dot_feature",
-            () -> new GTFeature(SimpleBlockConfiguration.CODEC));
+    public final Supplier<MapCodec<GTFeature>> DOT_FEATURE = register("dot_feature", () -> GTFeature.CODEC);
 
-    public final Supplier<Feature<DefaultCropsConfiguration>> DEFAULT_CROPS = register("default_crops",
-            () -> new DefaultCropsFeature(DefaultCropsConfiguration.CODEC));
+    public final Supplier<MapCodec<DefaultCropsFeature>> DEFAULT_CROPS = register("default_crops", () -> DefaultCropsFeature.CODEC);
 
     public static ResourceKey<PlacedFeature> registerKey(String name) {
                 return ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name));
             }
 
-    public abstract <Y extends FeatureConfiguration, T extends Feature<Y>> Supplier<T> register(final String name, final Supplier<T> featureSupplier);
+    public abstract <T extends Feature> Supplier<MapCodec<T>> register(final String name, final Supplier<MapCodec<T>> codecSupplier);
 }

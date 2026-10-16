@@ -1,5 +1,4 @@
 package org.dawnoftime.gardentrails.block.templates;
-import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,12 +23,6 @@ import org.dawnoftime.gardentrails.block.IFlammable;
 import org.jetbrains.annotations.NotNull;
 
 public class BushBlockGT extends BushBlock implements IBlockGeneration, IFlammable, BonemealableBlock {
-    // Not used: the blocks of this mod are registered without a block type codec
-    @Override
-    public MapCodec<BushBlock> codec() {
-        return null;
-    }
-
     private final VoxelShape[] shapes;
 
     public BushBlockGT(final Properties properties, VoxelShape[] shapes) {
@@ -54,17 +48,17 @@ public class BushBlockGT extends BushBlock implements IBlockGeneration, IFlammab
     }
 
     @Override
-    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state) {
+    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
         return true;
     }
 
     @Override
-    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state) {
+    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
         return random.nextInt(10) == 0;
     }
 
     @Override
-    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state) {
+    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
         Block.popResource(level, pos, new ItemStack(this.asItem()));
     }
 

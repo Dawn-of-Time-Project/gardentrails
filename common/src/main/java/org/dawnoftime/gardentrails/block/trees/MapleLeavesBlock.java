@@ -28,7 +28,7 @@ public class MapleLeavesBlock extends BlockGT {
     public static final IntegerProperty MULTIBLOCK_Z = GTBlockStateProperties.MULTIBLOCK_3Z;
 
     public MapleLeavesBlock(final Properties properties) {
-        super(properties.pushReaction(PushReaction.DESTROY));
+        super(properties.pushReaction(PushReaction.POPPED));
         this.registerDefaultState(this.defaultBlockState().setValue(MapleTrunkBlock.FACING, Direction.NORTH).setValue(MapleLeavesBlock.MULTIBLOCK_X, 0).setValue(MapleLeavesBlock.MULTIBLOCK_Y, 0).setValue(MapleLeavesBlock.MULTIBLOCK_Z, 0));
     }
 

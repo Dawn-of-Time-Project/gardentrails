@@ -211,7 +211,7 @@ public class SilkmothEntity extends AmbientCreature {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(ROTATION_POS, new BlockPos(this.blockPosition()));
+        builder.define(ROTATION_POS, this.blockPosition());
         builder.define(CLOCKWISE, this.random.nextBoolean());
         builder.define(DISTANCE, this.getNewRotationDistance());
     }

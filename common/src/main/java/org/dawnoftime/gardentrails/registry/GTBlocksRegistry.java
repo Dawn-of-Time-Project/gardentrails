@@ -102,37 +102,37 @@ public abstract class GTBlocksRegistry {
 
     // --- Copper Pergola ---
     public final Supplier<PergolaBlock> COPPER_PERGOLA = register("copper_pergola",
-            () -> new PergolaBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK).noOcclusion(),
+            () -> new PergolaBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().unaffected()).noOcclusion(),
                     () -> GTBlocksRegistry.INSTANCE.COPPER_PERGOLA_VINE.get(),
                     () -> GTBlocksRegistry.INSTANCE.COPPER_PERGOLA_IVY.get(),
                     () -> GTBlocksRegistry.INSTANCE.COPPER_PERGOLA_GRAPE.get()));
     public final Supplier<PergolaBlock> COPPER_PERGOLA_VINE = registerWithItem("copper_pergola_vine",
-            () -> new PergolaPlantBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK).noOcclusion(), () -> COPPER_PERGOLA.get()), null);
+            () -> new PergolaPlantBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().unaffected()).noOcclusion(), () -> COPPER_PERGOLA.get()), null);
     public final Supplier<PergolaBlock> COPPER_PERGOLA_IVY = registerWithItem("copper_pergola_ivy",
-            () -> new PergolaPlantBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK).noOcclusion(), () -> COPPER_PERGOLA.get()), null);
+            () -> new PergolaPlantBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().unaffected()).noOcclusion(), () -> COPPER_PERGOLA.get()), null);
     public final Supplier<PergolaBlock> COPPER_PERGOLA_GRAPE = registerWithItem("copper_pergola_grape",
-            () -> new PergolaCropBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK).noOcclusion(), 4, 6, 0, 2, 2, () -> COPPER_PERGOLA.get()), null);
+            () -> new PergolaCropBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().unaffected()).noOcclusion(), 4, 6, 0, 2, 2, () -> COPPER_PERGOLA.get()), null);
 
     // --- Oxidized Copper Pergola ---
     public final Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA = register("oxidized_copper_pergola",
-            () -> new PergolaBlock(RegistrationContext.copy(Blocks.OXIDIZED_COPPER).noOcclusion(),
+            () -> new PergolaBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().oxidized()).noOcclusion(),
                     () -> GTBlocksRegistry.INSTANCE.OXIDIZED_COPPER_PERGOLA_VINE.get(),
                     () -> GTBlocksRegistry.INSTANCE.OXIDIZED_COPPER_PERGOLA_IVY.get(),
                     () -> GTBlocksRegistry.INSTANCE.OXIDIZED_COPPER_PERGOLA_GRAPE.get()));
     public final Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA_VINE = registerWithItem("oxidized_copper_pergola_vine",
-            () -> new PergolaPlantBlock(RegistrationContext.copy(Blocks.OXIDIZED_COPPER).noOcclusion(), () -> OXIDIZED_COPPER_PERGOLA.get()), null);
+            () -> new PergolaPlantBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().oxidized()).noOcclusion(), () -> OXIDIZED_COPPER_PERGOLA.get()), null);
     public final Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA_IVY = registerWithItem("oxidized_copper_pergola_ivy",
-            () -> new PergolaPlantBlock(RegistrationContext.copy(Blocks.OXIDIZED_COPPER).noOcclusion(), () -> OXIDIZED_COPPER_PERGOLA.get()), null);
+            () -> new PergolaPlantBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().oxidized()).noOcclusion(), () -> OXIDIZED_COPPER_PERGOLA.get()), null);
     public final Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA_GRAPE = registerWithItem("oxidized_copper_pergola_grape",
-            () -> new PergolaCropBlock(RegistrationContext.copy(Blocks.OXIDIZED_COPPER).noOcclusion(), 4, 6, 0, 2, 2, () -> OXIDIZED_COPPER_PERGOLA.get()), null);
+            () -> new PergolaCropBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().oxidized()).noOcclusion(), 4, 6, 0, 2, 2, () -> OXIDIZED_COPPER_PERGOLA.get()), null);
 
     // --- Lattice ---
     public final Supplier<LatticeBlock> IRON_LATTICE = register("iron_lattice",
             () -> new LatticeBlock(RegistrationContext.copy(Blocks.IRON_BARS).noOcclusion()));
     public final Supplier<LatticeBlock> COPPER_LATTICE = register("copper_lattice",
-            () -> new LatticeBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK).noOcclusion()));
+            () -> new LatticeBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().unaffected()).noOcclusion()));
     public final Supplier<LatticeBlock> OXIDIZED_COPPER_LATTICE = register("oxidized_copper_lattice",
-            () -> new LatticeBlock(RegistrationContext.copy(Blocks.OXIDIZED_COPPER).noOcclusion()));
+            () -> new LatticeBlock(RegistrationContext.copy(Blocks.COPPER_BLOCK.weathering().oxidized()).noOcclusion()));
 
     public void postRegister() {
         CYPRESS = registerWithFlowerPotItem("cypress", () -> new CypressBlock(RegistrationContext.copy(Blocks.SPRUCE_LEAVES).randomTicks()).setBurnable(), (block) -> new PotAndBlockItem(block, RegistrationContext.item()));

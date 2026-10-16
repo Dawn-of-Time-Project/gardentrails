@@ -6,20 +6,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecraft:block_state_property",
-              "block": "gardentrails:maple_orange_sapling"
-            }
-          ],
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "gardentrails:maple_orange_sapling"
+          },
           "name": "gardentrails:maple_orange_sapling"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ]
 }

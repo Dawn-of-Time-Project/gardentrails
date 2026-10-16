@@ -1,0 +1,26 @@
+{
+  "type": "gardentrails:default_crops",
+  "feature": {
+    "feature": {
+      "type": "minecraft:simple_block",
+      "to_place": {
+        "type": "minecraft:simple",
+        "state": {
+          "id": "gardentrails:geranium_purple"
+        }
+      }
+    },
+    "placement": [
+      {
+        "type": "minecraft:block_predicate_filter",
+        "predicate": {
+          "type": "minecraft:matching_blocks",
+          "blocks": "minecraft:air"
+        }
+      }
+    ]
+  },
+  "tries": 6,
+  "xz_spread": 1,
+  "y_spread": 2
+}

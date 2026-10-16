@@ -21,7 +21,7 @@ import static org.dawnoftime.gardentrails.util.VoxelShapes.WILD_PLANT_SHAPES;
 public class WildPlantBlock extends BlockGT {
 
     public WildPlantBlock(Properties properties, VoxelShape[] shapes) {
-        super(properties.pushReaction(PushReaction.DESTROY), shapes);
+        super(properties.pushReaction(PushReaction.POPPED), shapes);
     }
 
     public WildPlantBlock(Properties properties){

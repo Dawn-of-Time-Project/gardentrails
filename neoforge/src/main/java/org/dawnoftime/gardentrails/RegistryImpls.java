@@ -8,7 +8,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.advancements.CriterionTrigger;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.advancements.triggers.CriterionTrigger;
 import net.minecraft.core.Holder;
 import org.dawnoftime.gardentrails.advancement.KillSilkmothTrigger;
 import net.minecraft.world.effect.MobEffect;
@@ -29,7 +30,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
@@ -133,11 +133,12 @@ public class RegistryImpls {
     }
 
     public static class NeoForgeFeaturesRegistry extends GTFeaturesRegistry {
-        public static final DeferredRegister<Feature<?>> FEATURES_REGISTRY = DeferredRegister.create(Registries.FEATURE, GTCommon.MOD_ID);
+        public static final DeferredRegister<MapCodec<? extends Feature>> FEATURES_REGISTRY = DeferredRegister.create(Registries.FEATURE_TYPE, GTCommon.MOD_ID);
 
         @Override
-        public <Y extends FeatureConfiguration, T extends Feature<Y>> Supplier<T> register(String name, Supplier<T> featureSupplier) {
-            return FEATURES_REGISTRY.register(name, featureSupplier);
+        public <T extends Feature> Supplier<MapCodec<T>> register(String name, Supplier<MapCodec<T>> codecSupplier) {
+            DeferredHolder<MapCodec<? extends Feature>, MapCodec<? extends Feature>> holder = FEATURES_REGISTRY.register(name, codecSupplier::get);
+            return () -> (MapCodec<T>) holder.get();
         }
     }
 
@@ -272,7 +273,7 @@ public class RegistryImpls {
         NeoForgeCreativeModeTabsRegistry.CREATIVE_MODE_TABS_REGISTRY.register(bus);
 
         // The vanilla brushable block entity only accepts vanilla blocks, so the moldy log must be added to it
-        bus.addListener((net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent event) -> event.modify(BlockEntityType.BRUSHABLE_BLOCK, GTBlocksRegistry.INSTANCE.ROTTEN_OAK_LOG.get()));
+        bus.addListener((net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent event) -> event.modify(net.minecraft.world.level.block.entity.BlockEntityTypes.BRUSHABLE_BLOCK, GTBlocksRegistry.INSTANCE.ROTTEN_OAK_LOG.get()));
         bus.addListener((EntityAttributeCreationEvent event) -> event.put(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), SilkmothEntity.createAttributes().build()));
         bus.addListener((EntityAttributeCreationEvent event) -> event.put(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), QuetzalEntity.createAttributes().build()));
         bus.addListener((RegisterSpawnPlacementsEvent event) -> event.register(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, QuetzalEntity::checkQuetzalSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR));

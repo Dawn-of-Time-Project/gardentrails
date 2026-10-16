@@ -49,7 +49,7 @@ public class IvyBlock extends BlockGT implements IBlockGeneration, IBlockTooltip
     private static final IntegerProperty AGE = BlockStateProperties.AGE_2;
 
     public IvyBlock(Properties properties) {
-        super(properties.pushReaction(PushReaction.DESTROY), IVY_SHAPES);
+        super(properties.pushReaction(PushReaction.POPPED), IVY_SHAPES);
         this.registerDefaultState(this.defaultBlockState().setValue(AGE, 0).setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false).setValue(WEST, false).setValue(PERSISTENT, false));
     }
 

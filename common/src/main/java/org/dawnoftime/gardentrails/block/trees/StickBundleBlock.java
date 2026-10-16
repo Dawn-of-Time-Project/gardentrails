@@ -54,7 +54,7 @@ public class StickBundleBlock extends BlockGT implements IBlockChain, IBlockTool
     }
 
     public StickBundleBlock(Properties properties) {
-        super(properties.pushReaction(PushReaction.DESTROY), STICK_BUNDLE_SHAPES);
+        super(properties.pushReaction(PushReaction.POPPED), STICK_BUNDLE_SHAPES);
         this.registerDefaultState(this.defaultBlockState().setValue(AGE, 0).setValue(HALF, Half.TOP));
     }
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 import net.minecraft.world.item.Item;
 
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -110,7 +110,7 @@ public class SoilSeedsItem extends BlockItem implements IHasFlowerPot {
                 BlockState newState = world.getBlockState(pos);
                 Block block = newState.getBlock();
                 if (block == madeState.getBlock()) {
-                    this.updateCustomBlockEntityTag(pos, world, playerentity, itemstack, newState);
+                    updateCustomBlockEntityTag(world, playerentity, pos, itemstack);
                     block.setPlacedBy(world, pos, newState, playerentity, itemstack);
                     if (playerentity instanceof ServerPlayer) {
                         CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) playerentity, pos, itemstack);

@@ -1,0 +1,34 @@
+{
+  "type": "gardentrails:default_crops",
+  "feature": {
+    "feature": {
+      "type": "gardentrails:dot_feature",
+      "to_place": {
+        "type": "minecraft:simple",
+        "state": {
+          "id": "gardentrails:ivy",
+          "properties": {
+            "age": "0",
+            "east": "false",
+            "north": "false",
+            "persistent": "false",
+            "south": "false",
+            "west": "false"
+          }
+        }
+      }
+    },
+    "placement": [
+      {
+        "type": "minecraft:block_predicate_filter",
+        "predicate": {
+          "type": "minecraft:matching_blocks",
+          "blocks": "minecraft:air"
+        }
+      }
+    ]
+  },
+  "tries": 12,
+  "xz_spread": 2,
+  "y_spread": 2
+}

@@ -1,0 +1,26 @@
+{
+  "type": "gardentrails:default_crops",
+  "feature": {
+    "feature": {
+      "type": "gardentrails:dot_feature",
+      "to_place": {
+        "type": "minecraft:simple",
+        "state": {
+          "id": "gardentrails:boxwood_bush"
+        }
+      }
+    },
+    "placement": [
+      {
+        "type": "minecraft:block_predicate_filter",
+        "predicate": {
+          "type": "minecraft:matching_blocks",
+          "blocks": "minecraft:air"
+        }
+      }
+    ]
+  },
+  "tries": 16,
+  "xz_spread": 2,
+  "y_spread": 2
+}

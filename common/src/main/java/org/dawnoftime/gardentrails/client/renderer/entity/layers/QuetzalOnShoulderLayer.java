@@ -58,7 +58,7 @@ public class QuetzalOnShoulderLayer extends RenderLayer<AvatarRenderState, Playe
         quetzalState.yRot = yRot;
         quetzalState.xRot = xRot;
         collector.submitModel(this.model, quetzalState, poseStack, this.model.renderType(QuetzalRenderer.QUETZAL_TEXTURE),
-                packedLight, OverlayTexture.NO_OVERLAY, state.outlineColor, null);
+                packedLight, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor);
         poseStack.popPose();
     }
 }

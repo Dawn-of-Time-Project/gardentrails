@@ -18,7 +18,7 @@ public class GTBlockTagGenerator extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         for(TagKey<Block> tag : GTBlocksRegistry.blockTagsMap.keySet()){
-            GTBlocksRegistry.blockTagsMap.get(tag).forEach(block -> this.tag(tag).add(block.get()));
+            GTBlocksRegistry.blockTagsMap.get(tag).forEach(block -> this.tag(tag).add(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getResourceKey(block.get()).orElseThrow()));
         }
         //blockTagsMap.clear();
         int a = 1;

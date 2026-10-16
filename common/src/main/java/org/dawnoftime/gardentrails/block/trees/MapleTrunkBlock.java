@@ -29,7 +29,7 @@ public class MapleTrunkBlock extends BlockGT {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public MapleTrunkBlock(final Properties properties) {
-        super(properties.pushReaction(PushReaction.DESTROY));
+        super(properties.pushReaction(PushReaction.POPPED));
         this.registerDefaultState(this.defaultBlockState().setValue(MapleTrunkBlock.FACING, Direction.NORTH));
     }
 
