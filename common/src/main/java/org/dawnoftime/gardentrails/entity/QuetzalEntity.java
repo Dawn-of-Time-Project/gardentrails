@@ -87,8 +87,8 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
         super(type, level);
         // Same movement setup as the vanilla parrot
         this.moveControl = new FlyingMoveControl(this, 10, false);
-        this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
-        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+        this.setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, -1.0F);
+        this.setPathfindingMalus(PathType.FIRE, -1.0F);
         this.setPathfindingMalus(PathType.COCOA, -1.0F);
     }
 
@@ -204,7 +204,7 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
                     this.setOrderedToSit(false);
                     this.setInSittingPose(false);
                     this.setGardenMode(true);
-                    player.displayClientMessage(Component.translatable("message.gardentrails.quetzal_garden"), false);
+                    player.sendSystemMessage(Component.translatable("message.gardentrails.quetzal_garden"));
                 } else {
                     this.setOrderedToSit(true);
                 }
@@ -399,7 +399,7 @@ public class QuetzalEntity extends ShoulderRidingEntity implements FlyingAnimal 
             if (pos != null) {
                 BlockState state = level.getBlockState(pos);
                 if (state.isRandomlyTicking()) {
-                    state.randomTick(level, pos, level.random);
+                    state.randomTick(level, pos, level.getRandom());
                 }
             }
         }

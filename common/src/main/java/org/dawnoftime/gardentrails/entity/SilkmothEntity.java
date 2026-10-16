@@ -110,7 +110,7 @@ public class SilkmothEntity extends AmbientCreature {
         int horizontalRange = 5;
         int verticalRange = 2;
 
-        int x = (int) this.level().getDayTime() % 23999;
+        int x = (int) this.level().getDefaultClockTime() % 23999;
         boolean isNight = x > 12000 && x < 23000;
         x = (int) Math.floor(this.getX()) - horizontalRange;
         int y = (int) Math.floor(this.getY()) - verticalRange;

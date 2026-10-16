@@ -22,7 +22,7 @@ public class GTFeature extends Feature<SimpleBlockConfiguration> {
         RandomSource random = pContext.random();
 
         SimpleBlockConfiguration config = pContext.config();
-        BlockState state = config.toPlace().getState(random, pos);
+        BlockState state = config.toPlace().getState(level, random, pos);
 
         if(state.getBlock() instanceof IBlockGeneration block) {
             return block.generateOnPos(level, pos, state, random);

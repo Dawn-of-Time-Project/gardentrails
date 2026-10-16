@@ -1,7 +1,10 @@
 package org.dawnoftime.gardentrails;
 
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.client.color.block.BlockColor;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.FoliageColor;
@@ -10,6 +13,7 @@ import net.minecraft.world.level.block.Block;
 import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class BiomeColorHandlers {
@@ -24,7 +28,7 @@ public class BiomeColorHandlers {
         g = Math.min(255, (int)(g * BRIGHTNESS_FACTOR));
         b = Math.min(255, (int)(b * BRIGHTNESS_FACTOR));
         
-        return (r << 16) | (g << 8) | b;
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
     
     public static void init() {
@@ -38,49 +42,25 @@ public class BiomeColorHandlers {
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_PURPLEISH);
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_RED);
         registerBiomeColoredBlock(GTBlocksRegistry.INSTANCE.GERANIUM_WHITE);
-        registerBiomeColoredBlockOnly(() -> GTBlocksRegistry.INSTANCE.CAMELLIA.get());
+        registerBiomeColoredBlock(() -> GTBlocksRegistry.INSTANCE.CAMELLIA.get());
         registerBiomeColoredBlock(() -> GTBlocksRegistry.POT_BLOCKS.get("cypress_flower_pot"));
-    }
-
-    private static void registerBiomeColoredBlockOnly(Supplier<Block> blockSupplier) {
-        Block block = blockSupplier.get();
-        if (IBiomeColoredBlock.isBiomeColored(block)) {
-            IBiomeColoredBlock coloredBlock = (IBiomeColoredBlock) block;
-            BlockColor blockColor = (state, world, pos, tintIndex) -> {
-                if (world != null && pos != null && tintIndex == 0) {
-                    int color = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                        ? BiomeColors.getAverageFoliageColor(world, pos)
-                        : BiomeColors.getAverageGrassColor(world, pos);
-                    return brightenColor(color);
-                }
-                int defaultColor = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                    ? FoliageColor.FOLIAGE_DEFAULT
-                    : GrassColor.getDefaultColor();
-                return brightenColor(defaultColor);
-            };
-            ColorProviderRegistry.BLOCK.register(blockColor, block);
-        }
     }
 
     private static void registerBiomeColoredBlock(Supplier<Block> blockSupplier) {
         Block block = blockSupplier.get();
         if (IBiomeColoredBlock.isBiomeColored(block)) {
-            IBiomeColoredBlock coloredBlock = (IBiomeColoredBlock) block;
-            
-            BlockColor blockColor = (state, world, pos, tintIndex) -> {
-                if (world != null && pos != null && tintIndex == 0) {
-                    int color = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                        ? BiomeColors.getAverageFoliageColor(world, pos)
-                        : BiomeColors.getAverageGrassColor(world, pos);
-                    return brightenColor(color);
+            final boolean foliage = ((IBiomeColoredBlock) block).getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE;
+            BlockColorRegistry.register(List.of(new BlockTintSource() {
+                @Override
+                public int color(BlockState state) {
+                    return brightenColor(foliage ? FoliageColor.FOLIAGE_DEFAULT : GrassColor.getDefaultColor());
                 }
-                int defaultColor = coloredBlock.getColorType() == IBiomeColoredBlock.ColorType.FOLIAGE
-                    ? FoliageColor.FOLIAGE_DEFAULT
-                    : GrassColor.getDefaultColor();
-                return brightenColor(defaultColor);
-            };
-            
-            ColorProviderRegistry.BLOCK.register(blockColor, block);
+
+                @Override
+                public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                    return brightenColor(foliage ? BiomeColors.getAverageFoliageColor(level, pos) : BiomeColors.getAverageGrassColor(level, pos));
+                }
+            }), block);
         }
     }
 }

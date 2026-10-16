@@ -2,15 +2,15 @@ package org.dawnoftime.gardentrails;
 import org.dawnoftime.gardentrails.registry.GTCriteriaRegistry;
 import net.minecraft.core.Holder;
 
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import org.dawnoftime.gardentrails.client.renderer.entity.layers.QuetzalOnShoulderLayer;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -209,7 +209,7 @@ public class RegistryImpls {
     public static class FabricCreativeModeTabsRegistry extends GTCreativeModeTabsRegistry {
         @Override
         public <T extends CreativeModeTab> Supplier<CreativeModeTab> register(String name, Supplier<ItemStack> iconSupplier, Component title) {
-            var group = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), FabricItemGroup.builder().icon(iconSupplier).title(title).displayItems((itemDisplayParameters, output) -> {
+            var group = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name), FabricCreativeModeTab.builder().icon(iconSupplier).title(title).displayItems((itemDisplayParameters, output) -> {
                 GTCreativeModeTabsRegistry.addOrderedItems(output::accept);
             }).build());
             return () -> group;
@@ -233,10 +233,10 @@ public class RegistryImpls {
         EntityRendererRegistry.register(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), QuetzalRenderer::new);
         EntityRendererRegistry.register(GTEntitiesRegistry.INSTANCE.FEATHERED_ARROW_ENTITY.get(), GTArrowRenderer::new);
         BlockEntityRenderers.register(GTBlockEntitiesRegistry.INSTANCE.DRYER.get(), DryerRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(SilkmothModel.LAYER_LOCATION, SilkmothModel::createBodyLayer);
-        EntityModelLayerRegistry.registerModelLayer(QuetzalModel.LAYER_LOCATION, QuetzalModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(SilkmothModel.LAYER_LOCATION, SilkmothModel::createBodyLayer);
+        ModelLayerRegistry.registerModelLayer(QuetzalModel.LAYER_LOCATION, QuetzalModel::createBodyLayer);
         // Quetzal on the player shoulder
-        LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
+        LivingEntityRenderLayerRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
             if (entityRenderer instanceof AvatarRenderer<?> avatarRenderer) {
                 registrationHelper.register(new QuetzalOnShoulderLayer((RenderLayerParent<AvatarRenderState, PlayerModel>) avatarRenderer, context.getModelSet()));
             }

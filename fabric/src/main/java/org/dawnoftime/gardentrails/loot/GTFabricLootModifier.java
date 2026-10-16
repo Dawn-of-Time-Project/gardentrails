@@ -44,11 +44,10 @@ public final class GTFabricLootModifier {
         if (config.generateChestLoot && shouldAdd) {
             LootPool.Builder poolBuilder = LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1f))
-                    .conditionally(LootItemRandomChanceCondition.randomChance(probability).build());
+                    .when(LootItemRandomChanceCondition.randomChance(probability));
 
-            poolBuilder.with(LootItem.lootTableItem(item)
-                            .setWeight(1)
-                            .build())
+            poolBuilder.add(LootItem.lootTableItem(item)
+                            .setWeight(1))
                     .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1f)));
 
             tableBuilder.pool(poolBuilder.build());

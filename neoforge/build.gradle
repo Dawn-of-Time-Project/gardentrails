@@ -10,10 +10,6 @@ neoForge {
     if (at.exists()) {
         accessTransformers.from(at.absolutePath)
     }
-    parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
-    }
     runs {
         configureEach {
             systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
@@ -54,20 +50,20 @@ repositories {
 dependencies {
     compileOnly project(":common")
 
-    compileOnly "mezz.jei:jei-1.21.11-common-api:27.48.0.106"
-    compileOnly "mezz.jei:jei-1.21.11-neoforge-api:27.48.0.106"
-    runtimeOnly "mezz.jei:jei-1.21.11-neoforge:27.48.0.106"
+    compileOnly "mezz.jei:jei-26.1.2-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-26.1.2-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-26.1.2-neoforge:${jei_version}"
 
     // Dev-only: armoroftheages requires YACL
-    runtimeOnly "maven.modrinth:yacl:HZs9mrWM"
+    runtimeOnly "maven.modrinth:yacl:B1mfgQmD"
 
     // Mod compatibility
-    runtimeOnly "maven.modrinth:cloth-config:Wsus0EWg"
-    runtimeOnly "maven.modrinth:architectury-api:EvL9NK2R"
-    runtimeOnly "maven.modrinth:geckolib:FpONDAt3"
-    runtimeOnly "maven.modrinth:armor-of-the-ages:qfrUfbaf"
-    runtimeOnly "maven.modrinth:dawn-of-time:H6CluobL"
-    runtimeOnly "maven.modrinth:fusion-connected-textures:1.3.16-neoforge-mc1.21.11"
+    runtimeOnly "maven.modrinth:cloth-config:TimoYzse"
+    runtimeOnly "maven.modrinth:architectury-api:fyNzvIcr"
+    runtimeOnly "maven.modrinth:geckolib:xfVfPcoC"
+    runtimeOnly "maven.modrinth:armor-of-the-ages:Xqexlxy8"
+    // Dawn of Time has no 26.1.2 release yet (latest is 1.21.11), dev runtime dependency removed
+    runtimeOnly "maven.modrinth:fusion-connected-textures:8g0jpGRQ"
 }
 
 publishMods {

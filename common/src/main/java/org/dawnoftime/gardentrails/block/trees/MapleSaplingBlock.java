@@ -73,7 +73,7 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
 
     @Override
     public boolean isBonemealSuccess(final Level p_180670_1_, final RandomSource p_180670_2_, final BlockPos p_180670_3_, final BlockState p_180670_4_) {
-        return p_180670_1_.random.nextFloat() < 0.45D;
+        return p_180670_1_.getRandom().nextFloat() < 0.45D;
     }
 
     @Override
@@ -107,7 +107,7 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
     public static boolean isValidForPlacement(final LevelAccessor worldIn, final BlockPos bottomCenterIn) {
         final BlockPos floorCenter = bottomCenterIn.below();
         BlockState state = worldIn.getBlockState(floorCenter);
-        if(!state.is(BlockTags.DIRT)) {
+        if(!state.is(BlockTags.SUBSTRATE_OVERWORLD)) {
             return false;
         }
         for(int x = -1; x <= 1; x++) {

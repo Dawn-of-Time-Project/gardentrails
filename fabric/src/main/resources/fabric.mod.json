@@ -31,10 +31,10 @@
         "${mod_id}.fabric.mixins.json"
     ],
     "depends": {
-        "fabricloader": ">=0.14",
-        "fabric": "*",
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric-api": "*",
         "minecraft": "${fabric_minecraft_version_range}",
-        "java": ">=21"
+        "java": ">=${java_version}"
     },
     "suggests": {
         "another-mod": "*"

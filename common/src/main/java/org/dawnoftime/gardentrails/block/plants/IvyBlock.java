@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import static net.minecraft.tags.BlockTags.DIRT;
+import static net.minecraft.tags.BlockTags.SUBSTRATE_OVERWORLD;
 import static net.minecraft.tags.BlockTags.SAND;
 import static org.dawnoftime.gardentrails.util.VoxelShapes.IVY_SHAPES;
 
@@ -82,7 +82,7 @@ public class IvyBlock extends BlockGT implements IBlockGeneration, IBlockTooltip
 
     private static boolean hasFullFace(BlockState state, LevelReader Level, BlockPos pos, Direction face) {
         Block block = state.getBlock();
-        if (block.defaultBlockState().is(DIRT) || block.defaultBlockState().is(SAND) || block.defaultBlockState().is(GTTags.INSTANCE.GRAVEL))
+        if (block.defaultBlockState().is(SUBSTRATE_OVERWORLD) || block.defaultBlockState().is(SAND) || block.defaultBlockState().is(GTTags.INSTANCE.GRAVEL))
             return false;
         return Block.isFaceFull(state.getCollisionShape(Level, pos), face.getOpposite());
     }

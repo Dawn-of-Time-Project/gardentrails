@@ -34,7 +34,7 @@ public class GeraniumBlock extends BlockGT implements BonemealableBlock, IBiomeC
     @Override
     public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
         BlockState blockDown = worldIn.getBlockState(pos.below());
-        return blockDown.getBlock() == Blocks.GRASS_BLOCK || blockDown.is(BlockTags.DIRT) || blockDown.getBlock() == Blocks.FARMLAND;
+        return blockDown.getBlock() == Blocks.GRASS_BLOCK || blockDown.is(BlockTags.SUBSTRATE_OVERWORLD) || blockDown.getBlock() == Blocks.FARMLAND;
     }
 
     @Override

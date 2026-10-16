@@ -16,7 +16,7 @@ public class GTFabric implements ModInitializer, ClientModInitializer {
         GTCommon.init();
         RegistryImpls.init();
         // The vanilla brushable block entity only accepts vanilla blocks, so the moldy log must be added to it
-        net.minecraft.world.level.block.entity.BlockEntityType.BRUSHABLE_BLOCK.addSupportedBlock(org.dawnoftime.gardentrails.registry.GTBlocksRegistry.INSTANCE.ROTTEN_OAK_LOG.get());
+        net.minecraft.world.level.block.entity.BlockEntityType.BRUSHABLE_BLOCK.addValidBlock(org.dawnoftime.gardentrails.registry.GTBlocksRegistry.INSTANCE.ROTTEN_OAK_LOG.get());
         GTCauldronInteractions.init();
         GTDispenserBehaviors.init();
         BiomeModifiers.init();
@@ -27,7 +27,6 @@ public class GTFabric implements ModInitializer, ClientModInitializer {
     @Override
     public void onInitializeClient() {
         RegistryImpls.initClient();
-        RenderLayers.init();
         BiomeColorHandlers.init();
     }
 }

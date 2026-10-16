@@ -141,7 +141,7 @@ public abstract class GTBlocksRegistry {
         for(String variantId : MAPLE_VARIANT_IDS) {
             Supplier<Block> trunk = registerWithItem("maple_" + variantId + "_trunk", () -> new MapleTrunkBlock(RegistrationContext.copy(Blocks.SPRUCE_LEAVES)), null, BlockTags.MINEABLE_WITH_AXE);
             Supplier<Block> leaves = registerWithItem("maple_" + variantId + "_leaves", () -> new MapleLeavesBlock(RegistrationContext.copy(Blocks.SPRUCE_LEAVES)), null, BlockTags.MINEABLE_WITH_AXE);
-            Supplier<Block> sapling = registerWithFlowerPotItem("maple_" + variantId + "_sapling", () -> new MapleSaplingBlock(RegistrationContext.copy(Blocks.SPRUCE_LEAVES), trunk, leaves), (block) -> new PotAndBlockItem(block, RegistrationContext.item()));
+            Supplier<Block> sapling = registerWithFlowerPotItem("maple_" + variantId + "_sapling", () -> new MapleSaplingBlock(RegistrationContext.copy(Blocks.SPRUCE_LEAVES).noCollision(), trunk, leaves), (block) -> new PotAndBlockItem(block, RegistrationContext.item()));
             MAPLE_VARIANTS.put(variantId, new MapleVariant(variantId, trunk, leaves, sapling));
         }
         CAMELLIA = registerWithFlowerPotItem("camellia", () -> new ColoredGrowingBushBlock(SoilCropsBlock.PlantType.PLAINS, 3), "camellia_seeds", (block) -> new SoilSeedsItem(block, null));

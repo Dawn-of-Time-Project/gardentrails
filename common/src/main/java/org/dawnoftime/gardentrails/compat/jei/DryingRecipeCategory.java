@@ -12,7 +12,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.dawnoftime.gardentrails.GTCommon;
@@ -76,7 +76,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryerRecipe> {
     }
 
     @Override
-    public void draw(@NotNull DryerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(@NotNull DryerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         this.slot.draw(guiGraphics, 9, 7);
         this.slot.draw(guiGraphics, 73, 7);
         this.arrow.draw(guiGraphics, 40, 8);
@@ -84,6 +84,6 @@ public class DryingRecipeCategory implements IRecipeCategory<DryerRecipe> {
         final Font font = Minecraft.getInstance().font;
         final Component time = Component.translatable("gardentrails.jei.drying.time", recipe.getDryingTime() / 20);
         final int textX = (WIDTH - font.width(time)) / 2;
-        guiGraphics.drawString(font, time, textX, 30, 0xFF808080, false);
+        guiGraphics.text(font, time, textX, 30, 0xFF808080, false);
     }
 }

@@ -41,14 +41,14 @@ public class GrainsAndSeedsMixItem extends BoneMealItem {
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity target, @NotNull InteractionHand hand) {
-        if (target instanceof TamableAnimal animal && animal.getType().is(TAMEABLE_BIRDS) && !animal.isTame()) {
+        if (target instanceof TamableAnimal animal && animal.is(TAMEABLE_BIRDS) && !animal.isTame()) {
             Level level = animal.level();
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
-            level.playSound(null, animal.getX(), animal.getY(), animal.getZ(), SoundEvents.PARROT_EAT, animal.getSoundSource(), 1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.2F);
+            level.playSound(null, animal.getX(), animal.getY(), animal.getZ(), SoundEvents.PARROT_EAT, animal.getSoundSource(), 1.0F, 1.0F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F);
             if (!level.isClientSide()) {
-                if (level.random.nextInt(TAME_CHANCE) == 0) {
+                if (level.getRandom().nextInt(TAME_CHANCE) == 0) {
                     animal.tame(player);
                     level.broadcastEntityEvent(animal, (byte) 7);
                 } else {

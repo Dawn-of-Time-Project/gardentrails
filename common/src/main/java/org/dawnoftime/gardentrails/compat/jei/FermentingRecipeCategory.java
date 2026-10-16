@@ -12,7 +12,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.dawnoftime.gardentrails.GTCommon;
@@ -77,7 +77,7 @@ public class FermentingRecipeCategory implements IRecipeCategory<FermentingRecip
     }
 
     @Override
-    public void draw(@NotNull FermentingRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(@NotNull FermentingRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         for (int i = 0; i < recipe.getFermentingIngredients().size(); i++) {
             this.slot.draw(guiGraphics, 9 + i * 20, 7);
         }
@@ -87,6 +87,6 @@ public class FermentingRecipeCategory implements IRecipeCategory<FermentingRecip
         final Font font = Minecraft.getInstance().font;
         final Component time = Component.translatable("gardentrails.jei.fermenting.time", recipe.getFermentingTime() / 20);
         final int textX = (WIDTH - font.width(time)) / 2;
-        guiGraphics.drawString(font, time, textX, 30, 0xFF808080, false);
+        guiGraphics.text(font, time, textX, 30, 0xFF808080, false);
     }
 }

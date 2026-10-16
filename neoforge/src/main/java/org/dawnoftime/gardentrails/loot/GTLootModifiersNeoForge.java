@@ -26,8 +26,8 @@ public class GTLootModifiersNeoForge extends LootModifier {
 
     private final Item item;
 
-    public GTLootModifiersNeoForge(LootItemCondition[] conditionsIn, Item item) {
-        super(conditionsIn);
+    public GTLootModifiersNeoForge(LootItemCondition[] conditionsIn, int priority, Item item) {
+        super(conditionsIn, priority);
         this.item = item;
     }
 

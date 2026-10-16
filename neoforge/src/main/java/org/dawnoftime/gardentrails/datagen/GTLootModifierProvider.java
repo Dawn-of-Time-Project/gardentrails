@@ -8,6 +8,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
+import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import org.dawnoftime.gardentrails.GTCommon;
 import org.dawnoftime.gardentrails.loot.GTLootModifiersNeoForge;
 import org.dawnoftime.gardentrails.loot.LootTablesToModify;
@@ -75,6 +76,7 @@ public class GTLootModifierProvider extends GlobalLootModifierProvider {
                         LootTableIdCondition.builder(Identifier.tryParse(lootTableName)).build(),
                         LootItemRandomChanceCondition.randomChance(probability).build()
                 },
+                IGlobalLootModifier.DEFAULT_PRIORITY,
                 item
         );
     }

@@ -2,6 +2,7 @@ package org.dawnoftime.gardentrails.recipe;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.dawnoftime.gardentrails.registry.GTRecipeSerializersRegistry;
@@ -10,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-public record DryerRecipe(String group, Ingredient ingredient, ItemStack result, float experience,
+public record DryerRecipe(String group, Ingredient ingredient, ItemStackTemplate result, float experience,
                           int dryingTime, int ingredientCount) implements Recipe<SimpleContainerRecipeInput> {
 
     public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return this.result;
+        return this.result.create();
     }
 
     public int getDryingTime() {
@@ -27,8 +28,8 @@ public record DryerRecipe(String group, Ingredient ingredient, ItemStack result,
     }
 
     @Override
-    public ItemStack assemble(SimpleContainerRecipeInput simpleContainer, HolderLookup.Provider provider) {
-        return this.result.copy();
+    public ItemStack assemble(SimpleContainerRecipeInput simpleContainer) {
+        return this.result.create();
     }
 
     @Override
@@ -50,6 +51,11 @@ public record DryerRecipe(String group, Ingredient ingredient, ItemStack result,
     @Override
     public @NotNull RecipeBookCategory recipeBookCategory() {
         return RecipeBookCategories.CRAFTING_MISC;
+    }
+
+    @Override
+    public boolean showNotification() {
+        return false;
     }
 
     @Override

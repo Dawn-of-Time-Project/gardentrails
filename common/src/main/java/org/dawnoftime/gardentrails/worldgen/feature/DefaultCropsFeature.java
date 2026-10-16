@@ -11,28 +11,27 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 
-public class DefaultCropsFeature extends Feature<RandomPatchConfiguration> {
-    public DefaultCropsFeature(Codec<RandomPatchConfiguration> pCodec) {
+public class DefaultCropsFeature extends Feature<DefaultCropsConfiguration> {
+    public DefaultCropsFeature(Codec<DefaultCropsConfiguration> pCodec) {
         super(pCodec);
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<RandomPatchConfiguration> pContext) {
+    public boolean place(FeaturePlaceContext<DefaultCropsConfiguration> pContext) {
         WorldGenLevel level = pContext.level();
         ChunkGenerator generator = pContext.chunkGenerator();
         BlockPos pos = pContext.origin();
         RandomSource random = pContext.random();
 
-        RandomPatchConfiguration config = pContext.config();
+        DefaultCropsConfiguration config = pContext.config();
 
         FeatureConfiguration featureConfig = config.feature().value().feature().value().config();
         if(!(featureConfig instanceof SimpleBlockConfiguration))
             return false;
 
-        BlockState state = ((SimpleBlockConfiguration) featureConfig).toPlace().getState(random, pos);
+        BlockState state = ((SimpleBlockConfiguration) featureConfig).toPlace().getState(level, random, pos);
         int i = 0;
 
         for(int j = 0; j < config.tries(); ++j) {
@@ -57,7 +56,7 @@ public class DefaultCropsFeature extends Feature<RandomPatchConfiguration> {
         return i > 0;
     }
 
-    public BlockPos getPos(RandomSource random, BlockPos pos, RandomPatchConfiguration config) {
-        return pos.offset(random.nextInt(config.xzSpread()) - random.nextInt(config.xzSpread()), random.nextInt(config.ySpread()) - random.nextInt(config.ySpread()), random.nextInt(config.xzSpread()) - random.nextInt(config.xzSpread()));
+    public BlockPos getPos(RandomSource random, BlockPos pos, DefaultCropsConfiguration config) {
+        return pos.offset(random.nextInt(config.xzSpread() + 1) - random.nextInt(config.xzSpread() + 1), random.nextInt(config.ySpread() + 1) - random.nextInt(config.ySpread() + 1), random.nextInt(config.xzSpread() + 1) - random.nextInt(config.xzSpread() + 1));
     }
 }

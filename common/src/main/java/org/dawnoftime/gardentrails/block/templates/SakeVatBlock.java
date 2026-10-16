@@ -1,7 +1,7 @@
 package org.dawnoftime.gardentrails.block.templates;
 import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.cauldron.CauldronInteractions;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.world.item.Item;
@@ -92,7 +92,7 @@ public class SakeVatBlock extends AbstractCauldronBlock implements EntityBlock, 
     }
 
     public SakeVatBlock(Properties properties) {
-        super(properties, new CauldronInteraction.InteractionMap("sake_vat", Map.of()));
+        super(properties, CauldronInteractions.EMPTY);
         this.registerDefaultState(this.stateDefinition.any().setValue(LEVEL, 0).setValue(READY, false).setValue(FACING, Direction.NORTH));
     }
 

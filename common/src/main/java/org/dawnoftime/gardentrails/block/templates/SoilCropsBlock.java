@@ -152,7 +152,7 @@ public class SoilCropsBlock extends CropBlock implements IBlockGeneration {
     public boolean generateOnPos(WorldGenLevel world, BlockPos pos, BlockState state, RandomSource random) {
         final BlockState groundState = world.getBlockState(pos.below());
 
-        if(!groundState.is(BlockTags.DIRT)) {
+        if(!groundState.is(BlockTags.SUBSTRATE_OVERWORLD)) {
             return false;
         }
 

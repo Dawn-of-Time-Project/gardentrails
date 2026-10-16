@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
@@ -19,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public record FermentingRecipe(List<FermentingIngredient> ingredients, ItemStack result, int fermentingTime) implements Recipe<SimpleContainerRecipeInput> {
+public record FermentingRecipe(List<FermentingIngredient> ingredients, ItemStackTemplate result, int fermentingTime) implements Recipe<SimpleContainerRecipeInput> {
     public static final int INGREDIENT_COUNT = 3;
 
     public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return this.result;
+        return this.result.create();
     }
 
     public int getFermentingTime() {
@@ -82,8 +83,8 @@ public record FermentingRecipe(List<FermentingIngredient> ingredients, ItemStack
     }
 
     @Override
-    public @NotNull ItemStack assemble(@NotNull SimpleContainerRecipeInput input, @NotNull HolderLookup.Provider registries) {
-        return this.result.copy();
+    public @NotNull ItemStack assemble(@NotNull SimpleContainerRecipeInput input) {
+        return this.result.create();
     }
 
     @Override
@@ -104,6 +105,16 @@ public record FermentingRecipe(List<FermentingIngredient> ingredients, ItemStack
     @Override
     public @NotNull RecipeBookCategory recipeBookCategory() {
         return RecipeBookCategories.CRAFTING_MISC;
+    }
+
+    @Override
+    public @NotNull String group() {
+        return "";
+    }
+
+    @Override
+    public boolean showNotification() {
+        return false;
     }
 
     @Override

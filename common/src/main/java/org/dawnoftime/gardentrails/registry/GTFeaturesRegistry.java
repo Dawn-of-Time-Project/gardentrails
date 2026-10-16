@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
+import org.dawnoftime.gardentrails.worldgen.feature.DefaultCropsConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.dawnoftime.gardentrails.GTCommon;
@@ -38,8 +38,8 @@ public abstract class GTFeaturesRegistry {
     public final Supplier<Feature<SimpleBlockConfiguration>> DOT_FEATURE = register("dot_feature",
             () -> new GTFeature(SimpleBlockConfiguration.CODEC));
 
-    public final Supplier<Feature<RandomPatchConfiguration>> DEFAULT_CROPS = register("default_crops",
-            () -> new DefaultCropsFeature(RandomPatchConfiguration.CODEC));
+    public final Supplier<Feature<DefaultCropsConfiguration>> DEFAULT_CROPS = register("default_crops",
+            () -> new DefaultCropsFeature(DefaultCropsConfiguration.CODEC));
 
     public static ResourceKey<PlacedFeature> registerKey(String name) {
                 return ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, name));

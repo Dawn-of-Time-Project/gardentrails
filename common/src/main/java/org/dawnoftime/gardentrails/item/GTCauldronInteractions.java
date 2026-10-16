@@ -1,6 +1,6 @@
 package org.dawnoftime.gardentrails.item;
 
-import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -15,7 +15,7 @@ public class GTCauldronInteractions {
 
     /** Must be called after the items are registered (loader common setup). */
     public static void init() {
-        CauldronInteraction.WATER.map().put(GTBlocksRegistry.INSTANCE.RICE.get().asItem(), (state, level, pos, player, hand, stack) -> {
+        CauldronInteractions.WATER.put(GTBlocksRegistry.INSTANCE.RICE.get().asItem(), (state, level, pos, player, hand, stack) -> {
             if (!level.isClientSide()) {
                 int count = stack.getCount();
                 ItemStack washed = new ItemStack(GTItemsRegistry.INSTANCE.WASHED_RICE.get(), count);
