@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#c:crops/commelina",
+    "#c:crops/rice",
+    "#c:crops/maize"
+  ]
+}

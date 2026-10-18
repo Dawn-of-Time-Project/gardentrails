@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import org.dawnoftime.gardentrails.GTCommon;
 import org.dawnoftime.gardentrails.block.trees.MapleVariant;
 
@@ -31,7 +32,7 @@ public abstract class GTCreativeModeTabsRegistry {
 
         // ── Rotten Set ───────────────────────────────────────────────────────────
         output.accept(GTBlocksRegistry.INSTANCE.ROTTEN_OAK_LOG.get());
-        output.accept(GTBlocksRegistry.INSTANCE.SOAKED_OAK_LOG.get());
+        output.accept(GTBlocksRegistry.INSTANCE.DECAYED_OAK_LOG.get());
         output.accept(GTBlocksRegistry.INSTANCE.ROTTEN_OAK_PLANKS.get());
         output.accept(GTBlocksRegistry.INSTANCE.ROTTEN_OAK_STAIRS.get());
         output.accept(GTBlocksRegistry.INSTANCE.ROTTEN_OAK_SLAB.get());
@@ -40,6 +41,7 @@ public abstract class GTCreativeModeTabsRegistry {
         output.accept(GTBlocksRegistry.INSTANCE.ROTTEN_OAK_FENCE.get());
         output.accept(GTBlocksRegistry.INSTANCE.ROTTEN_OAK_FENCE_GATE.get());
         output.accept(GTBlocksRegistry.INSTANCE.ROTTEN_OAK_TRAPDOOR.get());
+        output.accept(GTBlocksRegistry.INSTANCE.ROTTEN_OAK_SAPLING.get());
 
         // ── Plants ──────────────────────────────────────────
         output.accept(GTBlocksRegistry.INSTANCE.CAMELLIA.get());
@@ -63,36 +65,12 @@ public abstract class GTCreativeModeTabsRegistry {
         }
 
         // ── Geranium ──────────────────────────────────────────────────────────────
-        output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_PINK.get());
-        output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_ORANGE.get());
-        output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_PURPLE.get());
-        output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_PURPLEISH.get());
-        output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_RED.get());
-        output.accept(GTBlocksRegistry.INSTANCE.GERANIUM_WHITE.get());
+        for (Supplier<Block> geranium : GTBlocksRegistry.INSTANCE.GERANIUMS.values()) {
+            output.accept(geranium.get());
+        }
 
         // ── Pots ──────────────────────────────────────────────────────────────
-        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PINK.get());
-        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_ORANGE.get());
-        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PURPLE.get());
-        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_PURPLEISH.get());
-        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_RED.get());
-        output.accept(GTBlocksRegistry.INSTANCE.PLANTER_GERANIUM_WHITE.get());
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("geranium_pink_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("geranium_orange_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("geranium_purple_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("geranium_purpleish_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("geranium_red_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("geranium_white_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("camellia_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("mulberry_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("commelina_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("cypress_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("ivy_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("grape_seeds_flower_pot"));
-        output.accept(GTBlocksRegistry.POT_BLOCKS.get("maize_flower_pot"));
-        for(MapleVariant variant : GTBlocksRegistry.INSTANCE.MAPLE_VARIANTS.values()) {
-            output.accept(GTBlocksRegistry.POT_BLOCKS.get("maple_" + variant.id() + "_sapling_flower_pot"));
-        }
+        output.accept(GTBlocksRegistry.INSTANCE.FLOWER_PLANTER.get());
 
         // ── Sake ──────────────────────────────────────────────────────────────
         output.accept(GTItemsRegistry.INSTANCE.TEA_LEAVES.get());
@@ -121,15 +99,7 @@ public abstract class GTCreativeModeTabsRegistry {
         output.accept(GTItemsRegistry.INSTANCE.SILK_COCOONS.get());
         output.accept(GTItemsRegistry.INSTANCE.SILK.get());
         output.accept(GTBlocksRegistry.INSTANCE.STICK_BUNDLE.get());
-        output.accept(GTBlocksRegistry.INSTANCE.BAMBOO_DRYING_TRAY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.OAK_DRYING_TRAY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.BIRCH_DRYING_TRAY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.SPRUCE_DRYING_TRAY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.JUNGLE_DRYING_TRAY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.ACACIA_DRYING_TRAY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.DARK_OAK_DRYING_TRAY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.MANGROVE_DRYING_TRAY.get());
-        output.accept(GTBlocksRegistry.INSTANCE.CHERRY_DRYING_TRAY.get());
+        GTBlocksRegistry.INSTANCE.DRYING_TRAYS.values().forEach(tray -> output.accept(tray.get()));
 
         // ── Quetzal ──────────────────────────────────────────────────────────────
         output.accept(GTItemsRegistry.INSTANCE.BLUE_PETALS.get());
@@ -142,6 +112,7 @@ public abstract class GTCreativeModeTabsRegistry {
         output.accept(GTItemsRegistry.INSTANCE.GREEN_ARROW.get());
         output.accept(GTItemsRegistry.INSTANCE.BLUE_ARROW.get());
         output.accept(GTItemsRegistry.INSTANCE.QUETZAL_ARROW.get());
+        output.accept(GTItemsRegistry.INSTANCE.ROTTEN_ARROW.get());
 
         // ── Entities ──────────────────────────────────────────────────────────────
         output.accept(BuiltInRegistries.ITEM.get(new ResourceLocation(GTCommon.MOD_ID, "quetzal_spawn_egg")));

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building_blocks",
+  "pattern": [
+    "STS"
+  ],
+  "key": {
+    "T": {
+      "item": "dawnoftimebuilder:thatch_bamboo_slab"
+    },
+    "S": {
+      "item": "gardentrails:silk"
+    }
+  },
+  "result": {
+    "item": "dawnoftimebuilder:small_tatami_mat",
+    "count": 1
+  }
+}

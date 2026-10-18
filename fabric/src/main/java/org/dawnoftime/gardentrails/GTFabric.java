@@ -24,8 +24,9 @@ public class GTFabric implements ModInitializer, ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        RegistryImpls.initClient();
+        RegistryImplsClient.initClient();
         RenderLayers.init();
         BiomeColorHandlers.init();
+        PlanterModels.init();
     }
 }

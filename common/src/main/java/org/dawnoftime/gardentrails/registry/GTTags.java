@@ -10,6 +10,8 @@ public abstract class GTTags {
     public static GTTags INSTANCE;
     //Block tags
     public final TagKey<Block> GRAVEL = registerBlock(new ResourceLocation("c", "gravel"));
+    // Farmland and the farmland of the other mods, the soil of the crops (data driven, other mods can add theirs)
+    public final TagKey<Block> CROP_SOILS = registerBlock(new ResourceLocation(GTCommon.MOD_ID, "crop_soils"));
     // Plants a garden mode quetzal can speed up
     public final TagKey<Block> QUETZAL_BOOSTED = registerBlock(new ResourceLocation(GTCommon.MOD_ID, "quetzal_boosted"));
     //Item tags

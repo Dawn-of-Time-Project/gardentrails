@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building_blocks",
+  "pattern": [
+    "TT",
+    "SS"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:stick"
+    },
+    "S": {
+      "item": "gardentrails:silk"
+    }
+  },
+  "result": {
+    "item": "dawnoftimebuilder:white_little_flag",
+    "count": 1
+  }
+}

@@ -14,6 +14,7 @@ import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
 import org.dawnoftime.gardentrails.registry.GTRecipeTypesRegistry;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -51,11 +52,7 @@ public class GTJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(new ItemStack(GTBlocksRegistry.INSTANCE.SAKE_VAT.get()), FermentingRecipeCategory.RECIPE_TYPE);
-        final GTBlocksRegistry blocks = GTBlocksRegistry.INSTANCE;
-        final List<Supplier<Block>> trays = List.of(
-                blocks.BAMBOO_DRYING_TRAY, blocks.OAK_DRYING_TRAY, blocks.BIRCH_DRYING_TRAY,
-                blocks.SPRUCE_DRYING_TRAY, blocks.JUNGLE_DRYING_TRAY, blocks.ACACIA_DRYING_TRAY,
-                blocks.DARK_OAK_DRYING_TRAY, blocks.MANGROVE_DRYING_TRAY, blocks.CHERRY_DRYING_TRAY);
+        final Collection<Supplier<Block>> trays = GTBlocksRegistry.INSTANCE.DRYING_TRAYS.values();
         for (Supplier<Block> tray : trays) {
             registration.addRecipeCatalyst(new ItemStack(tray.get()), DryingRecipeCategory.RECIPE_TYPE);
         }

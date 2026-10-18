@@ -126,7 +126,7 @@ public class SilkmothEntity extends AmbientCreature {
                     state = this.level().getBlockState(pos);
 
                     if(state.getBlock() == GTBlocksRegistry.INSTANCE.MULBERRY.get()){
-                        if(!((DoubleGrowingBushBlock) state.getBlock()).isBottomCrop(state)) listMulberry.add(pos);
+                        if(!((DoubleGrowingBushBlock) state.getBlock()).isBottomHalf(state)) listMulberry.add(pos);
                     }else if(isNight){
                         if(state.getLightEmission() >= 14) listLight.add(pos);
                     }

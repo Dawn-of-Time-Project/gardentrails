@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "BxB",
+    "R R"
+  ],
+  "key": {
+    "R": {
+      "item": "gardentrails:red_feather"
+    },
+    "B": {
+      "item": "minecraft:bone_block"
+    },
+    "x": {
+      "item": "minecraft:netherite_boots"
+    }
+  },
+  "result": {
+    "item": "armoroftheages:quetzalcoatl_armor_feet",
+    "count": 1
+  }
+}

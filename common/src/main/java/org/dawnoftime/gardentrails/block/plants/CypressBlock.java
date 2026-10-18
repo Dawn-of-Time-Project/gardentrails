@@ -75,7 +75,7 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
         } else if (!heldItemStack.isEmpty() && heldItemStack.getItem() == this.asItem()) {
             //We put a CypressBlock on top of the cypress
             final BlockPos topPos = this.getHighestCypressPos(worldIn, pos).above();
-            if (topPos.getY() <= Utils.HIGHEST_Y) {
+            if (topPos.getY() < worldIn.getMaxBuildHeight()) {
                 if (!worldIn.isClientSide() && worldIn.getBlockState(topPos).isAir()) {
                     worldIn.setBlock(topPos, this.defaultBlockState(), 11);
                     if (!player.isCreative()) {
@@ -90,7 +90,7 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
 
     private BlockPos getHighestCypressPos(final Level worldIn, final BlockPos pos) {
         int yOffset;
-        for (yOffset = 0; yOffset + pos.getY() <= Utils.HIGHEST_Y; yOffset++) {
+        for (yOffset = 0; yOffset + pos.getY() < worldIn.getMaxBuildHeight(); yOffset++) {
             if (worldIn.getBlockState(pos.above(yOffset)).getBlock() != this) {
                 break;
             }

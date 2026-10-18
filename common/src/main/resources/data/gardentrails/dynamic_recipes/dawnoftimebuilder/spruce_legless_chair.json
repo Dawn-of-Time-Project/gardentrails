@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building_blocks",
+  "pattern": [
+    "T  ",
+    "TSS",
+    "TTT"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:spruce_slab"
+    },
+    "S": {
+      "item": "gardentrails:silk"
+    }
+  },
+  "result": {
+    "item": "dawnoftimebuilder:spruce_legless_chair",
+    "count": 1
+  }
+}

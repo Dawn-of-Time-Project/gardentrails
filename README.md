@@ -28,21 +28,23 @@ No required dependency, and everything blends into vanilla. It also plays nicely
 
 ### Wild plants
 
-| Plant | Where to find it | What you get                                        |
-|---|---|-----------------------------------------------------|
-| **Boxwood Bush** | Forests | Edges (short and tall) to shape your garden         |
-| **Camellia** | Jungles, savannas, taigas | Leaves that dry into **tea**                        |
-| **Commelina** | Swamps, flower forests | A blue flower that dries into **blue petals**       |
-| **Cypress** | Savannas | A tall decorative tree-like plant                   |
-| **Geraniums** | Flower forests, meadows, birch forests | Six colors, dye, planters                           |
-| **Ivy** | Forests, dark forests | A climbing plant                            |
+| Plant | Where to find it | What you get                                             |
+|---|---|----------------------------------------------------------|
+| **Boxwood Bush** | Forests | Hedges (short and tall) to shape your garden             |
+| **Camellia** | Jungles, savannas, taigas | Leaves that dry into **tea**                             |
+| **Commelina** | Swamps, flower forests | A blue flower that dries into **blue petals**            |
+| **Cypress** | Savannas | A tall decorative tree-like plant                        |
+| **Geraniums** | Flower forests, meadows, birch forests | Six colors, dye, planters                                |
+| **Ivy** | Forests, dark forests | A climbing plant                                         |
 | **Mulberry** | Taigas | **Mulberry leaves** (silk) and **mulberry juice** (sake) |
-| **Rice** | Swamps | **Rice** for cooking and sake                       |
-| **Wild Grape** | Forests, dark forests | **Grapes** and **grape seeds**                      |
-| **Wild Maize** | Savannas, plains | **Maize**                                           |
-| **Maple trees** | Birch forests, dark forests | Red, orange and green autumn trees                  |
+| **Rice** | Swamps | **Rice** for cooking and sake                            |
+| **Wild Grape** | Forests, dark forests | **Grapes** and **grape seeds**                           |
+| **Wild Maize** | Savannas, plains | **Maize**                                                |
+| **Maple trees** | Birch forests, dark forests, Maple Woods (Biomes O' Plenty) | Red, orange and green autumn trees                       |
 
-> Every biome list is editable in the [config](#configuration).
+Plants also spawn in the biomes of popular biome mods (see [Compatibility](#compatibility)), so they keep appearing in modpacks that replace the vanilla biomes.
+
+> The biome list of every plant is a datapack tag, and you can add biomes to it in the [config](#configuration).
 
 <div align="center"><img src="https://i.imgur.com/yhha6Zo.png"></div>
 
@@ -84,7 +86,7 @@ Sake is brewed in the **Sake Vat**. Each batch needs **three ingredients**, pour
 3. Mix cooked rice with **mold** to get *moldy rice*.
 4. **Dry** moldy rice on a drying tray. You get **fermented rice**.
 
-> **Where does mold come from?** Look for the **rotten tree** in swamps and **brush** the rotten oak log with a vanilla brush.
+> **Where does mold come from?** Look for the **rotten tree** in swamps (vanilla and modded swamp biomes) and **brush** the rotten oak log with a vanilla brush. You can also grow your own source: see [Rotten wood](#rotten-wood).
 
 **Step 2, fill the vat**
 
@@ -104,6 +106,39 @@ Each sake gives a **1 minute boost** followed by a short penalty. Drink several 
 
 Found in the **rotten tree** structure in swamps. Rotten oak logs can be crafted into a full set of decorative blocks (planks, stairs, slab, edge, plate, fence, fence gate, trapdoor).
 
+**Grow your own mold.** Craft a **Rotten Oak Sapling** with an oak sapling and **mold**. It grows an oak shaped tree made of rotten oak logs, and you can **brush** those logs again and again to collect more mold. No need to travel back to the swamp.
+
+### Flower pots and planters
+
+- **Flower pot:** put a plant on an empty vanilla flower pot to get the potted version, and use an empty hand to take the plant back. This works with the plants of Garden Trails, vanilla and other mods. The tooltip of a plant tells you if it fits in a pot.
+- **Flower Planter:** a wider flower pot made of bricks (6 bricks). Place it against a wall, on the lower or upper half of a block. It holds any plant a flower pot can hold, shown with the same model as in the pot. Put a geranium in it to get the planter with hanging leaves.
+
+### Arrows
+
+Five arrows, each craft gives 4 arrows.
+
+- **Red, Green, Blue Arrow:** more damage than a regular arrow.
+- **Quetzal Arrow:** far more damage than a regular arrow.
+- **Rotten Arrow:** less damage than a regular arrow, inflicts **Poison and Hunger** for 5 seconds.
+
+<div align="center"><img src="https://i.imgur.com/yhha6Zo.png"></div>
+
+## Chest generation
+
+Garden Trails items can be found in the chests of vanilla structures. The chance is the probability that the chest gets the item. Each line can be turned off in the [config](#configuration), or all of them with `generateChestLoot`.
+
+| Structure (chest) | Item | Chance |
+|---|---|---|
+| Shipwreck (treasure) | Silk | 100% |
+| Shipwreck (supply) | Grapes, maize, rice, mulberry | 20% each |
+| Plains village house | Grapes | 50% |
+| Savanna village house | Maize | 50% |
+| Taiga village house | Rice, mulberry | 50% each |
+| Simple dungeon | Mold | 5% |
+| Stronghold (library, corridor, crossing) | Mold | 5% |
+| Jungle temple | One colored arrow (red, green or blue) | 25% |
+| Jungle temple | One colored feather (red, green or blue) | 50% |
+
 <div align="center"><img src="https://i.imgur.com/yhha6Zo.png"></div>
 
 ## Entities
@@ -112,7 +147,7 @@ Found in the **rotten tree** structure in swamps. Rotten oak logs can be crafted
 A small flying insect that spawns around **mulberry plants**. It lives about 20 minutes and drops silk worm eggs while it flies. It is the starting point of the [silk chain](#-silk).
 
 ### Quetzal
-A colorful bird that lives in **jungles**.
+A colorful bird that lives in **jungles** (and the jungle biomes of the supported biome mods).
 
 | Action | Result |
 |---|---|
@@ -126,15 +161,26 @@ A colorful bird that lives in **jungles**.
 
 ## Compatibility
 
-| Mod | What changes |
-|---|---|
-| [Dawn of Time](https://www.curseforge.com/minecraft/mc-mods/dawn-of-time) | Some futon, tatami, chair, flag and cushion recipes use **silk** |
-| [Armor of the Ages](https://www.curseforge.com/minecraft/mc-mods/armor-of-the-ages) | Several armor recipes use **silk**. The Quetzalcoatl armor uses **Quetzal feathers**. Wearing the Quetzalcoatl chestplate with a Quetzal on your shoulder gives **Reunited Brothers**: Quetzal Trust speed plus reduced damage |
-| [Critters and Companions](https://www.curseforge.com/minecraft/mc-mods/critters-and-companions) | Silk, silk lead and grappling hook recipes |
-| [Let's Do Vinery](https://www.curseforge.com/minecraft/mc-mods/lets-do-vinery) | Garden Trails grapes can be crafted into a red grape bag |
-| [Farmer's Delight](https://www.curseforge.com/minecraft/mc-mods/farmers-delight) | Rice can be crafted into a bag of rice, and works on its rich soil |
-| Aether, Immersive Weathering | Plants can grow on their farmland |
-| **JEI** | Dedicated **Drying** and **Fermenting** recipe categories |
+- [Dawn of Time](https://www.curseforge.com/minecraft/mc-mods/dawn-of-time): some futon, tatami, chair, flag and cushion recipes use **silk**.
+- [Armor of the Ages](https://www.curseforge.com/minecraft/mc-mods/armor-of-the-ages): several armor recipes use **silk**. The Quetzalcoatl armor uses **Quetzal feathers**. Wearing the Quetzalcoatl chestplate with a Quetzal on your shoulder gives **Reunited Brothers**: Quetzal Trust speed plus reduced damage.
+- [Critters and Companions](https://www.curseforge.com/minecraft/mc-mods/critters-and-companions): silk, silk lead and grappling hook recipes.
+- [Let's Do Vinery](https://www.curseforge.com/minecraft/mc-mods/lets-do-vinery): Garden Trails grapes can be crafted into a red grape bag.
+- [Farmer's Delight](https://www.curseforge.com/minecraft/mc-mods/farmers-delight): rice can be crafted into a bag of rice, and works on its rich soil.
+- [Farmer's Respite](https://modrinth.com/mod/farmers-respite): **tea leaves** can be used in the kettle to brew dandelion tea, like the Farmer's Respite tea leaves (Forge only).
+- [Upgrade Aquatic](https://modrinth.com/mod/upgrade-aquatic): the **mulberry** is added to the `forge:fruits/mulberry` tag, so mods that read this tag recognize it as a mulberry (Forge only).
+- Aether, Immersive Weathering: plants can grow on their farmland.
+- [JEI](https://modrinth.com/mod/jei): dedicated **Drying** and **Fermenting** recipe categories.
+
+### Biome mods
+
+Wild plants, the quetzal and the rotten tree also spawn in the biomes of these mods, so Garden Trails keeps working in modpacks that replace the vanilla biomes. Every category is covered (swamps, jungles, flower forests, forests, taigas, savannas, plains and more). The red and orange maple trees also grow in the **Maple Woods** of Biomes O' Plenty.
+
+- [Terralith](https://modrinth.com/mod/terralith)
+- [Biomes O' Plenty](https://modrinth.com/mod/biomes-o-plenty)
+- [Regions Unexplored](https://modrinth.com/mod/regions-unexplored)
+- [Oh The Biomes We've Gone](https://modrinth.com/mod/oh-the-biomes-weve-gone)
+- [Atmospheric](https://modrinth.com/mod/atmospheric)
+- [Nature's Spirit](https://modrinth.com/mod/natures-spirit)
 
 Everything is **datadriven**. The tags `gardentrails:quetzal_boosted`, `gardentrails:tameable_birds` and `gardentrails:quetzal_bond_chest` let modpack authors add their own plants, birds and chestplates. The `gardentrails:fermenting` and `gardentrails:dryer` recipe types can be used in datapacks.
 
@@ -148,16 +194,24 @@ The config file is `config/gardentrails-config.txt`, generated on first launch. 
 |---|---|
 | `generateChestLoot` | Adds Garden Trails items to vanilla chest loot |
 | `generateSilk`, `generateGrapes`, `generateMaize`, `generateRice`, `generateMulberry` | Toggles the matching loot additions |
+| `generateMold` | Mold in simple dungeon chests (5%) and stronghold chests (5%) |
+| `generateArrows`, `generateFeathers` | Colored arrows (25%) and colored feathers (50%) in jungle temple chests |
 | `dawnOfTimeUseSilk` | Enables the silk recipes for Dawn of Time |
 | `armorOfTheAgesUseSilk` | Enables the silk recipes for Armor of the Ages |
 | `armorOfTheAgesUseQuetzalFeathers` | Makes the Quetzalcoatl armor recipes use Garden Trails feathers |
-| `<plant>_biomes` | Comma separated list of biome IDs where the plant spawns |
+| `<plant>_enabled` | `false` stops the plant from spawning (also works for `quetzal`) |
+| `<plant>_extra_biomes` | Comma separated list of biome IDs added on top of the plant's default biomes |
 
-Biome IDs use the full form `namespace:biome_name`, so biomes from other mods can be added (for example `byg:jacaranda_forest`). IDs from mods that are not installed are ignored. To stop a plant from spawning, leave the list empty:
+Each plant has only these two keys, for example:
 
 ```
-boxwood_bush_biomes=
+boxwood_bush_enabled=true
+boxwood_bush_extra_biomes=byg:jacaranda_forest,mymod:my_biome
 ```
+
+Biome IDs use the full form `namespace:biome_name`. IDs from mods that are not installed are ignored. The default biomes of each plant and of the quetzal are datapack tags (`data/gardentrails/tags/worldgen/biome/has_<plant>.json`): the config can only add biomes, so to remove some, override the tag with a datapack.
+
+> The layout of the config file changed. If you come from an older version, delete your old `gardentrails-config.txt` to generate the new one.
 
 <div align="center"><img src="https://i.imgur.com/yhha6Zo.png"></div>
 
@@ -165,7 +219,7 @@ boxwood_bush_biomes=
 
 - **Development, models and textures** by [Poulpinou](https://github.com/PierreChag) & [TheGoldenWorld](https://github.com/TheGoldenWorld).
 - **Maple tree** by *Knoxxturre*.
-- **Quetzal bird** by *Hadrim*
+- **Quetzal bird** by *Hahdrim*
 - **Our community:** thank you all for constantly helping us improve the mod. ❤️
 
 Garden Trails is released under the [MIT License](LICENSE.md).

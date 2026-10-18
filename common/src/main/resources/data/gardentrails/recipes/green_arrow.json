@@ -6,7 +6,7 @@
 		"P  "
 	],
 	"key": {
-		"F": {"item": "minecraft:flint"},
+		"F": {"item": "minecraft:iron_nugget"},
 		"S": {"item": "minecraft:stick"},
 		"P": {"item": "gardentrails:green_feather"}
 	},

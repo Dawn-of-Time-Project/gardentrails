@@ -1,7 +1,9 @@
 package org.dawnoftime.gardentrails.platform;
 
-import org.dawnoftime.gardentrails.GTConfig;
-import org.dawnoftime.gardentrails.GTConfigLoader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import org.dawnoftime.gardentrails.blockentity.FlowerPlanterBlockEntity;
+import org.dawnoftime.gardentrails.FlowerPlanterBlockEntityForge;
 import org.dawnoftime.gardentrails.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
 
@@ -13,7 +15,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public GTConfig getConfig() {
-        return GTConfigLoader.INSTANCE;
+    public FlowerPlanterBlockEntity createFlowerPlanterBlockEntity(BlockPos pos, BlockState state) {
+        return new FlowerPlanterBlockEntityForge(pos, state);
     }
 }

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "SPS",
+    "L L"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:leather_leggings"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "S": {
+      "item": "gardentrails:silk"
+    }
+  },
+  "result": {
+    "item": "armoroftheages:japanese_light_armor_legs",
+    "count": 1
+  }
+}

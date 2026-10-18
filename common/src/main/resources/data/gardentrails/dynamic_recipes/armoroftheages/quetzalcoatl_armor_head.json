@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "GGG",
+    "RoR",
+    "ivi"
+  ],
+  "key": {
+    "G": {
+      "item": "gardentrails:green_feather"
+    },
+    "R": {
+      "item": "gardentrails:red_feather"
+    },
+    "o": {
+      "item": "minecraft:netherite_helmet"
+    },
+    "i": {
+      "item": "minecraft:gold_ingot"
+    },
+    "v": {
+      "item": "minecraft:skeleton_skull"
+    }
+  },
+  "result": {
+    "item": "armoroftheages:quetzalcoatl_armor_head",
+    "count": 1
+  }
+}

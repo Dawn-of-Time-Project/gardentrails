@@ -15,24 +15,6 @@ import org.dawnoftime.gardentrails.worldgen.feature.GTFeature;
 import java.util.function.Supplier;
 
 public abstract class GTFeaturesRegistry {
-    public static final ResourceKey<PlacedFeature> CAMELLIA_PLACED_KEY = registerKey("camellia_placed");
-    public static final ResourceKey<PlacedFeature> COMMELINA_PLACED_KEY = registerKey("commelina_placed");
-    public static final ResourceKey<PlacedFeature> CYPRESS_PLACED_KEY = registerKey("cypress_placed");
-    public static final ResourceKey<PlacedFeature> RED_MAPLE_PLACED_KEY = registerKey("red_maple_placed");
-    public static final ResourceKey<PlacedFeature> ORANGE_MAPLE_PLACED_KEY = registerKey("orange_maple_placed");
-    public static final ResourceKey<PlacedFeature> GREEN_MAPLE_PLACED_KEY = registerKey("green_maple_placed");
-    public static final ResourceKey<PlacedFeature> BOXWOOD_BUSH_PLACED_KEY = registerKey("boxwood_bush_placed");
-    public static final ResourceKey<PlacedFeature> MULBERRY_PLACED_KEY = registerKey("mulberry_placed");
-    public static final ResourceKey<PlacedFeature> RICE_PLACED_KEY = registerKey("rice_placed");
-    public static final ResourceKey<PlacedFeature> WILD_GRAPE_PLACED_KEY = registerKey("wild_grape_placed");
-    public static final ResourceKey<PlacedFeature> WILD_MAIZE_PLACED_KEY = registerKey("wild_maize_placed");
-    public static final ResourceKey<PlacedFeature> GERANIUM_PINK_PLACED_KEY = registerKey("geranium_pink_placed");
-    public static final ResourceKey<PlacedFeature> GERANIUM_ORANGE_PLACED_KEY = registerKey("geranium_orange_placed");
-    public static final ResourceKey<PlacedFeature> GERANIUM_PURPLE_PLACED_KEY = registerKey("geranium_purple_placed");
-    public static final ResourceKey<PlacedFeature> GERANIUM_PURPLEISH_PLACED_KEY = registerKey("geranium_purpleish_placed");
-    public static final ResourceKey<PlacedFeature> GERANIUM_RED_PLACED_KEY = registerKey("geranium_red_placed");
-    public static final ResourceKey<PlacedFeature> GERANIUM_WHITE_PLACED_KEY = registerKey("geranium_white_placed");
-    public static final ResourceKey<PlacedFeature> IVY_PLACED_KEY = registerKey("ivy_placed");
     public static GTFeaturesRegistry INSTANCE;
 
     public final Supplier<Feature<SimpleBlockConfiguration>> DOT_FEATURE = register("dot_feature",
@@ -40,6 +22,11 @@ public abstract class GTFeaturesRegistry {
 
     public final Supplier<Feature<RandomPatchConfiguration>> DEFAULT_CROPS = register("default_crops",
             () -> new DefaultCropsFeature(RandomPatchConfiguration.CODEC));
+
+    /** Placed feature of a plant of GTConfig.PLANTS, the json is data/gardentrails/worldgen/placed_feature/{plant}_placed.json. */
+    public static ResourceKey<PlacedFeature> placedKeyOf(String plant) {
+        return registerKey(plant + "_placed");
+    }
 
     public static ResourceKey<PlacedFeature> registerKey(String name) {
                 return ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(GTCommon.MOD_ID, name));

@@ -87,7 +87,7 @@ public class DryerRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public @NotNull ItemStack getToastSymbol() {
-        return new ItemStack(GTBlocksRegistry.INSTANCE.BAMBOO_DRYING_TRAY.get());
+        return new ItemStack(GTBlocksRegistry.INSTANCE.DRYING_TRAYS.get("bamboo").get());
     }
 
     @Override

@@ -9,6 +9,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -28,16 +29,16 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
+import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import org.dawnoftime.gardentrails.entity.QuetzalEntity;
 import org.dawnoftime.gardentrails.entity.SilkmothEntity;
-import org.dawnoftime.gardentrails.item.IHasFlowerPot;
 import org.dawnoftime.gardentrails.item.IconItem;
 import org.dawnoftime.gardentrails.registry.*;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -56,10 +57,6 @@ public class RegistryImpls {
     public static class ForgeBlocksRegistry extends GTBlocksRegistry {
         public static final DeferredRegister<Block> BLOCKS_REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, GTCommon.MOD_ID);
         public static final DeferredRegister<Item> BLOCK_ITEMS_REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, GTCommon.MOD_ID);
-        public ForgeBlocksRegistry() {
-            postRegister();
-        }
-
         @SafeVarargs
         @Override
         public final <T extends Block, Y extends Item> Supplier<T> registerWithItem(String id, Supplier<T> block, Function<T, Y> item, TagKey<Block>... tags) {
@@ -67,38 +64,16 @@ public class RegistryImpls {
             if(item != null) {
                 BLOCK_ITEMS_REGISTRY.register(id, () -> item.apply(registryBlock.get()));
             }
-            if(tags.length == 0){
-                addBlockTag(registryBlock, BlockTags.MINEABLE_WITH_PICKAXE);
-            }else{
-                for (TagKey<Block> tag : tags) {
-                    addBlockTag(registryBlock, tag);
-                }
-            }
             return registryBlock;
         }
 
         @Override
-        public <T extends Block, Y extends Item & IHasFlowerPot> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item) {
+        public <T extends Block, Y extends Item> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item, @Nullable IBiomeColoredBlock.ColorType potColor) {
             RegistryObject<T> registryBlock = BLOCKS_REGISTRY.register(blockID, block);
             if (item != null) {
-                final String potName = blockID + "_flower_pot";
-
-                Supplier<FlowerPotBlockGT> potBlockObject = this.register(potName, () -> {
-                    final FlowerPotBlockGT potBlock = new FlowerPotBlockGT(null);
-                    POT_BLOCKS.put(potName, potBlock);
-                    return potBlock;
-                }, BlockTags.MINEABLE_WITH_PICKAXE);
-
-                BLOCK_ITEMS_REGISTRY.register(itemID, () -> {
-                    var item1 = item.apply(registryBlock.get());
-                    FlowerPotBlockGT potBlock = potBlockObject.get();
-
-                    item1.setPotBlock(potBlock);
-                    potBlock.setItemInPot(item1);
-                    return item1;
-                });
+                BLOCK_ITEMS_REGISTRY.register(itemID, () -> item.apply(registryBlock.get()));
             }
-            addBlockTag(registryBlock, BlockTags.SWORD_EFFICIENT);
+            this.registerPot(blockID, registryBlock, potColor);
             return registryBlock;
         }
     }
@@ -132,11 +107,9 @@ public class RegistryImpls {
     public static class ForgeItemsRegistry extends GTItemsRegistry {
         public static final DeferredRegister<Item> ITEMS_REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, GTCommon.MOD_ID);
 
-        public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new ForgeSpawnEggItem(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY, 0xDBD8BD, 0xFEFEFC, new Item.Properties()));
-        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new ForgeSpawnEggItem(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY, 0xFFFFFF, 0xFFFFFF, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
-
-        public ForgeItemsRegistry() {
-            postRegister();
+        @Override
+        protected Item createSpawnEgg(Supplier<? extends EntityType<? extends Mob>> entityType, int backgroundColor, int highlightColor, Item.Properties properties) {
+            return new ForgeSpawnEggItem(entityType, backgroundColor, highlightColor, properties);
         }
 
         @Override
@@ -144,31 +117,6 @@ public class RegistryImpls {
             return ITEMS_REGISTRY.register(name, itemSupplier);
         }
 
-        @Override
-        public <T extends Item & IHasFlowerPot> Supplier<Item> registerWithFlowerPot(String name, Supplier<T> itemSupplier) {
-            return registerWithFlowerPot(name, name, itemSupplier);
-        }
-
-        @Override
-        public <T extends Item & IHasFlowerPot> Supplier<Item> registerWithFlowerPot(String plantName, String seedName, Supplier<T> itemSupplier) {
-            final String potName = plantName + "_flower_pot";
-
-            Supplier<FlowerPotBlockGT> potBlockObject = GTBlocksRegistry.INSTANCE.register(potName, () -> {
-                final FlowerPotBlockGT potBlock = new FlowerPotBlockGT(null);
-                GTBlocksRegistry.POT_BLOCKS.put(potName, potBlock);
-                return potBlock;
-            }, BlockTags.MINEABLE_WITH_PICKAXE);
-
-            return this.register(seedName, () -> {
-                T item = itemSupplier.get();
-                FlowerPotBlockGT potBlock = potBlockObject.get();
-
-                item.setPotBlock(potBlock);
-                potBlock.setItemInPot(item);
-
-                return item;
-            });
-        }
     }
 
     public static class ForgeRecipeSerializersRegistry extends GTRecipeSerializersRegistry {
@@ -218,7 +166,9 @@ public class RegistryImpls {
         ForgeMobEffectsRegistry.MOB_EFFECTS_REGISTRY.register(bus);
 
         GTBlocksRegistry.INSTANCE = new ForgeBlocksRegistry();
+        GTBlocksRegistry.INSTANCE.registerAll();
         GTItemsRegistry.INSTANCE = new ForgeItemsRegistry();
+        GTItemsRegistry.INSTANCE.registerAll();
         GTBlockEntitiesRegistry.INSTANCE = new ForgeBlockEntitiesRegistry();
         GTFeaturesRegistry.INSTANCE = new ForgeFeaturesRegistry();
         GTRecipeSerializersRegistry.INSTANCE = new ForgeRecipeSerializersRegistry();

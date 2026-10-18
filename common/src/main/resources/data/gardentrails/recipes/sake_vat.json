@@ -1,13 +1,14 @@
 {
 	"type": "minecraft:crafting_shaped",
 	"pattern": [
-		"S S",
-		"III",
+		"SXS",
+		"I I",
 		"SSS"
 	],
 	"key": {
 		"S": { "item": "minecraft:spruce_planks" },
-		"I": { "item": "minecraft:iron_ingot" }
+		"I": { "item": "minecraft:iron_ingot" },
+		"X": { "item": "minecraft:glass_pane" }
 	},
 	"result": { "item": "gardentrails:sake_vat", "count": 1 }
 }

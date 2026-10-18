@@ -1,7 +1,6 @@
 package org.dawnoftime.gardentrails.block.templates;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -14,36 +13,38 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 import org.dawnoftime.gardentrails.block.IBlockGeneration;
-import org.dawnoftime.gardentrails.block.IFlammable;
 import org.jetbrains.annotations.NotNull;
 
-public class BushBlockGT extends BushBlock implements IBlockGeneration, IFlammable, BonemealableBlock {
-    private final VoxelShape[] shapes;
+import javax.annotation.Nullable;
 
-    public BushBlockGT(final Properties properties, VoxelShape[] shapes) {
+public class BushBlockGT extends BushBlock implements IBlockGeneration, BonemealableBlock, IBiomeColoredBlock {
+    private final VoxelShape[] shapes;
+    @Nullable
+    private final ColorType colorType;
+
+    public BushBlockGT(final Properties properties, VoxelShape[] shapes, @Nullable final ColorType colorType) {
         super(properties);
         this.shapes = shapes;
+        this.colorType = colorType;
+    }
+
+    public BushBlockGT(final Properties properties, VoxelShape[] shapes) {
+        this(properties, shapes, null);
+    }
+
+    @Override
+    @Nullable
+    public ColorType getColorType() {
+        return this.colorType;
     }
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return this.shapes[0];
-    }
-
-    @Override
-    public int getFireSpreadSpeed(final BlockState state, final BlockGetter world, final BlockPos pos, final Direction face) {
-        int fireSpreadSpeed = 0;
-        return state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) ? 0 : fireSpreadSpeed;
-    }
-
-    @Override
-    public int getFlammability(final BlockState state, final BlockGetter world, final BlockPos pos, final Direction face) {
-        int fireDestructionSpeed = 0;
-        return state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) ? 0 : fireDestructionSpeed;
     }
 
     @Override

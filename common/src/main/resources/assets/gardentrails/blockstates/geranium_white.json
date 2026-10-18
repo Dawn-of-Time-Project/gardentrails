@@ -1,5 +1,5 @@
 {
-    "variants": {
-        "": { "model": "gardentrails:block/geranium_white" }
-    }
+	"variants": {
+		"": { "model": "gardentrails:block/geranium_white" }
+	}
 }
