@@ -6,23 +6,21 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 import org.dawnoftime.gardentrails.block.plants.*;
 import org.dawnoftime.gardentrails.block.trees.*;
 import org.dawnoftime.gardentrails.block.templates.*;
-import org.dawnoftime.gardentrails.item.IHasFlowerPot;
-import org.dawnoftime.gardentrails.item.templates.PotAndBlockItem;
+import org.dawnoftime.gardentrails.item.templates.PottablePlantItem;
 import org.dawnoftime.gardentrails.item.templates.SoilSeedsItem;
 import org.dawnoftime.gardentrails.util.Foods;
+import org.dawnoftime.gardentrails.util.GTBlockStateProperties.ClimbingPlant;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.ToIntFunction;
 
 import static org.dawnoftime.gardentrails.util.VoxelShapes.*;
 
@@ -30,126 +28,134 @@ import static org.dawnoftime.gardentrails.util.VoxelShapes.*;
 public abstract class GTBlocksRegistry {
     public static GTBlocksRegistry INSTANCE;
 
-    public static Map<TagKey<Block>, Set<Supplier<Block>>> blockTagsMap = new HashMap<>();
-    public static final HashMap<String, Block> POT_BLOCKS = new HashMap<>();
+    // Plants that have a potted version, read by the item tooltips
+    public static final Set<Block> POTTABLE_PLANTS = new HashSet<>();
+    // Blocks that need a non solid render layer, read by the client code of the loaders that cannot get it from the model json (Fabric).
+    public static final List<Supplier<? extends Block>> CUTOUT_BLOCKS = new ArrayList<>();
+    public static final List<Supplier<? extends Block>> TRANSLUCENT_BLOCKS = new ArrayList<>();
+    // Burn odds per block, applied by each loader with its own fire API
+    public static final Map<Supplier<? extends Block>, FireValues> FLAMMABLE_BLOCKS = new LinkedHashMap<>();
+
+    /** How fast fire spreads to the block and how fast it destroys it (planks: 5 and 20). */
+    public record FireValues(int spread, int destruction) {}
 
     public Supplier<Block> CYPRESS;
-    public final Supplier<Block> BOXWOOD_BUSH = register("boxwood_bush", () -> new BiomeColoredBushBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES), BUSH_SHAPES, IBiomeColoredBlock.ColorType.FOLIAGE), BlockTags.SWORD_EFFICIENT);
-    public final Supplier<Block> BOXWOOD_TALL_HEDGE = register("boxwood_tall_hedge", () -> new BiomeColoredPlateBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES), IBiomeColoredBlock.ColorType.FOLIAGE), BlockTags.SWORD_EFFICIENT);
-    public final Supplier<Block> BOXWOOD_SMALL_HEDGE = register("boxwood_small_hedge", () -> new BiomeColoredEdgeBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES), IBiomeColoredBlock.ColorType.FOLIAGE), BlockTags.SWORD_EFFICIENT);
+    // Grape seeds have no block, so vanilla pots cannot hold them: this pot swaps in through PotItem
+    public Supplier<Block> GRAPE_SEEDS_POT;
+    public Supplier<Block> BOXWOOD_BUSH;
+    public Supplier<Block> BOXWOOD_TALL_HEDGE;
+    public Supplier<Block> BOXWOOD_SMALL_HEDGE;
     public Supplier<Block> IVY;
-    public Supplier<Block> GERANIUM_PINK;
-    public Supplier<Block> GERANIUM_ORANGE;
-    public Supplier<Block> GERANIUM_PURPLE;
-    public Supplier<Block> GERANIUM_PURPLEISH;
-    public Supplier<Block> GERANIUM_RED;
-    public Supplier<Block> GERANIUM_WHITE;
-    public final Supplier<Block> PLANTER_GERANIUM_PINK = register("planter_geranium_pink", () -> new PlanterBlock(Block.Properties.ofFullCopy(Blocks.CLAY).strength(0.6F).noOcclusion()));
-    public final Supplier<Block> PLANTER_GERANIUM_ORANGE = register("planter_geranium_orange", () -> new PlanterBlock(Block.Properties.ofFullCopy(Blocks.CLAY).strength(0.6F).noOcclusion()));
-    public final Supplier<Block> PLANTER_GERANIUM_PURPLE = register("planter_geranium_purple", () -> new PlanterBlock(Block.Properties.ofFullCopy(Blocks.CLAY).strength(0.6F).noOcclusion()));
-    public final Supplier<Block> PLANTER_GERANIUM_PURPLEISH = register("planter_geranium_purpleish", () -> new PlanterBlock(Block.Properties.ofFullCopy(Blocks.CLAY).strength(0.6F).noOcclusion()));
-    public final Supplier<Block> PLANTER_GERANIUM_RED = register("planter_geranium_red", () -> new PlanterBlock(Block.Properties.ofFullCopy(Blocks.CLAY).strength(0.6F).noOcclusion()));
-    public final Supplier<Block> PLANTER_GERANIUM_WHITE = register("planter_geranium_white", () -> new PlanterBlock(Block.Properties.ofFullCopy(Blocks.CLAY).strength(0.6F).noOcclusion()));
-    public final Supplier<Block> WILD_GRAPE = register("wild_grape", () -> new WildPlantBlock(Block.Properties.ofFullCopy(Blocks.DANDELION)), BlockTags.SWORD_EFFICIENT);
-    public final Supplier<Block> BAMBOO_DRYING_TRAY = register("bamboo_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> OAK_DRYING_TRAY = register("oak_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> BIRCH_DRYING_TRAY = register("birch_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(Blocks.BIRCH_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ACACIA_DRYING_TRAY = register("acacia_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(Blocks.ACACIA_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> MANGROVE_DRYING_TRAY = register("mangrove_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(Blocks.MANGROVE_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> JUNGLE_DRYING_TRAY = register("jungle_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(Blocks.JUNGLE_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> CHERRY_DRYING_TRAY = register("cherry_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(Blocks.CHERRY_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> DARK_OAK_DRYING_TRAY = register("dark_oak_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(Blocks.DARK_OAK_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> SPRUCE_DRYING_TRAY = register("spruce_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_PLANKS).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> SAKE_VAT = register("sake_vat", () -> new SakeVatBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_PLANKS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE);
-    public Supplier<ColoredGrowingBushBlock> CAMELLIA;
+    public final Map<GeraniumColor, Supplier<Block>> GERANIUMS = new EnumMap<>(GeraniumColor.class);
+    public Supplier<Block> FLOWER_PLANTER;
+    public Supplier<Block> WILD_GRAPE;
+    // Drying trays by wood id, in creative tab order. The bamboo tray copies the oak planks.
+    public final Map<String, Supplier<Block>> DRYING_TRAYS = new LinkedHashMap<>();
+    public Supplier<Block> SAKE_VAT;
+    public Supplier<GrowingBushBlock> CAMELLIA;
     public Supplier<MulberryBlock> MULBERRY;
-    public final Supplier<WaterDoubleCropsBlock> RICE = registerWithItem("rice", () -> new WaterDoubleCropsBlock(2), (block) -> new SoilSeedsItem(block, Foods.RICE, "lore.gardentrails.rice", "block.minecraft.cauldron"), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> STICK_BUNDLE = register("stick_bundle", () -> new StickBundleBlock(Block.Properties.ofFullCopy(Blocks.OAK_WOOD).strength(2.0F, 3.0F).sound(SoundType.GRASS).noOcclusion()).setBurnable(), BlockTags.MINEABLE_WITH_AXE);
-    // Declared before the rotten log: the rotten log turns into it once brushed
-    // Properties come from the planks: the vanilla log properties read an axis state these blocks do not have
-    public final Supplier<Block> SOAKED_OAK_LOG = register("soaked_oak_log", () -> new SoakedLogBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ROTTEN_OAK_LOG = register("rotten_oak_log", () -> new MoldyLogBlock(SOAKED_OAK_LOG.get(), Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ROTTEN_OAK_PLANKS = register("rotten_oak_planks", () -> new Block(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ROTTEN_OAK_STAIRS = register("rotten_oak_stairs", () -> new StairBlockGT(ROTTEN_OAK_PLANKS.get().defaultBlockState(), Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ROTTEN_OAK_SLAB = register("rotten_oak_slab", () -> new SlabBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ROTTEN_OAK_EDGE = register("rotten_oak_edge", () -> new EdgeBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ROTTEN_OAK_PLATE = register("rotten_oak_plate", () -> new PlateBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ROTTEN_OAK_FENCE = register("rotten_oak_fence", () -> new FenceBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ROTTEN_OAK_FENCE_GATE = register("rotten_oak_fence_gate", () -> new FenceGateBlock(WoodType.OAK, Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
-    public final Supplier<Block> ROTTEN_OAK_TRAPDOOR = register("rotten_oak_trapdoor", () -> new TrapDoorBlockGT(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion(), BlockSetType.OAK), BlockTags.MINEABLE_WITH_AXE);
+    public Supplier<RottenOakSaplingBlock> ROTTEN_OAK_SAPLING;
+    public Supplier<WaterDoubleCropsBlock> RICE;
+    public Supplier<Block> STICK_BUNDLE;
+    public Supplier<Block> DECAYED_OAK_LOG;
+    public Supplier<Block> ROTTEN_OAK_LOG;
+    public Supplier<Block> ROTTEN_OAK_PLANKS;
+    public Supplier<Block> ROTTEN_OAK_STAIRS;
+    public Supplier<Block> ROTTEN_OAK_SLAB;
+    public Supplier<Block> ROTTEN_OAK_EDGE;
+    public Supplier<Block> ROTTEN_OAK_PLATE;
+    public Supplier<Block> ROTTEN_OAK_FENCE;
+    public Supplier<Block> ROTTEN_OAK_FENCE_GATE;
+    public Supplier<Block> ROTTEN_OAK_TRAPDOOR;
     public static final List<String> MAPLE_VARIANT_IDS = List.of("red", "orange", "green");
     public final Map<String, MapleVariant> MAPLE_VARIANTS = new LinkedHashMap<>();
     public Supplier<SoilCropsBlock> COMMELINA;
-    public final Supplier<Block> WILD_MAIZE = register("wild_maize", () -> new WildMaizeBlock(Block.Properties.ofFullCopy(Blocks.DANDELION)), BlockTags.SWORD_EFFICIENT);
+    public Supplier<Block> WILD_MAIZE;
     public Supplier<DoubleCropsBlock> MAIZE;
-    // --- Iron Pergola ---
-    // Note: bare pergola variants reference their plant children via GTBlocksRegistry.INSTANCE
-    // to avoid illegal forward references (plant fields are declared after the bare pergola field).
-    public final Supplier<PergolaBlock> IRON_PERGOLA = register("iron_pergola",
-            () -> new PergolaBlock(Block.Properties.ofFullCopy(Blocks.IRON_BARS),
-                    () -> GTBlocksRegistry.INSTANCE.IRON_PERGOLA_VINE.get(),
-                    () -> GTBlocksRegistry.INSTANCE.IRON_PERGOLA_IVY.get(),
-                    () -> GTBlocksRegistry.INSTANCE.IRON_PERGOLA_GRAPE.get()));
-    public final Supplier<PergolaBlock> IRON_PERGOLA_VINE = registerWithItem("iron_pergola_vine",
-            () -> new PergolaPlantBlock(Block.Properties.ofFullCopy(Blocks.IRON_BARS), () -> IRON_PERGOLA.get()), null);
-    public final Supplier<PergolaBlock> IRON_PERGOLA_IVY = registerWithItem("iron_pergola_ivy",
-            () -> new PergolaPlantBlock(Block.Properties.ofFullCopy(Blocks.IRON_BARS), () -> IRON_PERGOLA.get()), null);
-    public final Supplier<PergolaBlock> IRON_PERGOLA_GRAPE = registerWithItem("iron_pergola_grape",
-            () -> new PergolaCropBlock(Block.Properties.ofFullCopy(Blocks.IRON_BARS), 4, 6, 0, 2, 2, () -> IRON_PERGOLA.get()), null);
+    public Supplier<PergolaBlock> IRON_PERGOLA;
+    public Supplier<PergolaBlock> COPPER_PERGOLA;
+    public Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA;
+    public Supplier<LatticeBlock> IRON_LATTICE;
+    public Supplier<LatticeBlock> COPPER_LATTICE;
+    public Supplier<LatticeBlock> OXIDIZED_COPPER_LATTICE;
 
-    // --- Copper Pergola ---
-    public final Supplier<PergolaBlock> COPPER_PERGOLA = register("copper_pergola",
-            () -> new PergolaBlock(Block.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion(),
-                    () -> GTBlocksRegistry.INSTANCE.COPPER_PERGOLA_VINE.get(),
-                    () -> GTBlocksRegistry.INSTANCE.COPPER_PERGOLA_IVY.get(),
-                    () -> GTBlocksRegistry.INSTANCE.COPPER_PERGOLA_GRAPE.get()));
-    public final Supplier<PergolaBlock> COPPER_PERGOLA_VINE = registerWithItem("copper_pergola_vine",
-            () -> new PergolaPlantBlock(Block.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion(), () -> COPPER_PERGOLA.get()), null);
-    public final Supplier<PergolaBlock> COPPER_PERGOLA_IVY = registerWithItem("copper_pergola_ivy",
-            () -> new PergolaPlantBlock(Block.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion(), () -> COPPER_PERGOLA.get()), null);
-    public final Supplier<PergolaBlock> COPPER_PERGOLA_GRAPE = registerWithItem("copper_pergola_grape",
-            () -> new PergolaCropBlock(Block.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion(), 4, 6, 0, 2, 2, () -> COPPER_PERGOLA.get()), null);
+    /**
+     * Registers every block. Each loader calls it right after assigning {@link #INSTANCE}, so the constructors and
+     * suppliers below can read INSTANCE. A block that reads another block when it is built (stairs from planks,
+     * rotten log from decayed log) must be registered after it.
+     */
+    public final void registerAll() {
+        BOXWOOD_BUSH = cutout(register("boxwood_bush", () -> new BushBlockGT(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES), BUSH_SHAPES, IBiomeColoredBlock.ColorType.FOLIAGE), BlockTags.SWORD_EFFICIENT));
+        BOXWOOD_TALL_HEDGE = cutout(register("boxwood_tall_hedge", () -> new PlateBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES), IBiomeColoredBlock.ColorType.FOLIAGE), BlockTags.SWORD_EFFICIENT));
+        BOXWOOD_SMALL_HEDGE = cutout(register("boxwood_small_hedge", () -> new EdgeBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES), IBiomeColoredBlock.ColorType.FOLIAGE), BlockTags.SWORD_EFFICIENT));
+        FLOWER_PLANTER = cutout(register("flower_planter", () -> new FlowerPlanterBlock(planterProperties())));
+        WILD_GRAPE = cutout(register("wild_grape", () -> new WildPlantBlock(Block.Properties.ofFullCopy(Blocks.DANDELION)), BlockTags.SWORD_EFFICIENT));
+        Map<String, Block> trayPlanks = new LinkedHashMap<>();
+        trayPlanks.put("bamboo", Blocks.OAK_PLANKS);
+        trayPlanks.put("oak", Blocks.OAK_PLANKS);
+        trayPlanks.put("birch", Blocks.BIRCH_PLANKS);
+        trayPlanks.put("spruce", Blocks.SPRUCE_PLANKS);
+        trayPlanks.put("jungle", Blocks.JUNGLE_PLANKS);
+        trayPlanks.put("acacia", Blocks.ACACIA_PLANKS);
+        trayPlanks.put("dark_oak", Blocks.DARK_OAK_PLANKS);
+        trayPlanks.put("mangrove", Blocks.MANGROVE_PLANKS);
+        trayPlanks.put("cherry", Blocks.CHERRY_PLANKS);
+        trayPlanks.forEach((wood, planks) -> DRYING_TRAYS.put(wood, cutout(register(wood + "_drying_tray", () -> new DryerBlock(Block.Properties.ofFullCopy(planks).noOcclusion(), DRYER_SHAPES), BlockTags.MINEABLE_WITH_AXE))));
+        SAKE_VAT = translucent(register("sake_vat", () -> new SakeVatBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_PLANKS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE));
+        RICE = cutout(registerWithItem("rice", () -> new WaterDoubleCropsBlock(2), (block) -> new SoilSeedsItem(block, Foods.RICE, "lore.gardentrails.rice", "block.minecraft.cauldron"), BlockTags.MINEABLE_WITH_AXE));
+        STICK_BUNDLE = cutout(burnable(register("stick_bundle", () -> new StickBundleBlock(Block.Properties.ofFullCopy(Blocks.OAK_WOOD).strength(2.0F, 3.0F).sound(SoundType.GRASS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE)));
+        // Registered before the rotten log: the rotten log turns into it once brushed
+        // Properties come from the planks: the vanilla log properties read an axis state these blocks do not have
+        DECAYED_OAK_LOG = register("decayed_oak_log", () -> new DecayedLogBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+        ROTTEN_OAK_LOG = register("rotten_oak_log", () -> new MoldyLogBlock(DECAYED_OAK_LOG.get(), Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+        ROTTEN_OAK_PLANKS = register("rotten_oak_planks", () -> new Block(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+        ROTTEN_OAK_STAIRS = register("rotten_oak_stairs", () -> new StairBlockGT(ROTTEN_OAK_PLANKS.get().defaultBlockState(), Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+        ROTTEN_OAK_SLAB = register("rotten_oak_slab", () -> new SlabBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+        ROTTEN_OAK_EDGE = register("rotten_oak_edge", () -> new EdgeBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE);
+        ROTTEN_OAK_PLATE = register("rotten_oak_plate", () -> new PlateBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion()), BlockTags.MINEABLE_WITH_AXE);
+        ROTTEN_OAK_FENCE = register("rotten_oak_fence", () -> new FenceBlock(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+        ROTTEN_OAK_FENCE_GATE = register("rotten_oak_fence_gate", () -> new FenceGateBlock(WoodType.OAK, Block.Properties.ofFullCopy(Blocks.OAK_PLANKS)), BlockTags.MINEABLE_WITH_AXE);
+        ROTTEN_OAK_TRAPDOOR = cutout(register("rotten_oak_trapdoor", () -> new TrapDoorBlockGT(Block.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion(), BlockSetType.OAK), BlockTags.MINEABLE_WITH_AXE));
+        WILD_MAIZE = cutout(register("wild_maize", () -> new WildMaizeBlock(Block.Properties.ofFullCopy(Blocks.DANDELION)), BlockTags.SWORD_EFFICIENT));
 
-    // --- Oxidized Copper Pergola ---
-    public final Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA = register("oxidized_copper_pergola",
-            () -> new PergolaBlock(Block.Properties.ofFullCopy(Blocks.OXIDIZED_COPPER).noOcclusion(),
-                    () -> GTBlocksRegistry.INSTANCE.OXIDIZED_COPPER_PERGOLA_VINE.get(),
-                    () -> GTBlocksRegistry.INSTANCE.OXIDIZED_COPPER_PERGOLA_IVY.get(),
-                    () -> GTBlocksRegistry.INSTANCE.OXIDIZED_COPPER_PERGOLA_GRAPE.get()));
-    public final Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA_VINE = registerWithItem("oxidized_copper_pergola_vine",
-            () -> new PergolaPlantBlock(Block.Properties.ofFullCopy(Blocks.OXIDIZED_COPPER).noOcclusion(), () -> OXIDIZED_COPPER_PERGOLA.get()), null);
-    public final Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA_IVY = registerWithItem("oxidized_copper_pergola_ivy",
-            () -> new PergolaPlantBlock(Block.Properties.ofFullCopy(Blocks.OXIDIZED_COPPER).noOcclusion(), () -> OXIDIZED_COPPER_PERGOLA.get()), null);
-    public final Supplier<PergolaBlock> OXIDIZED_COPPER_PERGOLA_GRAPE = registerWithItem("oxidized_copper_pergola_grape",
-            () -> new PergolaCropBlock(Block.Properties.ofFullCopy(Blocks.OXIDIZED_COPPER).noOcclusion(), 4, 6, 0, 2, 2, () -> OXIDIZED_COPPER_PERGOLA.get()), null);
+        IRON_PERGOLA = registerPergola("iron", Blocks.IRON_BARS);
+        COPPER_PERGOLA = registerPergola("copper", Blocks.COPPER_BLOCK);
+        OXIDIZED_COPPER_PERGOLA = registerPergola("oxidized_copper", Blocks.OXIDIZED_COPPER);
 
-    // --- Lattice ---
-    public final Supplier<LatticeBlock> IRON_LATTICE = register("iron_lattice",
-            () -> new LatticeBlock(Block.Properties.ofFullCopy(Blocks.IRON_BARS).noOcclusion()));
-    public final Supplier<LatticeBlock> COPPER_LATTICE = register("copper_lattice",
-            () -> new LatticeBlock(Block.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion()));
-    public final Supplier<LatticeBlock> OXIDIZED_COPPER_LATTICE = register("oxidized_copper_lattice",
-            () -> new LatticeBlock(Block.Properties.ofFullCopy(Blocks.OXIDIZED_COPPER).noOcclusion()));
+        IRON_LATTICE = cutout(register("iron_lattice", () -> new LatticeBlock(Block.Properties.ofFullCopy(Blocks.IRON_BARS).noOcclusion())));
+        COPPER_LATTICE = cutout(register("copper_lattice", () -> new LatticeBlock(Block.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion())));
+        OXIDIZED_COPPER_LATTICE = cutout(register("oxidized_copper_lattice", () -> new LatticeBlock(Block.Properties.ofFullCopy(Blocks.OXIDIZED_COPPER).noOcclusion())));
 
-    public void postRegister() {
-        CYPRESS = registerWithFlowerPotItem("cypress", () -> new CypressBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES).randomTicks()).setBurnable(), (block) -> new PotAndBlockItem(block, new Item.Properties()));
-        MAIZE = registerWithFlowerPotItem("maize", () -> new DoubleCropsBlock(SoilCropsBlock.PlantType.CROP, 4), (block) -> new SoilSeedsItem(block, Foods.MAIZE));
-        COMMELINA = registerWithFlowerPotItem("commelina", () -> new SoilCropsBlock(SoilCropsBlock.PlantType.PLAINS), (block) -> new SoilSeedsItem(block, null));
+        // Plants with a potted version
+        CYPRESS = cutout(burnable(registerWithFlowerPotItem("cypress", () -> new CypressBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES).randomTicks()), "cypress", (block) -> new PottablePlantItem(block, new Item.Properties()), IBiomeColoredBlock.ColorType.FOLIAGE)));
+        GRAPE_SEEDS_POT = cutout(registerWithItem("grape_seeds_flower_pot", () -> new SeedPotBlock(() -> GTItemsRegistry.INSTANCE.GRAPE_SEEDS.get()), null, BlockTags.MINEABLE_WITH_PICKAXE));
+        MAIZE = cutout(registerWithFlowerPotItem("maize", () -> new DoubleCropsBlock(SoilCropsBlock.PlantType.CROP, 4), (block) -> new SoilSeedsItem(block, Foods.MAIZE)));
+        COMMELINA = cutout(registerWithFlowerPotItem("commelina", () -> new SoilCropsBlock(SoilCropsBlock.PlantType.PLAINS), (block) -> new SoilSeedsItem(block, null)));
         for(String variantId : MAPLE_VARIANT_IDS) {
-            Supplier<Block> trunk = registerWithItem("maple_" + variantId + "_trunk", () -> new MapleTrunkBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES)), null, BlockTags.MINEABLE_WITH_AXE);
-            Supplier<Block> leaves = registerWithItem("maple_" + variantId + "_leaves", () -> new MapleLeavesBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES)), null, BlockTags.MINEABLE_WITH_AXE);
-            Supplier<Block> sapling = registerWithFlowerPotItem("maple_" + variantId + "_sapling", () -> new MapleSaplingBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES), trunk, leaves), (block) -> new PotAndBlockItem(block, new Item.Properties()));
+            Supplier<Block> trunk = cutout(registerWithItem("maple_" + variantId + "_trunk", () -> new MapleTrunkBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES)), null, BlockTags.MINEABLE_WITH_AXE));
+            Supplier<Block> leaves = cutout(registerWithItem("maple_" + variantId + "_leaves", () -> new MapleLeavesBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES)), null, BlockTags.MINEABLE_WITH_AXE));
+            Supplier<Block> sapling = cutout(registerWithFlowerPotItem("maple_" + variantId + "_sapling", () -> new MapleSaplingBlock(Block.Properties.ofFullCopy(Blocks.SPRUCE_LEAVES), trunk, leaves), (block) -> new PottablePlantItem(block, new Item.Properties())));
             MAPLE_VARIANTS.put(variantId, new MapleVariant(variantId, trunk, leaves, sapling));
         }
-        CAMELLIA = registerWithFlowerPotItem("camellia", () -> new ColoredGrowingBushBlock(SoilCropsBlock.PlantType.PLAINS, 3), "camellia_seeds", (block) -> new SoilSeedsItem(block, null));
-        MULBERRY = registerWithFlowerPotItem("mulberry", () -> new MulberryBlock(SoilCropsBlock.PlantType.PLAINS, 3, 2), (block) -> new SoilSeedsItem(block, Foods.MULBERRY));
-        IVY = registerWithFlowerPotItem("ivy", () -> new IvyBlock(Block.Properties.ofFullCopy(Blocks.VINE).randomTicks().strength(0.2F).sound(SoundType.VINE)), (block) -> new PotAndBlockItem(block, new Item.Properties()));
-        GERANIUM_PINK = registerWithFlowerPotItem("geranium_pink", () -> new GeraniumBlock(Block.Properties.ofFullCopy(Blocks.SUNFLOWER).offsetType(BlockBehaviour.OffsetType.NONE).instabreak().sound(SoundType.GRASS)), (block) -> new PotAndBlockItem(block, new Item.Properties()));
-        GERANIUM_ORANGE = registerWithFlowerPotItem("geranium_orange", () -> new GeraniumBlock(Block.Properties.ofFullCopy(Blocks.SUNFLOWER).offsetType(BlockBehaviour.OffsetType.NONE).instabreak().sound(SoundType.GRASS)), (block) -> new PotAndBlockItem(block, new Item.Properties()));
-        GERANIUM_PURPLE = registerWithFlowerPotItem("geranium_purple", () -> new GeraniumBlock(Block.Properties.ofFullCopy(Blocks.SUNFLOWER).offsetType(BlockBehaviour.OffsetType.NONE).instabreak().sound(SoundType.GRASS)), (block) -> new PotAndBlockItem(block, new Item.Properties()));
-        GERANIUM_PURPLEISH = registerWithFlowerPotItem("geranium_purpleish", () -> new GeraniumBlock(Block.Properties.ofFullCopy(Blocks.SUNFLOWER).offsetType(BlockBehaviour.OffsetType.NONE).instabreak().sound(SoundType.GRASS)), (block) -> new PotAndBlockItem(block, new Item.Properties()));
-        GERANIUM_RED = registerWithFlowerPotItem("geranium_red", () -> new GeraniumBlock(Block.Properties.ofFullCopy(Blocks.SUNFLOWER).offsetType(BlockBehaviour.OffsetType.NONE).instabreak().sound(SoundType.GRASS)), (block) -> new PotAndBlockItem(block, new Item.Properties()));
-        GERANIUM_WHITE = registerWithFlowerPotItem("geranium_white", () -> new GeraniumBlock(Block.Properties.ofFullCopy(Blocks.SUNFLOWER).offsetType(BlockBehaviour.OffsetType.NONE).instabreak().sound(SoundType.GRASS)), (block) -> new PotAndBlockItem(block, new Item.Properties()));
+        ROTTEN_OAK_SAPLING = cutout(registerWithFlowerPotItem("rotten_oak_sapling", () -> new RottenOakSaplingBlock(Block.Properties.ofFullCopy(Blocks.OAK_SAPLING)), (block) -> new PottablePlantItem(block, new Item.Properties())));
+        CAMELLIA = cutout(registerWithFlowerPotItem("camellia", () -> new GrowingBushBlock(SoilCropsBlock.PlantType.PLAINS, 3, IBiomeColoredBlock.ColorType.FOLIAGE), "camellia_seeds", (block) -> new SoilSeedsItem(block, null)));
+        MULBERRY = cutout(registerWithFlowerPotItem("mulberry", () -> new MulberryBlock(SoilCropsBlock.PlantType.PLAINS, 3, 2), (block) -> new SoilSeedsItem(block, Foods.MULBERRY)));
+        IVY = cutout(registerWithFlowerPotItem("ivy", () -> new IvyBlock(Block.Properties.ofFullCopy(Blocks.VINE).randomTicks().strength(0.2F).sound(SoundType.VINE)), (block) -> new PottablePlantItem(block, new Item.Properties())));
+        for (GeraniumColor color : GeraniumColor.values()) {
+            GERANIUMS.put(color, cutout(registerWithFlowerPotItem(color.blockId(), () -> new GeraniumBlock(Block.Properties.ofFullCopy(Blocks.SUNFLOWER).offsetType(BlockBehaviour.OffsetType.NONE).instabreak().sound(SoundType.GRASS)), color.blockId(), (block) -> new PottablePlantItem(block, new Item.Properties()), IBiomeColoredBlock.ColorType.FOLIAGE)));
+        }
+    }
+
+    /**
+     * Registers the pergola of a metal, then its three legacy plant blocks. Before the climbing plant became a
+     * state property each plant had its own block: the legacy blocks only convert old worlds (LegacyPergolaBlock).
+     */
+    private Supplier<PergolaBlock> registerPergola(String metal, Block base) {
+        Supplier<PergolaBlock> pergola = cutout(register(metal + "_pergola", () -> new PergolaBlock(Block.Properties.ofFullCopy(base).noOcclusion())));
+        for (ClimbingPlant plant : List.of(ClimbingPlant.VINE, ClimbingPlant.IVY, ClimbingPlant.GRAPE)) {
+            registerWithItem(metal + "_pergola_" + plant.getSerializedName(), () -> new LegacyPergolaBlock(Block.Properties.ofFullCopy(base).noOcclusion(), pergola, plant), null);
+        }
+        return pergola;
     }
 
     public <T extends Block> Supplier<T> register(String id, Supplier<T> block) {
@@ -161,19 +167,49 @@ public abstract class GTBlocksRegistry {
     }
 
     public abstract <T extends Block, Y extends Item> Supplier<T> registerWithItem(String id, Supplier<T> block, Function<T, Y> item, TagKey<Block>... tags);
-    public abstract <T extends Block, Y extends Item & IHasFlowerPot> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item);
+    /**
+     * Registers the plant block, its item, its vanilla style potted block (blockID + "_flower_pot").
+     * The potted block has no item: it is only obtained by putting the plant item on an empty flower pot.
+     * Each loader registers the plant and its item, then calls {@link #registerPot}.
+     */
+    public abstract <T extends Block, Y extends Item> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item, @Nullable IBiomeColoredBlock.ColorType potColor);
 
-    public <T extends Block, Y extends Item & IHasFlowerPot> Supplier<T> registerWithFlowerPotItem(String id, Supplier<T> block, Function<T, Y> item) {
-        return this.registerWithFlowerPotItem(id, block, id, item);
+    public <T extends Block, Y extends Item> Supplier<T> registerWithFlowerPotItem(String id, Supplier<T> block, Function<T, Y> item) {
+        return this.registerWithFlowerPotItem(id, block, id, item, null);
     }
-    
 
-    public <T extends Block> void addBlockTag(Supplier<T> block, TagKey<Block> tag){
-        blockTagsMap.computeIfAbsent(tag, k -> new HashSet<>()).add((Supplier<Block>) block);
+    public <T extends Block, Y extends Item> Supplier<T> registerWithFlowerPotItem(String id, Supplier<T> block, String itemID, Function<T, Y> item) {
+        return this.registerWithFlowerPotItem(id, block, itemID, item, null);
     }
 
-    //Old Function
-    private static ToIntFunction<BlockState> litBlockEmission(final int lightValue) {
-        return state -> state.getValue(BlockStateProperties.LIT) ? lightValue : 0;
+    protected static Block.Properties planterProperties() {
+        return Block.Properties.ofFullCopy(Blocks.FLOWER_POT).strength(0.6F).noOcclusion();
+    }
+
+    /** Registers the potted version of a plant. The plant must be registered before, the pot reads its instance. */
+    protected void registerPot(String plantID, Supplier<? extends Block> plant, @Nullable IBiomeColoredBlock.ColorType potColor) {
+        cutout(registerWithItem(plantID + "_flower_pot", () -> {
+            Block plantBlock = plant.get();
+            POTTABLE_PLANTS.add(plantBlock);
+            return new PottedPlantBlock(plantBlock, potColor);
+        }, null, BlockTags.MINEABLE_WITH_PICKAXE));
+    }
+
+    /** Marks a registered block as cutout (plants, bars, leaves, anything with transparent pixels). */
+    protected static <T extends Block> Supplier<T> cutout(Supplier<T> block) {
+        CUTOUT_BLOCKS.add(block);
+        return block;
+    }
+
+    /** Marks a registered block as flammable like planks. */
+    protected static <T extends Block> Supplier<T> burnable(Supplier<T> block) {
+        FLAMMABLE_BLOCKS.put(block, new FireValues(5, 20));
+        return block;
+    }
+
+    /** Marks a registered block as translucent (glass like liquids). */
+    protected static <T extends Block> Supplier<T> translucent(Supplier<T> block) {
+        TRANSLUCENT_BLOCKS.add(block);
+        return block;
     }
 }

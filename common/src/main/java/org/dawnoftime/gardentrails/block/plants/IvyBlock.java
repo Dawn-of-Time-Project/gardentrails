@@ -1,7 +1,6 @@
 package org.dawnoftime.gardentrails.block.plants;
 
 import net.minecraft.world.item.Item;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -27,7 +26,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import org.dawnoftime.gardentrails.block.IBlockGeneration;
 import org.dawnoftime.gardentrails.block.templates.BlockGT;
-import org.dawnoftime.gardentrails.platform.Services;
 import org.dawnoftime.gardentrails.registry.GTTags;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
@@ -146,7 +144,7 @@ public class IvyBlock extends BlockGT implements IBlockGeneration {
     }
 
     @Override
-    public void tick(@NotNull BlockState state, ServerLevel levelIn, @NotNull BlockPos pos, @NotNull RandomSource random) {
+    public void randomTick(@NotNull BlockState state, ServerLevel levelIn, @NotNull BlockPos pos, @NotNull RandomSource random) {
         if (levelIn.isClientSide()) {
             return;
         }

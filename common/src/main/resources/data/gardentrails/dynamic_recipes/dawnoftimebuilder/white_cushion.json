@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building_blocks",
+  "pattern": [
+    "S  ",
+    "F  ",
+    "S  "
+  ],
+  "key": {
+    "F": {
+      "item": "minecraft:feather"
+    },
+    "S": {
+      "item": "gardentrails:silk"
+    }
+  },
+  "result": {
+    "id": "dawnoftimebuilder:white_cushion",
+    "count": 1
+  }
+}

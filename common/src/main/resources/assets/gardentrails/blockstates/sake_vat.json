@@ -1,7 +1,21 @@
 {
 	"multipart": [
 		{
-			"when": { "AND": [ { "facing": "north" }, { "OR": [ { "level": "0|1|2" }, { "ready": "true" } ] } ] },
+			"when": { "facing": "north" },
+			"apply": { "model": "gardentrails:block/sake_vat_body", "y": 0 }
+		},
+		{
+			"when": {
+				"AND": [
+					{ "facing": "north" },
+					{
+						"OR": [
+							{ "level": "0|1|2" },
+							{ "ready": "true" }
+						]
+					}
+				]
+			},
 			"apply": { "model": "gardentrails:block/open_sake_vat", "y": 0 }
 		},
 		{
@@ -9,7 +23,21 @@
 			"apply": { "model": "gardentrails:block/closed_sake_vat", "y": 0 }
 		},
 		{
-			"when": { "AND": [ { "facing": "east" }, { "OR": [ { "level": "0|1|2" }, { "ready": "true" } ] } ] },
+			"when": { "facing": "east" },
+			"apply": { "model": "gardentrails:block/sake_vat_body", "y": 90 }
+		},
+		{
+			"when": {
+				"AND": [
+					{ "facing": "east" },
+					{
+						"OR": [
+							{ "level": "0|1|2" },
+							{ "ready": "true" }
+						]
+					}
+				]
+			},
 			"apply": { "model": "gardentrails:block/open_sake_vat", "y": 90 }
 		},
 		{
@@ -17,7 +45,21 @@
 			"apply": { "model": "gardentrails:block/closed_sake_vat", "y": 90 }
 		},
 		{
-			"when": { "AND": [ { "facing": "south" }, { "OR": [ { "level": "0|1|2" }, { "ready": "true" } ] } ] },
+			"when": { "facing": "south" },
+			"apply": { "model": "gardentrails:block/sake_vat_body", "y": 180 }
+		},
+		{
+			"when": {
+				"AND": [
+					{ "facing": "south" },
+					{
+						"OR": [
+							{ "level": "0|1|2" },
+							{ "ready": "true" }
+						]
+					}
+				]
+			},
 			"apply": { "model": "gardentrails:block/open_sake_vat", "y": 180 }
 		},
 		{
@@ -25,15 +67,38 @@
 			"apply": { "model": "gardentrails:block/closed_sake_vat", "y": 180 }
 		},
 		{
-			"when": { "AND": [ { "facing": "west" }, { "OR": [ { "level": "0|1|2" }, { "ready": "true" } ] } ] },
+			"when": { "facing": "west" },
+			"apply": { "model": "gardentrails:block/sake_vat_body", "y": 270 }
+		},
+		{
+			"when": {
+				"AND": [
+					{ "facing": "west" },
+					{
+						"OR": [
+							{ "level": "0|1|2" },
+							{ "ready": "true" }
+						]
+					}
+				]
+			},
 			"apply": { "model": "gardentrails:block/open_sake_vat", "y": 270 }
 		},
 		{
 			"when": { "facing": "west", "level": "3", "ready": "false" },
 			"apply": { "model": "gardentrails:block/closed_sake_vat", "y": 270 }
 		},
-		{ "when": { "level": "1" }, "apply": { "model": "gardentrails:block/sake_vat_liquid_1" } },
-		{ "when": { "level": "2" }, "apply": { "model": "gardentrails:block/sake_vat_liquid_2" } },
-		{ "when": { "level": "3" }, "apply": { "model": "gardentrails:block/sake_vat_liquid_3" } }
+		{
+			"when": { "level": "1" },
+			"apply": { "model": "gardentrails:block/sake_vat_liquid_1" }
+		},
+		{
+			"when": { "level": "2" },
+			"apply": { "model": "gardentrails:block/sake_vat_liquid_2" }
+		},
+		{
+			"when": { "level": "3" },
+			"apply": { "model": "gardentrails:block/sake_vat_liquid_3" }
+		}
 	]
 }

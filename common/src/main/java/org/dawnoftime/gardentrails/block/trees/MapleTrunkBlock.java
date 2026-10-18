@@ -13,20 +13,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-
-import org.dawnoftime.gardentrails.block.templates.BlockGT;
 import org.jetbrains.annotations.NotNull;
 
-public class MapleTrunkBlock extends BlockGT {
+public class MapleTrunkBlock extends MapleMultiblockBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public MapleTrunkBlock(final Properties properties) {
-        super(properties.pushReaction(PushReaction.DESTROY));
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(MapleTrunkBlock.FACING, Direction.NORTH));
     }
 
@@ -40,18 +36,13 @@ public class MapleTrunkBlock extends BlockGT {
     public BlockState playerWillDestroy(final Level worldIn, final BlockPos blockPosIn, final BlockState blockStateIn, final Player playerEntityIn) {
         if(!worldIn.isClientSide) {
             if(playerEntityIn.isCreative()) {
-                // In creative, remove the trunk silently — super handles the one sound/particle
+                // In creative, remove the trunk silently, super handles the one sound/particle
                 worldIn.setBlock(blockPosIn, Blocks.AIR.defaultBlockState(), 35);
             }
 
-            // Remove all leaf blocks silently — no levelEvent to avoid stacking 9 sounds simultaneously
-            for(int x = -1; x <= 1; x++) {
-                for(int y = 1; y <= 2; y++) {
-                    for(int z = -1; z <= 1; z++) {
-                        final BlockPos baseBlock = new BlockPos(blockPosIn.getX() + x, blockPosIn.getY() + y, blockPosIn.getZ() + z);
-                        worldIn.setBlock(baseBlock, Blocks.AIR.defaultBlockState(), 35);
-                    }
-                }
+            // Remove all leaf blocks silently, no levelEvent to avoid stacking 9 sounds simultaneously
+            for(final BlockPos leafPos : MapleTree.leafArea(blockPosIn)) {
+                worldIn.setBlock(leafPos, Blocks.AIR.defaultBlockState(), 35);
             }
         }
 
@@ -64,53 +55,22 @@ public class MapleTrunkBlock extends BlockGT {
     }
 
     @Override
-    public VoxelShape getBlockSupportShape(final BlockState p_230335_1_, final BlockGetter p_230335_2_, final BlockPos p_230335_3_) {
+    public VoxelShape getBlockSupportShape(final BlockState state, final BlockGetter level, final BlockPos pos) {
         return Shapes.empty();
     }
 
     @Override
     public BlockState updateShape(final BlockState stateIn, final Direction facing, final BlockState facingState, final LevelAccessor worldIn, final BlockPos currentPos, final BlockPos facingPos) {
         if(Direction.DOWN.equals(facing)) {
-            final BlockState state = worldIn.getBlockState(currentPos.below());
-            if(!BlockTags.DIRT.equals(state.getBlock())) {
+            if(!facingState.is(BlockTags.DIRT)) {
                 return Blocks.AIR.defaultBlockState();
             }
         } else if(Direction.UP.equals(facing)) {
-            final BlockState state = worldIn.getBlockState(currentPos.above());
-            if(!(state.getBlock() instanceof MapleLeavesBlock)) {
-                return Blocks.AIR.defaultBlockState();
-            }
-
-            final Direction currentFacing = stateIn.getValue(MapleTrunkBlock.FACING);
-            if(currentFacing == null || !currentFacing.equals(state.getValue(MapleTrunkBlock.FACING))) {
+            if(!(facingState.getBlock() instanceof MapleLeavesBlock) || stateIn.getValue(MapleTrunkBlock.FACING) != facingState.getValue(MapleTrunkBlock.FACING)) {
                 return Blocks.AIR.defaultBlockState();
             }
         }
 
         return stateIn;
-    }
-
-//    @Override
-//    public ItemStack getCloneItemStack(final BlockState stateIn, final HitResult targetIn, final BlockGetter worldIn, final BlockPos posIn, final Player playerIn) {
-//        return new ItemStack(DoTBBlocksRegistry.INSTANCE.MAPLE_RED_SAPLING.get().asItem());
-//    }
-
-    /**
-     * Lights methods
-     */
-    @Override
-    public boolean useShapeForLightOcclusion(final BlockState p_220074_1_In) {
-        return false;
-    }
-
-    @Override
-
-    public float getShadeBrightness(final BlockState p_220080_1_, final BlockGetter p_220080_2_, final BlockPos p_220080_3_) {
-        return 1.0F;
-    }
-
-    @Override
-    public boolean propagatesSkylightDown(final BlockState p_200123_1_, final BlockGetter p_200123_2_, final BlockPos p_200123_3_) {
-        return true;
     }
 }

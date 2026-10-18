@@ -1,10 +1,7 @@
 {
-  "type": "neoforge:add_spawns",
-  "biomes": [
-    "minecraft:jungle",
-    "minecraft:sparse_jungle"
-  ],
-  "spawners": {
+  "type": "gardentrails:config_spawn",
+  "plant": "quetzal",
+  "spawner": {
     "type": "gardentrails:quetzal",
     "weight": 40,
     "minCount": 1,

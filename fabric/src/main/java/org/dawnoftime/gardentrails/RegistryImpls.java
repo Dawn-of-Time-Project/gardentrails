@@ -1,18 +1,12 @@
 package org.dawnoftime.gardentrails;
-import org.dawnoftime.gardentrails.registry.GTCriteriaRegistry;
-import net.minecraft.core.Holder;
 
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import org.dawnoftime.gardentrails.client.renderer.entity.layers.QuetzalOnShoulderLayer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -24,6 +18,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -37,20 +32,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import org.dawnoftime.gardentrails.block.IFlammable;
-import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
-import org.dawnoftime.gardentrails.client.model.entity.QuetzalModel;
-import org.dawnoftime.gardentrails.client.model.entity.SilkmothModel;
-import org.dawnoftime.gardentrails.client.renderer.blockentity.DryerRenderer;
-import org.dawnoftime.gardentrails.client.renderer.entity.GTArrowRenderer;
-import org.dawnoftime.gardentrails.client.renderer.entity.QuetzalRenderer;
-import org.dawnoftime.gardentrails.client.renderer.entity.SilkmothRenderer;
+import org.dawnoftime.gardentrails.block.templates.LegacyPergolaBlock;
+import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 import org.dawnoftime.gardentrails.entity.QuetzalEntity;
 import org.dawnoftime.gardentrails.entity.SilkmothEntity;
-import org.dawnoftime.gardentrails.item.IHasFlowerPot;
 import org.dawnoftime.gardentrails.item.IconItem;
 import org.dawnoftime.gardentrails.registry.*;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -66,17 +55,6 @@ public class RegistryImpls {
     }
 
     public static class FabricBlocksRegistry extends GTBlocksRegistry {
-        public FabricBlocksRegistry() {
-            postRegister();
-
-            for (Map.Entry<ResourceKey<Block>, Block> resourceKeyBlockEntry : BuiltInRegistries.BLOCK.entrySet()) {
-                Block block = resourceKeyBlockEntry.getValue();
-                if (block instanceof IFlammable) {
-                    FlammableBlockRegistry.getDefaultInstance().add(block, ((IFlammable) block).getFireSpreadSpeed(block.defaultBlockState(), null, null, null), ((IFlammable) block).getFlammability(block.defaultBlockState(), null, null, null));
-                }
-            }
-        }
-
         @SafeVarargs
         @Override
         public final <T extends Block, Y extends Item> Supplier<T> registerWithItem(String id, Supplier<T> block, Function<T, Y> item, TagKey<Block>... tags) {
@@ -84,38 +62,16 @@ public class RegistryImpls {
             if(item != null) {
                 Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, id), item.apply(registryBlock));
             }
-            if(tags.length == 0){
-                addBlockTag(() -> registryBlock, BlockTags.MINEABLE_WITH_PICKAXE);
-            }else{
-                for (TagKey<Block> tag : tags) {
-                    addBlockTag(() -> registryBlock, tag);
-                }
-            }
             return () -> registryBlock;
         }
 
         @Override
-        public <T extends Block, Y extends Item & IHasFlowerPot> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item) {
+        public <T extends Block, Y extends Item> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item, @Nullable IBiomeColoredBlock.ColorType potColor) {
             T toReturn = Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, blockID), block.get());
-            if(item != null) {
-                final String potName = blockID + "_flower_pot";
-
-                Supplier<FlowerPotBlockGT> potBlockObject = this.register(potName, () -> {
-                    final FlowerPotBlockGT potBlock = new FlowerPotBlockGT(null);
-                    POT_BLOCKS.put(potName, potBlock);
-                    return potBlock;
-                }, BlockTags.MINEABLE_WITH_PICKAXE);
-
-                Y item1 = item.apply(toReturn);
-                FlowerPotBlockGT potBlock = potBlockObject.get();
-
-                item1.setPotBlock(potBlock);
-                potBlock.setItemInPot(item1);
-
-                Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, itemID), item1);
+            if (item != null) {
+                Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(GTCommon.MOD_ID, itemID), item.apply(toReturn));
             }
-            // Flower can be broken with sword, and in the ItemRegistry, pot can be broken with Pickaxe.
-            addBlockTag(() -> toReturn, BlockTags.SWORD_EFFICIENT);
+            this.registerPot(blockID, () -> toReturn, potColor);
             return () -> toReturn;
         }
     }
@@ -145,11 +101,9 @@ public class RegistryImpls {
     }
 
     public static class FabricItemsRegistry extends GTItemsRegistry {
-        public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), 0xDBD8BD, 0xFEFEFC, new Item.Properties()));
-        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), 0xFFFFFF, 0xFFFFFF, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
-
-        public FabricItemsRegistry() {
-            postRegister();
+        @Override
+        protected Item createSpawnEgg(Supplier<? extends EntityType<? extends Mob>> entityType, int backgroundColor, int highlightColor, Item.Properties properties) {
+            return new SpawnEggItem(entityType.get(), backgroundColor, highlightColor, properties);
         }
 
         @Override
@@ -158,31 +112,6 @@ public class RegistryImpls {
             return () -> item;
         }
 
-        @Override
-        public <T extends Item & IHasFlowerPot> Supplier<Item> registerWithFlowerPot(String name, Supplier<T> itemSupplier) {
-            return registerWithFlowerPot(name, name, itemSupplier);
-        }
-
-        @Override
-        public <T extends Item & IHasFlowerPot> Supplier<Item> registerWithFlowerPot(String plantName, String seedName, Supplier<T> itemSupplier) {
-            final String potName = plantName + "_flower_pot";
-
-            Supplier<FlowerPotBlockGT> potBlockObject = GTBlocksRegistry.INSTANCE.register(potName, () -> {
-                final FlowerPotBlockGT potBlock = new FlowerPotBlockGT(null);
-                GTBlocksRegistry.POT_BLOCKS.put(potName, potBlock);
-                return potBlock;
-            }, BlockTags.MINEABLE_WITH_PICKAXE);
-
-            return this.register(seedName, () -> {
-                T item = itemSupplier.get();
-                FlowerPotBlockGT potBlock = potBlockObject.get();
-
-                item.setPotBlock(potBlock);
-                potBlock.setItemInPot(item);
-
-                return item;
-            });
-        }
     }
 
     public static class FabricRecipeSerializersRegistry extends GTRecipeSerializersRegistry {
@@ -223,27 +152,13 @@ public class RegistryImpls {
         }
     }
 
-    public static void initClient() {
-        EntityRendererRegistry.register(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), SilkmothRenderer::new);
-        EntityRendererRegistry.register(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), QuetzalRenderer::new);
-        EntityRendererRegistry.register(GTEntitiesRegistry.INSTANCE.FEATHERED_ARROW_ENTITY.get(), GTArrowRenderer::new);
-        BlockEntityRenderers.register(GTBlockEntitiesRegistry.INSTANCE.DRYER.get(), DryerRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(SilkmothModel.LAYER_LOCATION, SilkmothModel::createBodyLayer);
-        EntityModelLayerRegistry.registerModelLayer(QuetzalModel.LAYER_LOCATION, QuetzalModel::createBodyLayer);
-        // Quetzal on the player shoulder
-        LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
-            if (entityRenderer instanceof PlayerRenderer playerRenderer) {
-                registrationHelper.register(new QuetzalOnShoulderLayer<>(playerRenderer, context.getModelSet()));
-            }
-        });
-    }
-
     public static void init() {
         GTEntitiesRegistry.INSTANCE = new FabricEntitiesRegistry();
         GTMobEffectsRegistry.INSTANCE = new FabricMobEffectsRegistry();
-        Registry.register(BuiltInRegistries.TRIGGER_TYPES, org.dawnoftime.gardentrails.advancement.KillSilkmothTrigger.ID, GTCriteriaRegistry.KILL_SILKMOTH);
         GTBlocksRegistry.INSTANCE = new FabricBlocksRegistry();
+        GTBlocksRegistry.INSTANCE.registerAll();
         GTItemsRegistry.INSTANCE = new FabricItemsRegistry();
+        GTItemsRegistry.INSTANCE.registerAll();
         GTBlockEntitiesRegistry.INSTANCE = new FabricBlockEntitiesRegistry();
         GTFeaturesRegistry.INSTANCE = new FabricFeaturesRegistry();
         GTRecipeSerializersRegistry.INSTANCE = new FabricRecipeSerializersRegistry();
@@ -253,5 +168,8 @@ public class RegistryImpls {
 
         FabricDefaultAttributeRegistry.register(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), SilkmothEntity.createAttributes());
         FabricDefaultAttributeRegistry.register(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), QuetzalEntity.createAttributes());
+
+        GTBlocksRegistry.FLAMMABLE_BLOCKS.forEach((block, fire) -> FlammableBlockRegistry.getDefaultInstance().add(block.get(), fire.spread(), fire.destruction()));
+        ServerChunkEvents.CHUNK_LOAD.register((level, chunk) -> LegacyPergolaBlock.convertChunk(chunk));
     }
 }

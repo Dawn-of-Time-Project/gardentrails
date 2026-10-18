@@ -2,10 +2,9 @@ package org.dawnoftime.gardentrails.platform;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.state.BlockState;
-import org.dawnoftime.gardentrails.GTConfig;
-import org.dawnoftime.gardentrails.GTConfigLoader;
 import org.dawnoftime.gardentrails.mixin.accessor.CropBlockAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+import org.dawnoftime.gardentrails.blockentity.FlowerPlanterBlockEntity;
 import org.dawnoftime.gardentrails.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -17,8 +16,8 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public GTConfig getConfig() {
-        return GTConfigLoader.INSTANCE;
+    public FlowerPlanterBlockEntity createFlowerPlanterBlockEntity(BlockPos pos, BlockState state) {
+        return new FlowerPlanterBlockEntity(pos, state);
     }
 
     @Override

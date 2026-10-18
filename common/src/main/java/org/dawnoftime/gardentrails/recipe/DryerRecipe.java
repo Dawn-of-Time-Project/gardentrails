@@ -65,7 +65,7 @@ public record DryerRecipe(String group, Ingredient ingredient, ItemStack result,
 
     @Override
     public @NotNull ItemStack getToastSymbol() {
-        return new ItemStack(GTBlocksRegistry.INSTANCE.BAMBOO_DRYING_TRAY.get());
+        return new ItemStack(GTBlocksRegistry.INSTANCE.DRYING_TRAYS.get("bamboo").get());
     }
 
     @Override

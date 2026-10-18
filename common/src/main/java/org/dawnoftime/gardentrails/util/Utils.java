@@ -23,12 +23,11 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class Utils {
-    //General
-    public static final int HIGHEST_Y = 255;
-
     public static VoxelShape[] generateHorizontalShapes(final VoxelShape[] shapes, VoxelShape... nonRotatedShapes) {
         final VoxelShape[] newShape = {Shapes.empty()};
         final VoxelShape[] newShapes = new VoxelShape[shapes.length * 4 + nonRotatedShapes.length];
+        // Work on a copy so the caller's array is left untouched.
+        final VoxelShape[] current = shapes.clone();
         int i = 0;
         // First we copy the provided array at the start of the new one.
         for (final VoxelShape shape : shapes) {
@@ -38,9 +37,9 @@ public class Utils {
         // Then rotate the provided array in each direction, and add it the new array.
         for (int rotation = 1; rotation < 4; rotation++) {
             int j = 0;
-            for (final VoxelShape shape : shapes) {
+            for (final VoxelShape shape : current) {
                 shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> newShape[0] = Shapes.or(newShape[0], Shapes.box(1 - maxZ, minY, minX, 1 - minZ, maxY, maxX)));
-                shapes[j] = newShape[0];
+                current[j] = newShape[0];
                 newShapes[i] = newShape[0];
                 newShape[0] = Shapes.empty();
                 i++;

@@ -1,0 +1,141 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:flower_forest",
+    "minecraft:meadow",
+    "minecraft:birch_forest",
+    "minecraft:old_growth_birch_forest",
+    {
+      "id": "terralith:lavender_forest",
+      "required": false
+    },
+    {
+      "id": "terralith:lavender_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:sakura_grove",
+      "required": false
+    },
+    {
+      "id": "terralith:sakura_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:moonlight_grove",
+      "required": false
+    },
+    {
+      "id": "terralith:moonlight_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:blooming_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:blooming_plateau",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:jacaranda_glade",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:mystic_grove",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:lavender_field",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:sakura_grove",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:rose_fields",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:flower_fields",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:magnolia_woodland",
+      "required": false
+    },
+    {
+      "id": "natures_spirit:wisteria_forest",
+      "required": false
+    },
+    {
+      "id": "natures_spirit:floral_ridges",
+      "required": false
+    },
+    {
+      "id": "natures_spirit:blooming_sugi_forest",
+      "required": false
+    },
+    {
+      "id": "terralith:temperate_highlands",
+      "required": false
+    },
+    {
+      "id": "terralith:cloud_forest",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:woodland",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:seasonal_forest",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:orchard",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:aspen_glade",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:temperate_grove",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:orchard",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:zelkova_forest",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:temperate_grove",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:deciduous_forest",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:silver_birch_forest",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:orchard",
+      "required": false
+    },
+    {
+      "id": "natures_spirit:aspen_forest",
+      "required": false
+    },
+    {
+      "id": "natures_spirit:maple_woodlands",
+      "required": false
+    }
+  ]
+}

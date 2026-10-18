@@ -10,7 +10,8 @@ public enum GTArrowVariant {
     RED("red_arrow", 2.25D),
     GREEN("green_arrow", 2.25D),
     BLUE("blue_arrow", 2.25D),
-    QUETZAL("quetzal_arrow", 3.0D);
+    QUETZAL("quetzal_arrow", 3.0D),
+    ROTTEN("rotten_arrow", 1.0D);
 
     private final String id;
     private final double baseDamage;

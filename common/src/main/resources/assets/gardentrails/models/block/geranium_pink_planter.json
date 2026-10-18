@@ -1,0 +1,7 @@
+{
+  "parent": "gardentrails:block/geranium_planter",
+  "textures": {
+    "flowers": "gardentrails:block/geranium_pink_flowers",
+    "particle": "gardentrails:block/flower_planter"
+  }
+}

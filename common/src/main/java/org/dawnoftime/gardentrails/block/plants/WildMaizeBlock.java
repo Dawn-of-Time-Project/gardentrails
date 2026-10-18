@@ -12,21 +12,19 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.dawnoftime.gardentrails.block.IBlockGeneration;
+import org.dawnoftime.gardentrails.block.ITwoHalvesBlock;
 import org.dawnoftime.gardentrails.block.templates.WildPlantBlock;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class WildMaizeBlock extends WildPlantBlock implements IBlockGeneration {
+public class WildMaizeBlock extends WildPlantBlock implements IBlockGeneration, ITwoHalvesBlock {
     private static final VoxelShape VS = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 16.0D, 11.0D);
-    public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
 
     public WildMaizeBlock(Properties properties) {
         super(properties);
@@ -66,18 +64,7 @@ public class WildMaizeBlock extends WildPlantBlock implements IBlockGeneration {
 
     @Override
     public BlockState playerWillDestroy(Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
-        // Prevents item from dropping in creative by removing the part that gives the item with a setBlock.
-        if (!level.isClientSide() && player.isCreative()) {
-            if (state.getValue(HALF) == Half.TOP) {
-                BlockPos adjacentPos = pos.below();
-                BlockState adjacentState = level.getBlockState(adjacentPos);
-                if (adjacentState.is(this) && adjacentState.getValue(HALF) == Half.BOTTOM) {
-                    level.setBlock(adjacentPos, Blocks.AIR.defaultBlockState(), 35);
-                    // Event that plays the "break block" sound.
-                    level.levelEvent(player, 2001, adjacentPos, Block.getId(state));
-                }
-            }
-        }
+        this.preventCreativeDoubleDrop(level, pos, state, player);
         return super.playerWillDestroy(level, pos, state, player);
     }
 
@@ -85,29 +72,9 @@ public class WildMaizeBlock extends WildPlantBlock implements IBlockGeneration {
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         if(facing.getAxis().isHorizontal())
             return stateIn;
-
-        if(facing == Direction.UP && stateIn.getValue(HALF) == Half.BOTTOM) {
-            if(facingState.getBlock() == this) {
-                if(facingState.getValue(HALF) == Half.TOP) {
-                    return stateIn;
-                }
-            }
-            return Blocks.AIR.defaultBlockState();
-        }
-
-        if(facing == Direction.DOWN) {
-            if(stateIn.getValue(HALF) == Half.TOP) {
-                if(facingState.getBlock() == this) {
-                    if(facingState.getValue(HALF) == Half.BOTTOM) {
-                        return stateIn;
-                    }
-                }
-            } else if(canSurvive(stateIn, worldIn, currentPos))
-                return stateIn;
-            return Blocks.AIR.defaultBlockState();
-        }
-
-        return stateIn;
+        if(facing == Direction.DOWN && this.isBottomHalf(stateIn))
+            return canSurvive(stateIn, worldIn, currentPos) ? stateIn : Blocks.AIR.defaultBlockState();
+        return this.checkOtherHalf(stateIn, facing, facingState);
     }
 
     @Override

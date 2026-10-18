@@ -1,0 +1,5 @@
+{
+  "type": "gardentrails:config_driven",
+  "plant": "orange_maple",
+  "feature": "gardentrails:orange_maple_placed"
+}

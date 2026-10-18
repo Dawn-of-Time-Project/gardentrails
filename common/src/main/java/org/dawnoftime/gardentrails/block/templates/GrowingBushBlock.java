@@ -1,7 +1,4 @@
 package org.dawnoftime.gardentrails.block.templates;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.server.level.ServerPlayer;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +7,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -25,21 +25,32 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 import org.dawnoftime.gardentrails.util.GTBlockStateProperties;
 import org.dawnoftime.gardentrails.util.Utils;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
 
-public class GrowingBushBlock extends SoilCropsBlock {
+public class GrowingBushBlock extends SoilCropsBlock implements IBiomeColoredBlock {
     public final VoxelShape[] SHAPES;
     public final int cutAge;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_5;
     private static final BooleanProperty CUT = GTBlockStateProperties.CUT;
 
+    // Null when the bush keeps its texture color, else the biome color applied to its tinted layers
+    @Nullable
+    private final ColorType colorType;
+
     public GrowingBushBlock(PlantType plantType, int cutAge) {
+        this(plantType, cutAge, null);
+    }
+
+    public GrowingBushBlock(PlantType plantType, int cutAge, @Nullable ColorType colorType) {
         super(plantType);
         this.cutAge = cutAge;
+        this.colorType = colorType;
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0).setValue(CUT, false));
         this.SHAPES = this.makeShapes();
     }
@@ -76,6 +87,12 @@ public class GrowingBushBlock extends SoilCropsBlock {
         return AGE;
     }
 
+    @Nullable
+    @Override
+    public ColorType getColorType() {
+        return this.colorType;
+    }
+
     public BooleanProperty getCutProperty() {
         return CUT;
     }
@@ -86,15 +103,14 @@ public class GrowingBushBlock extends SoilCropsBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (super.useItemOn(stack, state, level, pos, player, hand, hitResult) == ItemInteractionResult.SUCCESS)
+    protected ItemInteractionResult useItemOn(ItemStack usedStack, BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult ray) {
+        if(super.useItemOn(usedStack, state, worldIn, pos, playerIn, hand, ray) == ItemInteractionResult.SUCCESS)
             return ItemInteractionResult.SUCCESS;
-
-        if(this.isMaxAge(state) && !player.isCreative()) {
-            if(!level.isClientSide()) {
-                ItemStack itemStackHand = player.getItemInHand(hand);
+        if(this.isMaxAge(state) && !playerIn.isCreative()) {
+            if(!worldIn.isClientSide()) {
+                ItemStack itemStackHand = playerIn.getItemInHand(hand);
                 boolean holdShears = itemStackHand.is(Items.SHEARS);
-                if(holdShears && level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
+                if(holdShears && worldIn instanceof ServerLevel serverLevel && playerIn instanceof ServerPlayer serverPlayer) {
                     itemStackHand.hurtAndBreak(1, serverLevel, serverPlayer, (item) -> serverPlayer.onEquippedItemBroken(
                             item,
                             hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND
@@ -102,11 +118,11 @@ public class GrowingBushBlock extends SoilCropsBlock {
                 }
 
                 ResourceLocation resourceLocation = this.builtInRegistryHolder().key().location();
-                this.harvestWithoutBreaking(state, level, pos, itemStackHand, resourceLocation.getPath(), holdShears ? 1.5F : 1.0F);
+                this.harvestWithoutBreaking(state, worldIn, pos, itemStackHand, resourceLocation.getPath(), holdShears ? 1.5F : 1.0F);
                 return ItemInteractionResult.SUCCESS;
             }
         }
-        return ItemInteractionResult.FAIL;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     // Called when bonemeal is used on this block

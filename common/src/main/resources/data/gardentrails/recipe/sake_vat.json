@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "S S",
-    "III",
+    "SXS",
+    "I I",
     "SSS"
   ],
   "key": {
@@ -11,6 +11,9 @@
     },
     "I": {
       "item": "minecraft:iron_ingot"
+    },
+    "X": {
+      "item": "minecraft:glass_pane"
     }
   },
   "result": {

@@ -1,7 +1,6 @@
 package org.dawnoftime.gardentrails.item.templates;
 
 import net.minecraft.world.item.Item;
-
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,27 +12,20 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
 import org.dawnoftime.gardentrails.block.templates.SoilCropsBlock;
-import org.dawnoftime.gardentrails.item.IHasFlowerPot;
 import net.minecraft.network.chat.Component;
 import org.dawnoftime.gardentrails.util.TooltipHelper;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import javax.annotation.Nullable;
 
-public class SoilSeedsItem extends BlockItem implements IHasFlowerPot {
-    private FlowerPotBlockGT potBlock;
-
+public class SoilSeedsItem extends BlockItem {
     // Optional sake process description, null for seeds outside the sake chain
     @Nullable private final String sakeDescKey;
     private final String[] sakeArgKeys;
@@ -54,25 +46,7 @@ public class SoilSeedsItem extends BlockItem implements IHasFlowerPot {
         if (this.sakeDescKey != null) {
             TooltipHelper.process(tooltips, "lore.gardentrails.sake_process", this.sakeDescKey, this.sakeArgKeys);
         }
-    }
-
-    @Override
-    public @NotNull InteractionResult useOn(UseOnContext context) {
-        var stack = context.getItemInHand();
-        Level world = context.getLevel();
-        if (!world.isClientSide() && this.getPotBlock() != null) {
-            BlockPos pos = context.getClickedPos();
-            BlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof FlowerPotBlock pot && ((FlowerPotBlock) pot.defaultBlockState().getBlock()).getPotted() == Blocks.AIR) {
-                Player player = context.getPlayer();
-                if (player == null || !player.getAbilities().instabuild) {
-                    stack.shrink(1);
-                }
-                world.setBlock(pos, this.getPotBlock().getRandomState(), 2);
-                return InteractionResult.SUCCESS;
-            }
-        }
-        return super.useOn(context);
+        PottablePlantItem.appendPotLore(this.getBlock(), tooltips);
     }
 
     @Override
@@ -114,15 +88,5 @@ public class SoilSeedsItem extends BlockItem implements IHasFlowerPot {
                 return InteractionResult.SUCCESS;
             }
         }
-    }
-
-    @Override
-    public FlowerPotBlockGT getPotBlock() {
-        return this.potBlock;
-    }
-
-    @Override
-    public void setPotBlock(FlowerPotBlockGT pot) {
-        this.potBlock = pot;
     }
 }

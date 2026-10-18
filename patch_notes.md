@@ -1,58 +1,36 @@
-## 🌱 Garden Trails Patch Notes: 1.21.1 v0.2.3
+## 🌱 Garden Trails Patch Notes v0.2.4
 
 ![new blocks](https://i.imgur.com/PnG9gNy.jpeg)
 
-### New entity: the rare Quetzal bird!
-- Added the Quetzal, a new bird that spawns in jungles and drops feathers, with its spawn egg
-- It can be tamed with the new Quetzal Offering, told to sit or follow, and can land on your shoulder
-- Added the garden mode: right-click a tamed Quetzal to cycle follow, sit and garden. In garden mode it stays in place and speeds up the growth of nearby plants
-- A Quetzal on your shoulder gives the new Quetzal Trust effect, a speed bonus that lasts as long as the bird stays on you
-- Added the Reunited Brothers effect, replacing Quetzal Trust when you wear a Quetzalcoatl chestplate from Armor of the Ages: same speed bonus plus reduced damage taken
-- Added the blue, green and red feathers, dropped by the Quetzal
-- Added the Quetzal Offering, the only item that can tame a Quetzal. The Quetzal Offering and the Quetzal spawn egg are now uncommon (yellow name)
-- Added the blue petals, obtained by drying a commelina in a drying tray
-- Added the grains and seeds mix: works like bone meal on plants and doubles the taming chance of parrots
-- Added datapack tags for tameable birds, boosted plants and chestplates that trigger Reunited Brothers
+► Full patchnote here: https://www.curseforge.com/minecraft/mc-mods/garden-trails/files/9183592
 
-### New unique crafting system: Sake
-- Added the Sake Vat, a fermenting block that turns three ingredients into sake bottles
-- Added five sakes: regular sake, mulberry, grape, maize and tea. Each one is drinkable and gives a short boost followed by a debuff
-- Drinking the same sake several times in a row extends the boost and adds stacking penalties
-- Added the washed rice, obtained by washing rice in a water cauldron. Cooked rice is now smelted from washed rice
-- Added the mold and the moldy rice. Fermented rice is now obtained by drying moldy rice in a drying tray
-- Added the `gardentrails:fermenting` recipe type for datapacks
-- Added "Sake Process" tooltips on the rotten oak log, mold, rice, washed rice, cooked rice, moldy rice, fermented rice and the Sake Vat to explain the whole chain
-
-### New blocks: Rotten Wood & Lattices
-- Added 3 rotten tree structures that generates in swamps
-- Added the rotten oak log and the soaked oak log. Brushing a rotten oak log gives mold
-- Added the full rotten oak wood set: planks, stairs, slab, edge, plate, fence, fence gate and trapdoor
-- Added the iron, copper and oxidized copper lattices. Up to four panels fit in one block and plants can grow on them like on pergolas
-
-### Arrows
-- Added the red, green and blue arrows, crafted with a colored feather. They hit slightly more than a regular arrow
-- Added the Quetzal arrow, crafted with the three colored feathers, a bone and an amethyst shard. It hits even more than a regular arrow
-
-### Integration
-- JEI: added the Fermenting and Drying categories
-- Armor of the Ages: the Quetzalcoatl head, chest and feet recipes now use Quetzal feathers, configurable
-
-### Improvements
-- Added tooltips on the Ivy, the Cypress and the Quetzal Offering, and unified the style of all tooltips
-- Each color of wild geranium now has its own biome list and spawn rate in the config
-- Bonemeal now works on pergola vines, ivy and grapes
-- The cypress in its flower pot now follows the biome foliage color
-- Plates and edges now connect to panes, iron bars and walls
-- Regular mobs and NPC now see decorative blocks as obstacles instead of walking through them
-- The silkmoth spawn egg now appears in the creative tab
-
-### Bug fixing:
-- Fixed Oxidized copper lattice recipe
-- Pergolas with plants now drops the pergola when broken, plus the plant when it is mature
-- Plants can now be placed anywhere on a pergola in survival (no more dirt or axis requirement) and consume the item, like on lattices
-- Fixed the orange and green maple trees never spawning on Fabric
-- Fixed the cypress flower pot item not being tinted in hand and inventory
-
-### Removed
-- Removed the four old sake bottles with their models, recipes and cumulative effects
-- Removed the Serious Business and Sake-chan advancements
+### New Content
+- Added the Rotten Oak Sapling and its flower pot, it grows an oak shaped tree made of Rotten Oak Logs that can be brushed again to collect more mold
+- Added the Flower Planter, a wider flower pot made of bricks placed against a wall on the lower or upper half of a block, it holds any plant a flower pot can hold, from this mod, vanilla or other mods, shown with the same model as in the pot
+- Added the Rotten Arrow, it deals less damage than a regular arrow but applies Poison and Hunger for 5 seconds on hit
+- Added a socials button on the Garden Trails creative tab, it opens the socials links from the DoT project
+- Added the Japanese Light Armor boots recipe (Armor of the Ages) still using string instead of silk
+- Mold can now be found in the chests of simple dungeons (5%) and of strongholds, in the library, corridors and crossings (5%)
+- Colored arrows (25%) and colored feathers (50%) can now be found in the chests of jungle temples, the color is random
+- New config options generateMold, generateArrows and generateFeathers to turn these chest additions off
+### Fixed
+- Fixed the planter turning around when placed on the lower part of a block
+- Fixed the crash at launch on server with Fabric
+- Plants can now be placed anywhere on a pergola in survival (no more dirt or axis requirement) and consume the item
+- Pergolas with plants now drop the pergola when broken, plus the plant when it is mature
+- Fixed the oxidized copper lattice recipe
+- Fixed the sake vat selection overlay and the missing faces around the liquid
+- Fixed the chest loot (silk, grape, maize, rice, mulberry in shipwrecks and village houses) that never appeared with Forge, and its chance being rolled twice
+- Fixed the ivy never growing or spreading, the stick bundles never growing silk worms and the maple sapling never growing: they now react to random ticks again
+### Changed
+- Wild rice now spawns twice as often
+- Potted plants now use the vanilla flower pot: put a plant on an empty flower pot to get the potted version, an empty hand gives the plant back
+- Potted plants are no longer craftable nor in the creative tab, and the potted items in inventories are removed, placed pots in the world are kept
+- Plants that fit in a flower pot now show it in their tooltip
+- The geranium planters are replaced by the Flower Planter: put a geranium in it to get the planter with the hanging leaves, placed geranium planters in the world are removed
+- Plants now spawn in the biomes of Terralith, Biomes O' Plenty, Regions Unexplored, Oh The Biomes We've Gone, Atmospheric and Nature's Spirit, so they keep spawning in modpacks that replace the vanilla biomes
+- The mulberry is now in the forge:fruits/mulberry tag, so other mods that use this tag (like Upgrade Aquatic) recognize it as a mulberry
+- The tea leaves are now in the farmersrespite:tea_leaves tag, so they can be used to brew dandelion tea in the Farmer's Respite kettle
+- The red and orange maple trees now also spawn in the Biomes O' Plenty Maple Woods
+### Other
+- Removed unused code and made a ton of internal code changes

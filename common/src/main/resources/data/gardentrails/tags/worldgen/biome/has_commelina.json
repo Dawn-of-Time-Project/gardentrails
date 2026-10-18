@@ -1,0 +1,132 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp",
+    {
+      "id": "terralith:orchid_swamp",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:bayou",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:marsh",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:wetland",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:bayou",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:cypress_swamplands",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:cypress_wetlands",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:white_mangrove_marshes",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:bayou",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:old_growth_bayou",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:marsh",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:fen",
+      "required": false
+    },
+    {
+      "id": "natures_spirit:marsh",
+      "required": false
+    },
+    "minecraft:flower_forest",
+    {
+      "id": "terralith:lavender_forest",
+      "required": false
+    },
+    {
+      "id": "terralith:lavender_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:sakura_grove",
+      "required": false
+    },
+    {
+      "id": "terralith:sakura_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:moonlight_grove",
+      "required": false
+    },
+    {
+      "id": "terralith:moonlight_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:blooming_valley",
+      "required": false
+    },
+    {
+      "id": "terralith:blooming_plateau",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:jacaranda_glade",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:mystic_grove",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:lavender_field",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:sakura_grove",
+      "required": false
+    },
+    {
+      "id": "biomeswevegone:rose_fields",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:flower_fields",
+      "required": false
+    },
+    {
+      "id": "regions_unexplored:magnolia_woodland",
+      "required": false
+    },
+    {
+      "id": "natures_spirit:wisteria_forest",
+      "required": false
+    },
+    {
+      "id": "natures_spirit:floral_ridges",
+      "required": false
+    },
+    {
+      "id": "natures_spirit:blooming_sugi_forest",
+      "required": false
+    }
+  ]
+}

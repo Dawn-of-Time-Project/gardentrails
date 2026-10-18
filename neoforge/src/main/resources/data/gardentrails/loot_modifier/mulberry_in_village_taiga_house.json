@@ -1,0 +1,16 @@
+{
+  "type": "gardentrails:add_item",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/village/village_taiga_house"
+    },
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.5
+    }
+  ],
+  "items": [
+    "gardentrails:mulberry"
+  ]
+}

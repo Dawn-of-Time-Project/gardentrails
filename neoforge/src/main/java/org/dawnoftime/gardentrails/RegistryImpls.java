@@ -6,20 +6,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.advancements.CriterionTrigger;
-import net.minecraft.core.Holder;
-import org.dawnoftime.gardentrails.advancement.KillSilkmothTrigger;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SpawnPlacementTypes;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
-import org.dawnoftime.gardentrails.entity.QuetzalEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -29,16 +22,24 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.core.Holder;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import org.dawnoftime.gardentrails.entity.QuetzalEntity;
 import org.dawnoftime.gardentrails.entity.SilkmothEntity;
-import org.dawnoftime.gardentrails.item.IHasFlowerPot;
+import org.dawnoftime.gardentrails.item.IconItem;
 import org.dawnoftime.gardentrails.registry.*;
 
+import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -56,53 +57,26 @@ public class RegistryImpls {
     public static class NeoForgeBlocksRegistry extends GTBlocksRegistry {
         public static final DeferredRegister<Block> BLOCKS_REGISTRY = DeferredRegister.create(Registries.BLOCK, GTCommon.MOD_ID);
         public static final DeferredRegister<Item> BLOCK_ITEMS_REGISTRY = DeferredRegister.create(Registries.ITEM, GTCommon.MOD_ID);
-
-        public NeoForgeBlocksRegistry() {
-            postRegister();
-        }
-
+        @SafeVarargs
         @Override
-        public <T extends Block, Y extends Item> Supplier<T> registerWithItem(String id, Supplier<T> block, Function<T, Y> item, TagKey<Block>... tags) {
+        public final <T extends Block, Y extends Item> Supplier<T> registerWithItem(String id, Supplier<T> block, Function<T, Y> item, TagKey<Block>... tags) {
             DeferredHolder<Block, T> registryBlock = BLOCKS_REGISTRY.register(id, block);
             if(item != null) {
                 BLOCK_ITEMS_REGISTRY.register(id, () -> item.apply(registryBlock.get()));
             }
-            if(tags.length == 0){
-                addBlockTag(registryBlock, BlockTags.MINEABLE_WITH_PICKAXE);
-            }else{
-                for (TagKey<Block> tag : tags) {
-                    addBlockTag(registryBlock, tag);
-                }
-            }
             return registryBlock;
         }
 
         @Override
-        public <T extends Block, Y extends Item & IHasFlowerPot> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item) {
+        public <T extends Block, Y extends Item> Supplier<T> registerWithFlowerPotItem(String blockID, Supplier<T> block, String itemID, Function<T, Y> item, @Nullable IBiomeColoredBlock.ColorType potColor) {
             DeferredHolder<Block, T> registryBlock = BLOCKS_REGISTRY.register(blockID, block);
             if (item != null) {
-                final String potName = blockID + "_flower_pot";
-
-                Supplier<FlowerPotBlockGT> potBlockObject = this.register(potName, () -> {
-                    final FlowerPotBlockGT potBlock = new FlowerPotBlockGT(null);
-                    POT_BLOCKS.put(potName, potBlock);
-                    return potBlock;
-                }, BlockTags.MINEABLE_WITH_PICKAXE);
-
-                BLOCK_ITEMS_REGISTRY.register(itemID, () -> {
-                    var item1 = item.apply(registryBlock.get());
-                    FlowerPotBlockGT potBlock = potBlockObject.get();
-
-                    item1.setPotBlock(potBlock);
-                    potBlock.setItemInPot(item1);
-                    return item1;
-                });
+                BLOCK_ITEMS_REGISTRY.register(itemID, () -> item.apply(registryBlock.get()));
             }
-            addBlockTag(registryBlock, BlockTags.SWORD_EFFICIENT);
+            this.registerPot(blockID, registryBlock, potColor);
             return registryBlock;
         }
     }
-
 
     public static class NeoForgeEntitiesRegistry extends GTEntitiesRegistry {
         public static final DeferredRegister<EntityType<?>> ENTITY_TYPES_REGISTRY = DeferredRegister.create(Registries.ENTITY_TYPE, GTCommon.MOD_ID);
@@ -111,7 +85,6 @@ public class RegistryImpls {
             return ENTITY_TYPES_REGISTRY.register(name, () -> builder.get().build(name));
         }
     }
-
 
     public static class NeoForgeMobEffectsRegistry extends GTMobEffectsRegistry {
         public static final DeferredRegister<MobEffect> MOB_EFFECTS_REGISTRY = DeferredRegister.create(Registries.MOB_EFFECT, GTCommon.MOD_ID);
@@ -123,11 +96,6 @@ public class RegistryImpls {
         }
     }
 
-    public static class NeoForgeCriteriaRegistry {
-        public static final DeferredRegister<CriterionTrigger<?>> TRIGGERS_REGISTRY = DeferredRegister.create(Registries.TRIGGER_TYPE, GTCommon.MOD_ID);
-        public static final DeferredHolder<CriterionTrigger<?>, KillSilkmothTrigger> KILL_SILKMOTH = TRIGGERS_REGISTRY.register(KillSilkmothTrigger.ID.getPath(), () -> GTCriteriaRegistry.KILL_SILKMOTH);
-    }
-
     public static class NeoForgeFeaturesRegistry extends GTFeaturesRegistry {
         public static final DeferredRegister<Feature<?>> FEATURES_REGISTRY = DeferredRegister.create(Registries.FEATURE, GTCommon.MOD_ID);
 
@@ -137,15 +105,12 @@ public class RegistryImpls {
         }
     }
 
-
     public static class NeoForgeItemsRegistry extends GTItemsRegistry {
         public static final DeferredRegister<Item> ITEMS_REGISTRY = DeferredRegister.create(Registries.ITEM, GTCommon.MOD_ID);
 
-        public final Supplier<Item> SILKMOTH_SPAWN_EGG = register("silkmoth_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.SILKMOTH_ENTITY.get(), 0xDBD8BD, 0xFEFEFC, new Item.Properties()));
-        public final Supplier<Item> QUETZAL_SPAWN_EGG = register("quetzal_spawn_egg", () -> new SpawnEggItem(GTEntitiesRegistry.INSTANCE.QUETZAL_ENTITY.get(), 0xFFFFFF, 0xFFFFFF, new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
-
-        public NeoForgeItemsRegistry() {
-            postRegister();
+        @Override
+        protected Item createSpawnEgg(Supplier<? extends EntityType<? extends Mob>> entityType, int backgroundColor, int highlightColor, Item.Properties properties) {
+            return new SpawnEggItem(entityType.get(), backgroundColor, highlightColor, properties);
         }
 
         @Override
@@ -153,31 +118,6 @@ public class RegistryImpls {
             return ITEMS_REGISTRY.register(name, itemSupplier);
         }
 
-        @Override
-        public <T extends Item & IHasFlowerPot> Supplier<Item> registerWithFlowerPot(String name, Supplier<T> itemSupplier) {
-            return registerWithFlowerPot(name, name, itemSupplier);
-        }
-
-        @Override
-        public <T extends Item & IHasFlowerPot> Supplier<Item> registerWithFlowerPot(String plantName, String seedName, Supplier<T> itemSupplier) {
-            final String potName = plantName + "_flower_pot";
-
-            Supplier<FlowerPotBlockGT> potBlockObject = GTBlocksRegistry.INSTANCE.register(potName, () -> {
-                final FlowerPotBlockGT potBlock = new FlowerPotBlockGT(null);
-                GTBlocksRegistry.POT_BLOCKS.put(potName, potBlock);
-                return potBlock;
-            }, BlockTags.MINEABLE_WITH_PICKAXE);
-
-            return this.register(seedName, () -> {
-                T item = itemSupplier.get();
-                FlowerPotBlockGT potBlock = potBlockObject.get();
-
-                item.setPotBlock(potBlock);
-                potBlock.setItemInPot(item);
-
-                return item;
-            });
-        }
     }
 
     public static class NeoForgeRecipeSerializersRegistry extends GTRecipeSerializersRegistry {
@@ -227,7 +167,9 @@ public class RegistryImpls {
         NeoForgeMobEffectsRegistry.MOB_EFFECTS_REGISTRY.register(bus);
 
         GTBlocksRegistry.INSTANCE = new NeoForgeBlocksRegistry();
+        GTBlocksRegistry.INSTANCE.registerAll();
         GTItemsRegistry.INSTANCE = new NeoForgeItemsRegistry();
+        GTItemsRegistry.INSTANCE.registerAll();
         GTBlockEntitiesRegistry.INSTANCE = new NeoForgeBlockEntitiesRegistry();
         GTFeaturesRegistry.INSTANCE = new NeoForgeFeaturesRegistry();
         GTRecipeSerializersRegistry.INSTANCE = new NeoForgeRecipeSerializersRegistry();
@@ -236,7 +178,6 @@ public class RegistryImpls {
         GTCreativeModeTabsRegistry.INSTANCE = new NeoForgeCreativeModeTabsRegistry();
 
         // Register all deffered registries
-        NeoForgeCriteriaRegistry.TRIGGERS_REGISTRY.register(bus);
         NeoForgeBlocksRegistry.BLOCKS_REGISTRY.register(bus);
         NeoForgeBlocksRegistry.BLOCK_ITEMS_REGISTRY.register(bus);
         NeoForgeItemsRegistry.ITEMS_REGISTRY.register(bus);

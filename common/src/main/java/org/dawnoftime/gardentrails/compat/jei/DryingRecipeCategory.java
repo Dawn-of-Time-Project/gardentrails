@@ -37,7 +37,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryerRecipe> {
 
     public DryingRecipeCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(GTBlocksRegistry.INSTANCE.OAK_DRYING_TRAY.get()));
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(GTBlocksRegistry.INSTANCE.DRYING_TRAYS.get("oak").get()));
         this.slot = guiHelper.getSlotDrawable();
         this.arrow = guiHelper.createAnimatedRecipeArrow(100);
     }

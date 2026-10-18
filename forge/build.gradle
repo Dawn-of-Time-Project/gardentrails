@@ -7,7 +7,6 @@ mixin {
     add(sourceSets.main, "${mod_id}.refmap.json")
 
     config("${mod_id}.mixins.json")
-    config("${mod_id}.forge.mixins.json")
 }
 
 legacyForge {
@@ -27,10 +26,6 @@ legacyForge {
         client {
             client()
         }
-        data {
-            data()
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-        }
         server {
             server()
         }
@@ -42,8 +37,6 @@ legacyForge {
         }
     }
 }
-
-sourceSets.main.resources.srcDir 'src/generated/resources'
 
 repositories {
     maven {
@@ -73,6 +66,12 @@ dependencies {
     modRuntimeOnly("maven.modrinth:critters-and-companions:acDDSIG3")
     modRuntimeOnly("maven.modrinth:armor-of-the-ages:Bc9cFnLg")
 
+    // Dev-only biome mods to test the plant biome tags (versions compatible with Forge 47.2.30, Oh The Biomes We've Gone is left out: its tree library has no mixin refmap and crashes the dev env)
+    modRuntimeOnly("maven.modrinth:terralith:WeYhEb5d")
+    modRuntimeOnly("maven.modrinth:terrablender:IfcgopfA")
+    modRuntimeOnly("maven.modrinth:biomes-o-plenty:peO5lWzX")
+    modRuntimeOnly("maven.modrinth:regions-unexplored:XTrgsfIB")
+
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
     implementation 'org.jetbrains:annotations:26.0.2'
 }
@@ -80,7 +79,7 @@ dependencies {
 jar {
     finalizedBy('reobfJar')
     manifest.attributes([
-            "MixinConfigs": "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
+            "MixinConfigs": "${mod_id}.mixins.json"
     ])
 }
 

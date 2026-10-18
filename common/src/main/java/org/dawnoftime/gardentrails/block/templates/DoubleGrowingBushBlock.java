@@ -1,6 +1,6 @@
 package org.dawnoftime.gardentrails.block.templates;
-import org.dawnoftime.gardentrails.platform.Services;
 
+import org.dawnoftime.gardentrails.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -13,22 +13,20 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import org.dawnoftime.gardentrails.block.ITwoHalvesBlock;
 import org.dawnoftime.gardentrails.util.Utils;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class DoubleGrowingBushBlock extends GrowingBushBlock {
+public class DoubleGrowingBushBlock extends GrowingBushBlock implements ITwoHalvesBlock {
     public final int growingAge;
     public final VoxelShape[] TOP_SHAPES;
-    public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
 
     public DoubleGrowingBushBlock(PlantType plantType, int cutAge, int growingAge) {
         super(plantType, cutAge);
@@ -94,19 +92,7 @@ public class DoubleGrowingBushBlock extends GrowingBushBlock {
 
     @Override
     public BlockState playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
-        Half half = state.getValue(HALF);
-        BlockPos otherPos = (half == Half.BOTTOM) ? pos.above() : pos.below();
-        BlockState blockstate = worldIn.getBlockState(otherPos);
-        if(blockstate.getBlock() == this) {
-            worldIn.setBlock(otherPos, Blocks.AIR.defaultBlockState(), 35);
-            worldIn.levelEvent(player, 2001, otherPos, Block.getId(blockstate));
-            ItemStack itemstack = player.getMainHandItem();
-            if(!worldIn.isClientSide() && !player.isCreative()) {
-                Block.dropResources(state, worldIn, pos, null, player, itemstack);
-                Block.dropResources(blockstate, worldIn, otherPos, null, player, itemstack);
-            }
-        }
-
+        this.destroyOtherHalf(worldIn, pos, state, player);
         return super.playerWillDestroy(worldIn, pos, state, player);
     }
 
@@ -121,7 +107,7 @@ public class DoubleGrowingBushBlock extends GrowingBushBlock {
     @Override
     public void growCrops(Level worldIn, BlockPos pos, BlockState state) {
         // If bonemeal is applied on the top block, redirect to the bottom block
-        if (!this.isBottomCrop(state)) {
+        if (!this.isBottomHalf(state)) {
             pos = pos.below();
             state = worldIn.getBlockState(pos);
             if (state.getBlock() != this) return;
@@ -141,7 +127,7 @@ public class DoubleGrowingBushBlock extends GrowingBushBlock {
 
     @Override
     public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-        if(this.isBottomCrop(state)) {
+        if(this.isBottomHalf(state)) {
             if(!worldIn.isLoaded(pos))
                 return; // Forge: prevent loading unloaded chunks when checking neighbor's light
             if(worldIn.getRawBrightness(pos, 0) >= 9) {
@@ -156,22 +142,6 @@ public class DoubleGrowingBushBlock extends GrowingBushBlock {
                 }
             }
         }
-    }
-
-    public boolean isBottomCrop(BlockState state) {
-        if(state.getBlock() instanceof DoubleGrowingBushBlock) {
-            return state.getValue(HALF) == Half.BOTTOM;
-        }
-        return false;
-    }
-
-    /**
-     * @param bottomState State of the bottom part of the double crop.
-     *
-     * @return State of the Top part of the crop in input.
-     */
-    public BlockState getTopState(BlockState bottomState) {
-        return bottomState.setValue(HALF, Half.TOP);
     }
 
     public int getAgeReachingTopBlock() {
@@ -190,17 +160,6 @@ public class DoubleGrowingBushBlock extends GrowingBushBlock {
 
     @Override
     public void setPlantWithAge(BlockState currentState, LevelAccessor worldIn, BlockPos pos, int newAge) {
-        if(currentState.getValue(HALF) == Half.TOP)
-            pos = pos.below();
-        if(newAge >= this.getAgeReachingTopBlock()) {
-            BlockPos posUp = pos.above();
-            if(worldIn.getBlockState(posUp).getBlock() == this || worldIn.isEmptyBlock(posUp)) {
-                worldIn.setBlock(posUp, currentState.setValue(this.getAgeProperty(), newAge).setValue(HALF, Half.TOP), 10);
-            }
-        }
-        if(newAge < this.getAgeReachingTopBlock() && this.getAge(currentState) == this.getAgeReachingTopBlock()) {
-            worldIn.setBlock(pos.above(), Blocks.AIR.defaultBlockState(), 10);
-        }
-        worldIn.setBlock(pos, currentState.setValue(this.getAgeProperty(), newAge).setValue(HALF, Half.BOTTOM), 10);
+        this.placeHalvesWithAge(currentState, worldIn, pos, newAge, this.getAgeProperty(), this.getAgeReachingTopBlock(), this.getAge(currentState));
     }
 }

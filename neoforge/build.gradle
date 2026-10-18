@@ -65,6 +65,15 @@ dependencies {
     runtimeOnly "maven.modrinth:armor-of-the-ages:EvVBQ12Y"
     runtimeOnly "maven.modrinth:dawn-of-time:tr4M1qvF"
     runtimeOnly "maven.modrinth:fusion-connected-textures:AYDaLPK8"
+
+    // Dev-only: biome mods to test plant worldgen in modded biomes
+    runtimeOnly "maven.modrinth:terrablender:6e8GCrLb"
+    runtimeOnly "maven.modrinth:glitchcore:S2TfWrZR"
+    runtimeOnly "maven.modrinth:lithostitched:cZu4cHY3"
+    runtimeOnly "maven.modrinth:corgilib:Za7PInLk"
+    runtimeOnly "maven.modrinth:biomes-o-plenty:BtZKRp69"
+    runtimeOnly "maven.modrinth:regions-unexplored:5A8LFnXX"
+    runtimeOnly "maven.modrinth:natures-spirit:9tpL59jN"
 }
 
 publishMods {

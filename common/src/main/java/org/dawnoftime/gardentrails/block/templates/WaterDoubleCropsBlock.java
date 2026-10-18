@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -70,23 +69,12 @@ public class WaterDoubleCropsBlock extends DoubleCropsBlock implements SimpleWat
     }
 
     @Override
-    public BlockState getTopState(BlockState bottomState) {
-        return super.getTopState(bottomState).setValue(WATERLOGGED, false);
+    public BlockState getTopState(BlockState state) {
+        return super.getTopState(state).setValue(WATERLOGGED, false);
     }
 
     @Override
-    public void setPlantWithAge(BlockState currentState, LevelAccessor worldIn, BlockPos pos, int newAge) {
-        if(currentState.getValue(HALF) == Half.TOP)
-            pos = pos.below();
-        if(newAge >= this.getAgeReachingTopBlock()) {
-            BlockPos posUp = pos.above();
-            if(worldIn.getBlockState(posUp).getBlock() == this || worldIn.isEmptyBlock(posUp)) {
-                worldIn.setBlock(posUp, currentState.setValue(this.getAgeProperty(), newAge).setValue(HALF, Half.TOP).setValue(WATERLOGGED, false), 10);
-            }
-        }
-        if(newAge < this.getAgeReachingTopBlock() && this.getAge(currentState) == this.getAgeReachingTopBlock()) {
-            worldIn.setBlock(pos.above(), Blocks.AIR.defaultBlockState(), 10);
-        }
-        worldIn.setBlock(pos, currentState.setValue(this.getAgeProperty(), newAge).setValue(HALF, Half.BOTTOM).setValue(WATERLOGGED, true), 10);
+    public BlockState getBottomState(BlockState state) {
+        return super.getBottomState(state).setValue(WATERLOGGED, true);
     }
 }

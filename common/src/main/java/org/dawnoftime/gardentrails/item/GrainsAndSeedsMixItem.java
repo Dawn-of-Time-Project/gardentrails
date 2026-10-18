@@ -1,7 +1,6 @@
 package org.dawnoftime.gardentrails.item;
 
 import net.minecraft.world.item.Item;
-
 import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;

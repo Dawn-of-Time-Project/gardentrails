@@ -57,6 +57,11 @@ public class PlanterBlock extends BlockGT {
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
 
+    /** Default state of another planter block with the orientation and the half of the source state. */
+    public static BlockState withPlacementOf(Block planter, BlockState source) {
+        return planter.defaultBlockState().setValue(FACING, source.getValue(FACING)).setValue(HALF, source.getValue(HALF));
+    }
+
     @Override
     protected boolean blocksLandPathing(final BlockState state) {
         return true;

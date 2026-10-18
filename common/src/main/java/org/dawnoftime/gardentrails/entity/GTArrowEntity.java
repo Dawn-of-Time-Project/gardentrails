@@ -5,6 +5,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
@@ -15,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 public class GTArrowEntity extends AbstractArrow {
+    private static final int ROTTEN_EFFECT_DURATION = 100; // 5 seconds
     private static final EntityDataAccessor<Integer> DATA_VARIANT = SynchedEntityData.defineId(GTArrowEntity.class, EntityDataSerializers.INT);
     private static final String VARIANT_TAG = "Variant";
 
@@ -49,6 +52,16 @@ public class GTArrowEntity extends AbstractArrow {
     private void setVariant(GTArrowVariant variant) {
         this.entityData.set(DATA_VARIANT, variant.ordinal());
         this.setBaseDamage(variant.getBaseDamage());
+    }
+
+    // Rotten arrows refresh poison and hunger on the target, vanilla keeps the longest remaining duration
+    @Override
+    protected void doPostHurtEffects(@NotNull LivingEntity target) {
+        super.doPostHurtEffects(target);
+        if (this.getVariant() == GTArrowVariant.ROTTEN) {
+            target.addEffect(new MobEffectInstance(MobEffects.POISON, ROTTEN_EFFECT_DURATION), this.getEffectSource());
+            target.addEffect(new MobEffectInstance(MobEffects.HUNGER, ROTTEN_EFFECT_DURATION), this.getEffectSource());
+        }
     }
 
     @Override

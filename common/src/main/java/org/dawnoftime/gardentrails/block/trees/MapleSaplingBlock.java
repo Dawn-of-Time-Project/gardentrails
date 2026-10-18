@@ -49,7 +49,7 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
     }
 
     @Override
-    public void tick(final BlockState state, final ServerLevel level, final BlockPos pos, final RandomSource source) {
+    public void randomTick(final BlockState state, final ServerLevel level, final BlockPos pos, final RandomSource source) {
         if(level.getMaxLocalRawBrightness(pos.above()) >= 9 && source.nextInt(7) == 0) {
             if(!level.isLoaded(pos)) {
                 return; // Forge: prevent loading unloaded chunks when checking neighbor's light
@@ -110,14 +110,9 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
         if(!state.is(BlockTags.DIRT)) {
             return false;
         }
-        for(int x = -1; x <= 1; x++) {
-            for(int y = 0; y <= 1; y++) {
-                for(int z = -1; z <= 1; z++) {
-                    state = worldIn.getBlockState(bottomCenterIn.offset(x, y + 1, z));
-                    if(!(state.getBlock() instanceof AirBlock)) {
-                        return false;
-                    }
-                }
+        for(final BlockPos leafPos : MapleTree.leafArea(bottomCenterIn)) {
+            if(!(worldIn.getBlockState(leafPos).getBlock() instanceof AirBlock)) {
+                return false;
             }
         }
         return true;
@@ -128,14 +123,8 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
             final Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(worldIn.getRandom());
             worldIn.setBlock(centerPosIn, this.trunk.get().defaultBlockState().setValue(MapleTrunkBlock.FACING, direction), 10);
 
-            for(int x = -1; x <= 1; x++) {
-                for(int y = 0; y <= 1; y++) {
-                    for(int z = -1; z <= 1; z++) {
-                        final BlockPos newBlockPosition = new BlockPos(centerPosIn.getX() + x, centerPosIn.getY() + y + 1, centerPosIn.getZ() + z);
-
-                        worldIn.setBlock(newBlockPosition, this.leaves.get().defaultBlockState().setValue(MapleTrunkBlock.FACING, direction).setValue(MapleLeavesBlock.MULTIBLOCK_X, x + 1).setValue(MapleLeavesBlock.MULTIBLOCK_Y, y).setValue(MapleLeavesBlock.MULTIBLOCK_Z, z + 1), 10);
-                    }
-                }
+            for(final BlockPos leafPos : MapleTree.leafArea(centerPosIn)) {
+                worldIn.setBlock(leafPos, MapleTree.leafState(this.leaves.get(), direction, centerPosIn, leafPos), 10);
             }
             return true;
         }

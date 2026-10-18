@@ -3,9 +3,9 @@ package org.dawnoftime.gardentrails;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import org.dawnoftime.gardentrails.client.model.entity.QuetzalModel;
 import org.dawnoftime.gardentrails.client.model.entity.SilkmothModel;
 import org.dawnoftime.gardentrails.client.renderer.blockentity.DryerRenderer;
@@ -18,7 +18,6 @@ import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
 
 @EventBusSubscriber(modid = GTCommon.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class GTNeoForgeClient {
-
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SilkmothModel.LAYER_LOCATION, SilkmothModel::createBodyLayer);

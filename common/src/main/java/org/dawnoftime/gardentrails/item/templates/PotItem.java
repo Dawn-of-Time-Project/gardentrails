@@ -5,57 +5,39 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.dawnoftime.gardentrails.block.templates.FlowerPotBlockGT;
-import org.dawnoftime.gardentrails.item.IHasFlowerPot;
-import javax.annotation.Nullable;
 
-public class PotItem extends ItemGT implements IHasFlowerPot {
-    private FlowerPotBlockGT potBlock;
+import java.util.function.Supplier;
 
-    public PotItem() {
-        super();
-    }
+/**
+ * Item without a block that can still be put in an empty vanilla flower pot (grape seeds).
+ * Vanilla pots only take block items, so the swap to the pot block is done here.
+ */
+public class PotItem extends ItemGT {
+    private final Supplier<Block> potBlock;
 
-    public PotItem(Properties properties) {
-        super(properties);
-    }
-
-    public PotItem(Properties properties, String loreKey) {
-        super(properties, loreKey);
+    public PotItem(Properties properties, String loreKey, Supplier<Block> potBlock) {
+        super(properties, new String[]{loreKey, PottablePlantItem.POT_LORE_KEY});
+        this.potBlock = potBlock;
     }
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        var stack = context.getItemInHand();
         Level world = context.getLevel();
-        if (!world.isClientSide() && this.getPotBlock() != null) {
-            BlockPos pos = context.getClickedPos();
-            BlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof FlowerPotBlock pot) {
-                if (((FlowerPotBlock) pot.defaultBlockState().getBlock()).getPotted() == Blocks.AIR) {
-                    Player player = context.getPlayer();
-                    if (player == null || !player.getAbilities().instabuild) {
-                        stack.shrink(1);
-                    }
-                    world.setBlock(pos, this.getPotBlock().getRandomState(), 2);
-                    return InteractionResult.SUCCESS;
+        BlockPos pos = context.getClickedPos();
+        BlockState state = world.getBlockState(pos);
+        if (state.is(Blocks.FLOWER_POT)) {
+            if (!world.isClientSide()) {
+                Player player = context.getPlayer();
+                if (player == null || !player.getAbilities().instabuild) {
+                    context.getItemInHand().shrink(1);
                 }
+                world.setBlock(pos, this.potBlock.get().defaultBlockState(), 2);
             }
+            return InteractionResult.sidedSuccess(world.isClientSide());
         }
         return super.useOn(context);
-    }
-
-    @Nullable
-    @Override
-    public FlowerPotBlockGT getPotBlock() {
-        return this.potBlock;
-    }
-
-    @Override
-    public void setPotBlock(@Nullable FlowerPotBlockGT pot) {
-        this.potBlock = pot;
     }
 }

@@ -1,0 +1,5 @@
+{
+  "type": "gardentrails:config_driven",
+  "plant": "camellia",
+  "feature": "gardentrails:camellia_placed"
+}
