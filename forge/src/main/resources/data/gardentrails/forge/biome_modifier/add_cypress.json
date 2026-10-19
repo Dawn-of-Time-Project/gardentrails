@@ -1,0 +1,5 @@
+{
+  "type": "gardentrails:config_driven",
+  "plant": "cypress",
+  "feature": "gardentrails:cypress_placed"
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building_blocks",
+  "pattern": [
+    "SSS",
+    "TTT"
+  ],
+  "key": {
+    "T": {
+      "item": "dawnoftimebuilder:thatch_bamboo"
+    },
+    "S": {
+      "item": "gardentrails:silk"
+    }
+  },
+  "result": {
+    "id": "dawnoftimebuilder:light_gray_futon",
+    "count": 1
+  }
+}

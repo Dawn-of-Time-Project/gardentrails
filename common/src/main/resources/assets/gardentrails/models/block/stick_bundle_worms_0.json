@@ -1,7 +1,6 @@
 {
 	"render_type": "minecraft:cutout",
 	"textures": {
-		"particle": "gardentrails:block/stick_bundle",
 		"2": "gardentrails:block/silk_worm"
 	},
 	"elements": [

@@ -35,7 +35,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryerRecipe> {
     private final Component title = Component.translatable("gardentrails.jei.category.drying");
 
     public DryingRecipeCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(GTBlocksRegistry.INSTANCE.OAK_DRYING_TRAY.get()));
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(GTBlocksRegistry.INSTANCE.DRYING_TRAYS.get("oak").get()));
         this.slot = guiHelper.getSlotDrawable();
         this.arrow = guiHelper.createAnimatedRecipeArrow(100);
     }

@@ -1,8 +1,9 @@
 package org.dawnoftime.gardentrails.block.templates;
+
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
-import org.dawnoftime.gardentrails.platform.Services;
 
+import org.dawnoftime.gardentrails.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -15,17 +16,16 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.dawnoftime.gardentrails.block.ITwoHalvesBlock;
+
 import javax.annotation.Nullable;
 
-public class DoubleCropsBlock extends SoilCropsBlock {
+public class DoubleCropsBlock extends SoilCropsBlock implements ITwoHalvesBlock {
     private final int growingAge;
     public final VoxelShape[] SHAPES;
-    public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
 
     public DoubleCropsBlock(PlantType plantType, int growingAge) {
         super(plantType);
@@ -64,16 +64,16 @@ public class DoubleCropsBlock extends SoilCropsBlock {
 
     @Override
     public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
-        if(this.isBottomCrop(stateIn)) {
+        if(this.isBottomHalf(stateIn)) {
             if(facing == Direction.UP) {
-                if(facingState.getBlock() == this && !this.isBottomCrop(facingState)) {
+                if(facingState.getBlock() == this && !this.isBottomHalf(facingState)) {
                     return stateIn;
                 } else
                     return (stateIn.getValue(AGE) < this.getAgeReachingTopBlock()) ? stateIn : this.getRemovedState(stateIn);
             }
         } else {
             if(facing == Direction.DOWN) {
-                if(facingState.getBlock() == this && this.isBottomCrop(facingState)) {
+                if(facingState.getBlock() == this && this.isBottomHalf(facingState)) {
                     return stateIn.setValue(AGE, facingState.getValue(AGE));
                 } else
                     return this.getRemovedState(stateIn);
@@ -85,18 +85,7 @@ public class DoubleCropsBlock extends SoilCropsBlock {
 
     @Override
     public void setPlantWithAge(BlockState currentState, LevelAccessor worldIn, BlockPos pos, int newAge) {
-        if(currentState.getValue(HALF) == Half.TOP)
-            pos = pos.below();
-        if(newAge >= this.getAgeReachingTopBlock()) {
-            BlockPos posUp = pos.above();
-            if(worldIn.getBlockState(posUp).getBlock() == this || worldIn.isEmptyBlock(posUp)) {
-                worldIn.setBlock(posUp, currentState.setValue(this.getAgeProperty(), newAge).setValue(HALF, Half.TOP), 10);
-            }
-        }
-        if(newAge < this.getAgeReachingTopBlock() && this.getAge(currentState) == this.getAgeReachingTopBlock()) {
-            worldIn.setBlock(pos.above(), Blocks.AIR.defaultBlockState(), 10);
-        }
-        worldIn.setBlock(pos, currentState.setValue(this.getAgeProperty(), newAge).setValue(HALF, Half.BOTTOM), 10);
+        this.placeHalvesWithAge(currentState, worldIn, pos, newAge, this.getAgeProperty(), this.getAgeReachingTopBlock(), this.getAge(currentState));
     }
 
     @Override
@@ -106,31 +95,15 @@ public class DoubleCropsBlock extends SoilCropsBlock {
 
     @Override
     public BlockState playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
-        Half half = state.getValue(HALF);
-        BlockPos otherPos = (half == Half.BOTTOM) ? pos.above() : pos.below();
-        BlockState otherState = worldIn.getBlockState(otherPos);
-        if(otherState.getBlock() == this) {
-            worldIn.setBlock(otherPos, this.getRemovedState(otherState), 35);
-            worldIn.levelEvent(player, 2001, otherPos, Block.getId(otherState));
-            ItemStack itemstack = player.getMainHandItem();
-            if(!worldIn.isClientSide() && !player.isCreative()) {
-                Block.dropResources(state, worldIn, pos, null, player, itemstack);
-                Block.dropResources(otherState, worldIn, otherPos, null, player, itemstack);
-            }
-        }
-
+        this.destroyOtherHalf(worldIn, pos, state, player);
         return super.playerWillDestroy(worldIn, pos, state, player);
-    }
-
-    public BlockState getRemovedState(BlockState state){
-        return Blocks.AIR.defaultBlockState();
     }
 
     // Only called with Bonemeal
     @Override
     public void growCrops(Level worldIn, BlockPos pos, BlockState state) {
         // If bonemeal is applied on the top block, redirect to the bottom block
-        if (!this.isBottomCrop(state)) {
+        if (!this.isBottomHalf(state)) {
             pos = pos.below();
             state = worldIn.getBlockState(pos);
             if (state.getBlock() != this) return;
@@ -143,7 +116,7 @@ public class DoubleCropsBlock extends SoilCropsBlock {
 
     @Override
     public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-        if(this.isBottomCrop(state)) {
+        if(this.isBottomHalf(state)) {
             if(!worldIn.isLoaded(pos))
                 return; // Forge: prevent loading unloaded chunks when checking neighbor's light
             if(worldIn.getRawBrightness(pos, 0) >= 9) {
@@ -158,22 +131,6 @@ public class DoubleCropsBlock extends SoilCropsBlock {
                 }
             }
         }
-    }
-
-    public boolean isBottomCrop(BlockState state) {
-        if(state.getBlock() instanceof DoubleCropsBlock) {
-            return state.getValue(HALF) == Half.BOTTOM;
-        }
-        return false;
-    }
-
-    /**
-     * @param bottomState State of the bottom part of the double crop.
-     *
-     * @return State of the Top part of the crop in input.
-     */
-    public BlockState getTopState(BlockState bottomState) {
-        return bottomState.setValue(HALF, Half.TOP);
     }
 
     public int getAgeReachingTopBlock() {

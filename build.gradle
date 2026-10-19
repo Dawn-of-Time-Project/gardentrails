@@ -4,7 +4,7 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "2.2.1" apply(false)
 }
 
-// Reads patch_notes.md at the root — write it before each ./gradlew publishMods
+// Reads patch_notes.md at the root â€” write it before each ./gradlew publishMods
 def patchNoteProvider = providers.provider {
     def file = rootProject.layout.projectDirectory.file("patch_notes.md").asFile
     if (!file.exists()) throw new GradleException("patch_notes.md not found! Create the file before publishing.")

@@ -1,0 +1,5 @@
+{
+  "type": "gardentrails:config_driven",
+  "plant": "mulberry",
+  "feature": "gardentrails:mulberry_placed"
+}

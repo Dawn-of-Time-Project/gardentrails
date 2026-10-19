@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "id": "gardentrails:camellia_flower_pot"
+      "id": "minecraft:flower_pot"
     },
     "title": {
       "translate": "advancements.gardentrails.two_seeds_one_pot.title"
@@ -17,97 +17,89 @@
   "parent": "gardentrails:crafting",
   "criteria": {
     "pot_camellia": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "items": [
+        "location": [
           {
-            "items": [
-              "gardentrails:camellia_flower_pot"
-            ]
+            "condition": "minecraft:block_state_property",
+            "block": "gardentrails:camellia_flower_pot"
           }
         ]
       }
     },
     "pot_mulberry": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "items": [
+        "location": [
           {
-            "items": [
-              "gardentrails:mulberry_flower_pot"
-            ]
+            "condition": "minecraft:block_state_property",
+            "block": "gardentrails:mulberry_flower_pot"
           }
         ]
       }
     },
     "pot_ivy": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "items": [
+        "location": [
           {
-            "items": [
-              "gardentrails:ivy_flower_pot"
-            ]
+            "condition": "minecraft:block_state_property",
+            "block": "gardentrails:ivy_flower_pot"
           }
         ]
       }
     },
     "pot_geranium": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "items": [
+        "location": [
           {
-            "items": [
-              "gardentrails:geranium_pink_flower_pot"
-            ]
+            "condition": "minecraft:block_state_property",
+            "block": "gardentrails:geranium_pink_flower_pot"
           }
         ]
       }
     },
     "pot_cypress": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "items": [
+        "location": [
           {
-            "items": [
-              "gardentrails:cypress_flower_pot"
-            ]
+            "condition": "minecraft:block_state_property",
+            "block": "gardentrails:cypress_flower_pot"
           }
         ]
       }
     },
     "pot_maple": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "items": [
+        "location": [
           {
-            "items": [
-              "gardentrails:maple_red_sapling_flower_pot"
-            ]
+            "condition": "minecraft:block_state_property",
+            "block": "gardentrails:maple_red_sapling_flower_pot"
           }
         ]
       }
     },
     "pot_commelina": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "items": [
+        "location": [
           {
-            "items": [
-              "gardentrails:commelina_flower_pot"
-            ]
+            "condition": "minecraft:block_state_property",
+            "block": "gardentrails:commelina_flower_pot"
           }
         ]
       }
     },
     "pot_maize": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "items": [
+        "location": [
           {
-            "items": [
-              "gardentrails:maize_flower_pot"
-            ]
+            "condition": "minecraft:block_state_property",
+            "block": "gardentrails:maize_flower_pot"
           }
         ]
       }

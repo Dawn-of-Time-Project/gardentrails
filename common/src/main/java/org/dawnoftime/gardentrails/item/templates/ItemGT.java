@@ -1,10 +1,11 @@
 package org.dawnoftime.gardentrails.item.templates;
 
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
+import java.util.ArrayList;
+
 import org.dawnoftime.gardentrails.util.RegistrationContext;
 
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.ArrayList;
-import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

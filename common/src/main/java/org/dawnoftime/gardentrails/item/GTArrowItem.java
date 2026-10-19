@@ -1,8 +1,9 @@
 package org.dawnoftime.gardentrails.item;
 
 import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.ArrayList;
 import java.util.function.Consumer;
+import java.util.ArrayList;
+
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.network.chat.Component;

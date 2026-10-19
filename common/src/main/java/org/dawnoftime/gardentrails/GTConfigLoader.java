@@ -33,31 +33,31 @@ public class GTConfigLoader {
                     case "generateMaize"          -> INSTANCE.generateMaize         = boolValue;
                     case "generateRice"           -> INSTANCE.generateRice          = boolValue;
                     case "generateMulberry"       -> INSTANCE.generateMulberry      = boolValue;
+                    case "generateMold"           -> INSTANCE.generateMold          = boolValue;
+                    case "generateArrows"         -> INSTANCE.generateArrows        = boolValue;
+                    case "generateFeathers"       -> INSTANCE.generateFeathers      = boolValue;
                     case "dawnOfTimeUseSilk"      -> INSTANCE.dawnOfTimeUseSilk     = boolValue;
                     case "armorOfTheAgesUseSilk"  -> INSTANCE.armorOfTheAgesUseSilk = boolValue;
                     case "armorOfTheAgesUseQuetzalFeathers" -> INSTANCE.armorOfTheAgesUseQuetzalFeathers = boolValue;
-                    case "boxwood_bush_biomes"    -> INSTANCE.boxwoodBushBiomes  = parseList(rawValue);
-                    case "camellia_biomes"        -> INSTANCE.camelliaBiomes     = parseList(rawValue);
-                    case "commelina_biomes"       -> INSTANCE.commelinaBiomes    = parseList(rawValue);
-                    case "cypress_biomes"         -> INSTANCE.cypressBiomes      = parseList(rawValue);
-                    case "geranium_pink_biomes"   -> INSTANCE.geraniumPinkBiomes = parseList(rawValue);
-                    case "geranium_orange_biomes" -> INSTANCE.geraniumOrangeBiomes = parseList(rawValue);
-                    case "geranium_purple_biomes" -> INSTANCE.geraniumPurpleBiomes = parseList(rawValue);
-                    case "geranium_purpleish_biomes" -> INSTANCE.geraniumPurpleishBiomes = parseList(rawValue);
-                    case "geranium_red_biomes" -> INSTANCE.geraniumRedBiomes = parseList(rawValue);
-                    case "geranium_white_biomes" -> INSTANCE.geraniumWhiteBiomes = parseList(rawValue);
-                    case "ivy_biomes"             -> INSTANCE.ivyBiomes          = parseList(rawValue);
-                    case "mulberry_biomes"        -> INSTANCE.mulberryBiomes     = parseList(rawValue);
-                    case "red_maple_biomes"       -> INSTANCE.redMapleBiomes     = parseList(rawValue);
-                    case "orange_maple_biomes"    -> INSTANCE.orangeMapleBiomes  = parseList(rawValue);
-                    case "green_maple_biomes"     -> INSTANCE.greenMapleBiomes   = parseList(rawValue);
-                    case "rice_biomes"            -> INSTANCE.riceBiomes         = parseList(rawValue);
-                    case "wild_grape_biomes"      -> INSTANCE.wildGrapeBiomes    = parseList(rawValue);
-                    case "wild_maize_biomes"      -> INSTANCE.wildMaizeBiomes    = parseList(rawValue);
+                    default -> parsePlantKey(key, rawValue, boolValue);
                 }
             }
         } catch (IOException e) {
             System.err.println("[GardenTrails] Failed to read config, using defaults: " + e.getMessage());
+        }
+    }
+
+    // Keys "<plant>_enabled" and "<plant>_extra_biomes", unknown keys are ignored
+    private static void parsePlantKey(String key, String rawValue, boolean boolValue) {
+        for (String plant : GTConfig.PLANTS) {
+            if (key.equals(plant + "_enabled")) {
+                INSTANCE.setPlantEnabled(plant, boolValue);
+                return;
+            }
+            if (key.equals(plant + "_extra_biomes")) {
+                INSTANCE.setExtraBiomes(plant, parseList(rawValue));
+                return;
+            }
         }
     }
 
@@ -84,6 +84,11 @@ generateMaize=true
 generateRice=true
 generateMulberry=true
 
+# Mold in the simple dungeons and the stronghold chests, colored arrows and feathers in the jungle temple chests
+generateMold=true
+generateArrows=true
+generateFeathers=true
+
 # Requires Dawn of Time - replaces white wool with silk in DoT recipes
 dawnOfTimeUseSilk=true
 
@@ -93,29 +98,52 @@ armorOfTheAgesUseSilk=true
 # Requires Armor of the Ages - Quetzalcoatl armor recipes use Garden Trails green and red feathers
 armorOfTheAgesUseQuetzalFeathers=true
 
-# Plant biome lists
-# Comma-separated biome IDs. Empty = plant does not spawn.
-# Use full biome IDs: namespace:biome_name (e.g., minecraft:forest, byg:jacaranda_forest)
+# Plant placement
+# The biomes of each plant come from the datapack tag data/gardentrails/tags/worldgen/biome/has_<plant>.json
+# (the same tag also drives the quetzal spawn). This file only overrides it:
+#   <plant>_enabled=false          the plant does not spawn anymore
+#   <plant>_extra_biomes=a:b,c:d   comma-separated biome IDs added on top of the tag
+# Biomes can only be added here. To remove biomes, override the tag with a datapack.
 # IDs for biomes from mods that are not installed are ignored automatically.
 
-boxwood_bush_biomes=minecraft:forest,minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:windswept_forest
-camellia_biomes=minecraft:jungle,minecraft:sparse_jungle,minecraft:bamboo_jungle,minecraft:savanna,minecraft:taiga
-commelina_biomes=minecraft:swamp,minecraft:mangrove_swamp,minecraft:flower_forest
-cypress_biomes=minecraft:savanna,minecraft:savanna_plateau,minecraft:windswept_savanna
-geranium_pink_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
-geranium_orange_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
-geranium_purple_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
-geranium_purpleish_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
-geranium_red_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
-geranium_white_biomes=minecraft:flower_forest,minecraft:meadow,minecraft:birch_forest,minecraft:old_growth_birch_forest
-ivy_biomes=minecraft:forest,minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest
-mulberry_biomes=minecraft:taiga,minecraft:old_growth_pine_taiga,minecraft:old_growth_spruce_taiga
-red_maple_biomes=minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest
-orange_maple_biomes=minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest
-green_maple_biomes=minecraft:birch_forest,minecraft:old_growth_birch_forest,minecraft:dark_forest
-rice_biomes=minecraft:swamp,minecraft:mangrove_swamp
-wild_grape_biomes=minecraft:forest,minecraft:birch_forest,minecraft:dark_forest
-wild_maize_biomes=minecraft:savanna,minecraft:savanna_plateau,minecraft:windswept_savanna,minecraft:plains
+boxwood_bush_enabled=true
+boxwood_bush_extra_biomes=
+camellia_enabled=true
+camellia_extra_biomes=
+commelina_enabled=true
+commelina_extra_biomes=
+cypress_enabled=true
+cypress_extra_biomes=
+geranium_pink_enabled=true
+geranium_pink_extra_biomes=
+geranium_orange_enabled=true
+geranium_orange_extra_biomes=
+geranium_purple_enabled=true
+geranium_purple_extra_biomes=
+geranium_purpleish_enabled=true
+geranium_purpleish_extra_biomes=
+geranium_red_enabled=true
+geranium_red_extra_biomes=
+geranium_white_enabled=true
+geranium_white_extra_biomes=
+ivy_enabled=true
+ivy_extra_biomes=
+mulberry_enabled=true
+mulberry_extra_biomes=
+red_maple_enabled=true
+red_maple_extra_biomes=
+orange_maple_enabled=true
+orange_maple_extra_biomes=
+green_maple_enabled=true
+green_maple_extra_biomes=
+rice_enabled=true
+rice_extra_biomes=
+wild_grape_enabled=true
+wild_grape_extra_biomes=
+wild_maize_enabled=true
+wild_maize_extra_biomes=
+quetzal_enabled=true
+quetzal_extra_biomes=
 """;
         try {
             Files.createDirectories(file.getParent());

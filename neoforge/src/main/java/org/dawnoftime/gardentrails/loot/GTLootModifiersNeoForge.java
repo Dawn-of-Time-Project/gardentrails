@@ -11,40 +11,40 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
-import org.dawnoftime.gardentrails.platform.Services;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class GTLootModifiersNeoForge extends LootModifier {
+
     public static final Supplier<MapCodec<GTLootModifiersNeoForge>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(instance ->
                     codecStart(instance)
-                            .and(BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(m -> m.item))
+                            .and(BuiltInRegistries.ITEM.byNameCodec().listOf().fieldOf("items").forGetter(m -> m.items))
                             .apply(instance, GTLootModifiersNeoForge::new)
             )
     );
 
-    private final Item item;
+    // One of these items is added, picked at random
+    private final List<Item> items;
 
-    public GTLootModifiersNeoForge(LootItemCondition[] conditionsIn, int priority, Item item) {
+    public GTLootModifiersNeoForge(LootItemCondition[] conditionsIn, int priority, List<Item> items) {
         super(conditionsIn, priority);
-        this.item = item;
+        this.items = items;
     }
 
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(@NotNull ObjectArrayList<ItemStack> generatedLoot, @NotNull LootContext lootContext) {
-        for (LootItemCondition condition : this.conditions)
-            if (!condition.test(lootContext))
-                return generatedLoot;
-
-        if (Services.PLATFORM.getConfig().generateChestLoot && LootTablesToModify.SHOULD_ADD_MAP.getOrDefault(item, false))
-            generatedLoot.add(new ItemStack(this.item));
+        // The conditions are already checked by LootModifier#apply, testing them again would roll the chance twice
+        if (LootTablesToModify.isEnabled(this.items)) {
+            generatedLoot.add(new ItemStack(this.items.get(lootContext.getRandom().nextInt(this.items.size()))));
+        }
 
         return generatedLoot;
     }
 
     @Override
-    public MapCodec<? extends IGlobalLootModifier> codec() {
+    public @NotNull MapCodec<? extends IGlobalLootModifier> codec() {
         return CODEC.get();
     }
 }

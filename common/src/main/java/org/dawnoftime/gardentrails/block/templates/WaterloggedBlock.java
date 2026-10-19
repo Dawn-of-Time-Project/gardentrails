@@ -1,8 +1,9 @@
 package org.dawnoftime.gardentrails.block.templates;
 
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -34,7 +35,7 @@ public class WaterloggedBlock extends BlockGT implements SimpleWaterloggedBlock 
     }
 
     @Override
-    public @NotNull BlockState updateShape(BlockState stateIn, @NotNull LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, @NotNull BlockPos currentPos, @NotNull Direction facing, @NotNull BlockPos facingPos, @NotNull BlockState facingState, RandomSource random) {
+    public @NotNull BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         if(stateIn.getValue(WATERLOGGED)) {
             scheduledTickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         }

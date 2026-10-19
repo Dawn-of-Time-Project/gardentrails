@@ -1,10 +1,10 @@
 package org.dawnoftime.gardentrails.block.trees;
 
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
-import org.dawnoftime.gardentrails.block.IBlockTooltip;
-import net.minecraft.world.item.Item;
 
+import net.minecraft.world.item.Item;
 import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,8 +31,8 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import org.dawnoftime.gardentrails.block.IBlockChain;
+import org.dawnoftime.gardentrails.block.ITwoHalvesBlock;
 import org.dawnoftime.gardentrails.block.templates.BlockGT;
-import org.dawnoftime.gardentrails.platform.Services;
 import org.dawnoftime.gardentrails.registry.GTItemsRegistry;
 import org.dawnoftime.gardentrails.util.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -43,8 +43,7 @@ import java.util.Objects;
 
 import static org.dawnoftime.gardentrails.util.VoxelShapes.STICK_BUNDLE_SHAPES;
 
-public class StickBundleBlock extends BlockGT implements IBlockChain, IBlockTooltip {
-    public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
+public class StickBundleBlock extends BlockGT implements IBlockChain, ITwoHalvesBlock, IBlockTooltip {
     private static final IntegerProperty AGE = BlockStateProperties.AGE_3;
 
     @Override
@@ -87,23 +86,7 @@ public class StickBundleBlock extends BlockGT implements IBlockChain, IBlockTool
     public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         if(facing.getAxis().isHorizontal())
             return stateIn;
-        if(facing == Direction.UP && stateIn.getValue(HALF) == Half.BOTTOM) {
-            if(facingState.getBlock() == this) {
-                if(facingState.getValue(HALF) == Half.TOP) {
-                    return stateIn;
-                }
-            }
-            return Blocks.AIR.defaultBlockState();
-        }
-        if(facing == Direction.DOWN && stateIn.getValue(HALF) == Half.TOP) {
-            if(facingState.getBlock() == this) {
-                if(facingState.getValue(HALF) == Half.BOTTOM) {
-                    return stateIn;
-                }
-            }
-            return Blocks.AIR.defaultBlockState();
-        }
-        return stateIn;
+        return this.checkOtherHalf(stateIn, facing, facingState);
     }
 
     @Override
@@ -114,7 +97,7 @@ public class StickBundleBlock extends BlockGT implements IBlockChain, IBlockTool
     }
 
     @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack usedStack, BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
         if(!worldIn.isClientSide()) {
             //The StickBundle is empty, we try to put worms on it.
             if(state.getValue(AGE) == 0) {
@@ -171,18 +154,7 @@ public class StickBundleBlock extends BlockGT implements IBlockChain, IBlockTool
 
     @Override
     public BlockState playerWillDestroy(Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
-        // Prevents item from dropping in creative by removing the part that gives the item with a setBlock.
-        if (!level.isClientSide() && player.isCreative()) {
-            if (state.getValue(HALF) == Half.TOP) {
-                BlockPos adjacentPos = pos.below();
-                BlockState adjacentState = level.getBlockState(adjacentPos);
-                if (adjacentState.is(this) && adjacentState.getValue(HALF) == Half.BOTTOM) {
-                    level.setBlock(adjacentPos, Blocks.AIR.defaultBlockState(), 35);
-                    // Event that plays the "break block" sound.
-                    level.levelEvent(player, 2001, adjacentPos, Block.getId(state));
-                }
-            }
-        }
+        this.preventCreativeDoubleDrop(level, pos, state, player);
         return super.playerWillDestroy(level, pos, state, player);
     }
 
