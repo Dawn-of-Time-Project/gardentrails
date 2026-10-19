@@ -1,7 +1,8 @@
 package org.dawnoftime.gardentrails.block.templates;
+
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
-import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.Registries;

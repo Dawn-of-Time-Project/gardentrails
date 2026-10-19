@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "entries": [
+    "gardentrails:arrows_in_jungle_temple",
+    "gardentrails:feathers_in_jungle_temple",
+    "gardentrails:grape_in_shipwreck_supply",
+    "gardentrails:grape_in_village_plains_house",
+    "gardentrails:maize_in_shipwreck_supply",
+    "gardentrails:maize_in_village_savanna_house",
+    "gardentrails:mold_in_simple_dungeon",
+    "gardentrails:mold_in_stronghold_corridor",
+    "gardentrails:mold_in_stronghold_crossing",
+    "gardentrails:mold_in_stronghold_library",
+    "gardentrails:mulberry_in_shipwreck_supply",
+    "gardentrails:mulberry_in_village_taiga_house",
+    "gardentrails:rice_in_shipwreck_supply",
+    "gardentrails:rice_in_village_taiga_house",
+    "gardentrails:silk_in_shipwreck_treasure"
+  ]
+}

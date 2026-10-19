@@ -1,10 +1,10 @@
 package org.dawnoftime.gardentrails.block.plants;
+
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
-import org.dawnoftime.gardentrails.block.IBlockTooltip;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.InteractionResult;
 
+import net.minecraft.world.item.Item;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -62,7 +63,8 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
     }
 
     @Override
-    protected @NotNull InteractionResult useItemOn(final @NotNull ItemStack heldItemStack, final @NotNull BlockState state, final @NotNull Level worldIn, final @NotNull BlockPos pos, final @NotNull Player player, final @NotNull InteractionHand handIn, final @NotNull BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack usedStack, final @NotNull BlockState state, final @NotNull Level worldIn, final @NotNull BlockPos pos, final Player player, final InteractionHand handIn, final BlockHitResult hit) {
+        final ItemStack heldItemStack = player.getItemInHand(handIn);
         if (player.isCrouching()) {
             //We remove the highest CypressBlock
             final BlockPos topPos = this.getHighestCypressPos(worldIn, pos);
@@ -78,7 +80,7 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
         } else if (!heldItemStack.isEmpty() && heldItemStack.getItem() == this.asItem()) {
             //We put a CypressBlock on top of the cypress
             final BlockPos topPos = this.getHighestCypressPos(worldIn, pos).above();
-            if (topPos.getY() <= Utils.HIGHEST_Y) {
+            if (topPos.getY() < worldIn.getMaxY() + 1) {
                 if (!worldIn.isClientSide() && worldIn.getBlockState(topPos).isAir()) {
                     worldIn.setBlock(topPos, this.defaultBlockState(), 11);
                     if (!player.isCreative()) {
@@ -88,12 +90,12 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
                 return InteractionResult.SUCCESS;
             }
         }
-        return super.useItemOn(heldItemStack, state, worldIn, pos, player, handIn, hit);
+        return super.useItemOn(usedStack, state, worldIn, pos, player, handIn, hit);
     }
 
     private BlockPos getHighestCypressPos(final Level worldIn, final BlockPos pos) {
         int yOffset;
-        for (yOffset = 0; yOffset + pos.getY() <= Utils.HIGHEST_Y; yOffset++) {
+        for (yOffset = 0; yOffset + pos.getY() < worldIn.getMaxY() + 1; yOffset++) {
             if (worldIn.getBlockState(pos.above(yOffset)).getBlock() != this) {
                 break;
             }
@@ -119,7 +121,7 @@ public class CypressBlock extends BlockGT implements IBlockGeneration, IBiomeCol
     }
 
     @Override
-    public BlockState updateShape(final BlockState stateIn, final LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, final BlockPos currentPos, final Direction facing, final BlockPos facingPos, final BlockState facingState, RandomSource random) {
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         if (!facing.getAxis().isVertical()) {
             return stateIn;
         }

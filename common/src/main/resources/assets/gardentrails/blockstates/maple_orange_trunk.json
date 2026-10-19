@@ -1,8 +1,8 @@
 {
-    "variants": {
-        "facing=north": { "model": "gardentrails:block/maple_orange/maple_orange_trunk"},
-        "facing=east": { "model": "gardentrails:block/maple_orange/maple_orange_trunk", "y" : 90},
-        "facing=south": { "model": "gardentrails:block/maple_orange/maple_orange_trunk", "y": 180 },
-        "facing=west": { "model": "gardentrails:block/maple_orange/maple_orange_trunk", "y": 270 }
-    }
+	"variants": {
+		"facing=north": { "model": "gardentrails:block/maple_orange/maple_orange_trunk" },
+		"facing=east": { "model": "gardentrails:block/maple_orange/maple_orange_trunk", "y": 90 },
+		"facing=south": { "model": "gardentrails:block/maple_orange/maple_orange_trunk", "y": 180 },
+		"facing=west": { "model": "gardentrails:block/maple_orange/maple_orange_trunk", "y": 270 }
+	}
 }

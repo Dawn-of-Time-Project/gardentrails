@@ -5,14 +5,13 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:item",
+          "type": "item",
           "name": "gardentrails:silk_worm_eggs",
           "weight": 1,
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "function": "set_count",
               "count": {
-                "type": "minecraft:uniform",
                 "min": 0,
                 "max": 1
               }
@@ -21,7 +20,6 @@
               "function": "minecraft:enchanted_count_increase",
               "enchantment": "minecraft:looting",
               "count": {
-                "type": "minecraft:uniform",
                 "min": 0,
                 "max": 1
               }
@@ -31,7 +29,7 @@
       ],
       "conditions": [
         {
-          "condition": "minecraft:killed_by_player"
+          "condition": "killed_by_player"
         }
       ]
     }

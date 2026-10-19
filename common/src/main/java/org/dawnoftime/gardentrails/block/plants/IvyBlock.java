@@ -1,10 +1,10 @@
 package org.dawnoftime.gardentrails.block.plants;
 
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
-import org.dawnoftime.gardentrails.block.IBlockTooltip;
-import net.minecraft.world.item.Item;
 
+import net.minecraft.world.item.Item;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -30,7 +30,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import org.dawnoftime.gardentrails.block.IBlockGeneration;
 import org.dawnoftime.gardentrails.block.templates.BlockGT;
-import org.dawnoftime.gardentrails.platform.Services;
 import org.dawnoftime.gardentrails.registry.GTTags;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
@@ -226,7 +225,7 @@ public class IvyBlock extends BlockGT implements IBlockGeneration, IBlockTooltip
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState stateIn, @NotNull LevelReader levelIn, ScheduledTickAccess scheduledTickAccess, @NotNull BlockPos currentPos, Direction facing, @NotNull BlockPos facingPos, @NotNull BlockState facingState, RandomSource random) {
+    public @NotNull BlockState updateShape(BlockState stateIn, LevelReader levelIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         stateIn = stateIn.setValue(PERSISTENT, false);
         if (facing.getAxis().isHorizontal()) {
             if (facing == Direction.NORTH && stateIn.getValue(NORTH) && !hasFullFace(facingState, levelIn, facingPos, facing)) {

@@ -1,8 +1,8 @@
 package org.dawnoftime.gardentrails.block.plants;
 
 import org.dawnoftime.gardentrails.block.IBlockTooltip;
-import net.minecraft.world.item.Item;
 
+import net.minecraft.world.item.Item;
 import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.block.state.properties.Half;
 import org.dawnoftime.gardentrails.block.templates.DoubleGrowingBushBlock;
-import org.dawnoftime.gardentrails.platform.Services;
 import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
 import org.jetbrains.annotations.NotNull;
 

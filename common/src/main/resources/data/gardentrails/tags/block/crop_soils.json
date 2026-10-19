@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:farmland",
+    {"id": "farmersdelight:rich_soil_farmland", "required": false},
+    {"id": "aether:aether_farmland", "required": false},
+    {"id": "immersive_weathering:loamy_farmland", "required": false},
+    {"id": "immersive_weathering:earthen_clay_farmland", "required": false},
+    {"id": "immersive_weathering:sandy_farmland", "required": false},
+    {"id": "immersive_weathering:silty_farmland", "required": false}
+  ]
+}

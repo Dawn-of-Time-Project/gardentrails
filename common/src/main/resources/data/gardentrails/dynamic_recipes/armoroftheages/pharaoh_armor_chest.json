@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "G G",
+    "SCS",
+    "S S"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_block"
+    },
+    "C": {
+      "item": "minecraft:golden_chestplate"
+    },
+    "S": {
+      "item": "gardentrails:silk"
+    }
+  },
+  "result": {
+    "id": "armoroftheages:pharaoh_armor_chest",
+    "count": 1
+  }
+}

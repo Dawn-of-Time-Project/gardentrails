@@ -8,13 +8,11 @@
         "${mod_author}"
     ],
     "contact": {
-        "homepage": "https://fabricmc.net/",
-        "sources": "https://github.com/FabricMC/fabric-example-mod"
+        "homepage": "https://www.curseforge.com/minecraft/mc-mods/garden-trails"
     },
     "license": "${license}",
     "icon": "icon.png",
     "environment": "*",
-    "accessWidener": "${mod_id}.accesswidener",
     "entrypoints": {
         "main": [
             "org.dawnoftime.gardentrails.GTFabric"
@@ -35,9 +33,6 @@
         "fabric": "*",
         "minecraft": "${fabric_minecraft_version_range}",
         "java": ">=21"
-    },
-    "suggests": {
-        "another-mod": "*"
     }
 }
   

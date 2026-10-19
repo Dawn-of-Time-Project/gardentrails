@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:oak_sapling",
+    "gardentrails:mold"
+  ],
+  "result": {
+    "id": "gardentrails:rotten_oak_sapling"
+  }
+}

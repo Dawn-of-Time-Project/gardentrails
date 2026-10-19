@@ -1,9 +1,10 @@
 package org.dawnoftime.gardentrails.block.templates;
 
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.ScheduledTickAccess;
 import org.dawnoftime.gardentrails.block.IBlockTooltip;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
+
 import net.minecraft.world.item.Item;
 
 import net.minecraft.core.BlockPos;
@@ -105,7 +106,7 @@ public class DryerBlock extends WaterloggedBlock implements EntityBlock, IBlockT
     }
 
     @Override
-    public @NotNull BlockState updateShape(BlockState stateIn, final @NotNull LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, final @NotNull BlockPos currentPos, final @NotNull Direction facing, final @NotNull BlockPos facingPos, final @NotNull BlockState facingState, RandomSource random) {
+    public @NotNull BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         stateIn = super.updateShape(stateIn, worldIn, scheduledTickAccess, currentPos, facing, facingPos, facingState, random);
         if(facing == Direction.DOWN && !this.canSurvive(stateIn, worldIn, currentPos)) {
             return Blocks.AIR.defaultBlockState();

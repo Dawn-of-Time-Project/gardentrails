@@ -1,5 +1,7 @@
 package org.dawnoftime.gardentrails.item.templates;
 
+import org.dawnoftime.gardentrails.block.IBlockTooltip;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;

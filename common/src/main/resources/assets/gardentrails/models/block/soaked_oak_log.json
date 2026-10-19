@@ -1,7 +1,0 @@
-{
-    "parent": "minecraft:block/cube_column",
-    "textures": {
-        "end": "gardentrails:block/soaked_oak_log_top",
-        "side": "gardentrails:block/soaked_oak_log"
-    }
-}

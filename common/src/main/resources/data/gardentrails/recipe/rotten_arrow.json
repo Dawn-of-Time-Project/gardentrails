@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " MF",
+    " BM",
+    "P  "
+  ],
+  "key": {
+    "F": "minecraft:flint",
+    "B": "minecraft:bone",
+    "M": "gardentrails:mold",
+    "P": "minecraft:feather"
+  },
+  "result": {
+    "id": "gardentrails:rotten_arrow",
+    "count": 4
+  }
+}

@@ -1,5 +1,7 @@
 package org.dawnoftime.gardentrails.blockentity;
 
+import net.minecraft.world.item.Item;
+
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;

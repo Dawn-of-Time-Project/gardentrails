@@ -12,6 +12,7 @@
     "ServerPlayerMixin"
   ],
   "client": [
+    "CreativeInventoryMixin"
   ],
   "server": [
   ],

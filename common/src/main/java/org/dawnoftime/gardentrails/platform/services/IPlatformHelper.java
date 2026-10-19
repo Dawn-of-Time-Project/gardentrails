@@ -2,10 +2,8 @@ package org.dawnoftime.gardentrails.platform.services;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.dawnoftime.gardentrails.GTConfig;
+import org.dawnoftime.gardentrails.blockentity.FlowerPlanterBlockEntity;
 
 public interface IPlatformHelper {
 
@@ -18,8 +16,10 @@ public interface IPlatformHelper {
      */
     boolean isModLoaded(String modId);
 
-    GTConfig getConfig();
 
-    // technically doesn't belong here (i think?) but needs to be because for whatever reason neoforge patches the method signature of this method
+    /** Creates the flower planter block entity, Forge returns a subclass that hands its content to the baked model. */
+    FlowerPlanterBlockEntity createFlowerPlanterBlockEntity(BlockPos pos, BlockState state);
+
+    /** Growth speed of a crop block, vanilla and the loaders do not agree on the parameters of the method. */
     float getGrowthSpeed(BlockState state, BlockGetter level, BlockPos pos);
 }

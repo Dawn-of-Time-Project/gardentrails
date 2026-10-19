@@ -1,24 +1,19 @@
 package org.dawnoftime.gardentrails.block.templates;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.dawnoftime.gardentrails.GTCommon;
-import org.dawnoftime.gardentrails.block.IFlammable;
 import org.jetbrains.annotations.NotNull;
 
 import static org.dawnoftime.gardentrails.GTCommon.MOD_ID;
 import static org.dawnoftime.gardentrails.util.VoxelShapes.FULL_SHAPE;
 
-public class BlockGT extends Block implements IFlammable {
-    private int fireSpreadSpeed = 0;
-    private int fireDestructionSpeed = 0;
+public class BlockGT extends Block {
     private final VoxelShape[] shapes;
 
     public BlockGT(Properties properties, VoxelShape[] shapes) {
@@ -60,25 +55,5 @@ public class BlockGT extends Block implements IFlammable {
     public boolean isPathfindable(final @NotNull BlockState state, final @NotNull PathComputationType type) {
         if (type == PathComputationType.LAND && this.blocksLandPathing(state)) return false;
         return super.isPathfindable(state, type);
-    }
-
-    public Block setBurnable() {
-        return setBurnable(5, 20);
-    }
-
-    public Block setBurnable(int fireSpreadSpeed, int fireDestructionSpeed) {
-        this.fireSpreadSpeed = fireSpreadSpeed;
-        this.fireDestructionSpeed = fireDestructionSpeed;
-        return this;
-    }
-
-    @Override
-    public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        return state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) ? 0 : this.fireSpreadSpeed;
-    }
-
-    @Override
-    public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        return state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED) ? 0 : this.fireDestructionSpeed;
     }
 }
