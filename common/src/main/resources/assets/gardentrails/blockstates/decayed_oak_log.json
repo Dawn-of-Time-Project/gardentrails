@@ -1,0 +1,7 @@
+{
+	"variants": {
+		"axis=y": { "model": "gardentrails:block/decayed_oak_log" },
+		"axis=z": { "model": "gardentrails:block/decayed_oak_log", "x": 90 },
+		"axis=x": { "model": "gardentrails:block/decayed_oak_log", "x": 90, "y": 90 }
+	}
+}

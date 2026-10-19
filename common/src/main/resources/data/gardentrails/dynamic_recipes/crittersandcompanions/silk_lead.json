@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SS ",
+    "SB ",
+    "  S"
+  ],
+  "key": {
+    "S": "gardentrails:silk",
+    "B": "minecraft:slime_ball"
+  },
+  "result": {
+    "id": "crittersandcompanions:silk_lead",
+    "count": 1
+  }
+}

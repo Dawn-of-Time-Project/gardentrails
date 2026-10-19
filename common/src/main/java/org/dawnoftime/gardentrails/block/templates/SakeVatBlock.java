@@ -2,6 +2,7 @@ package org.dawnoftime.gardentrails.block.templates;
 import org.dawnoftime.gardentrails.block.IBlockTooltip;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.cauldron.CauldronInteractions;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.world.item.Item;
 

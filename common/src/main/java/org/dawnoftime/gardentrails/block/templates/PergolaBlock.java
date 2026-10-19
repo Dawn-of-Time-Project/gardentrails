@@ -1,65 +1,64 @@
 package org.dawnoftime.gardentrails.block.templates;
 
 import org.dawnoftime.gardentrails.block.IBlockTooltip;
-import org.dawnoftime.gardentrails.util.TooltipHelper;
+
+import net.minecraft.world.item.Item;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
-import org.dawnoftime.gardentrails.registry.GTItemsRegistry;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.dawnoftime.gardentrails.block.IBlockClimbingPlant;
 import org.dawnoftime.gardentrails.util.GTBlockStateProperties;
+import org.dawnoftime.gardentrails.util.GTBlockStateProperties.ClimbingPlant;
+import org.dawnoftime.gardentrails.util.TooltipHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Supplier;
 
+import static org.dawnoftime.gardentrails.util.VoxelShapes.PERGOLA_COLLISION_SHAPES;
 import static org.dawnoftime.gardentrails.util.VoxelShapes.PERGOLA_SHAPES;
 
-
-public class PergolaBlock extends BlockGT implements IBlockTooltip {
+/**
+ * One block per metal. The climbing plant (vine, ivy, grape) is a state property, like the lattice.
+ * The former blocks "metal_pergola_vine, _ivy and _grape" are aliased to this block by the loaders.
+ */
+public class PergolaBlock extends BlockGT implements IBlockClimbingPlant, IBlockTooltip {
     public static final BooleanProperty AXIS_X = GTBlockStateProperties.AXIS_X;
     public static final BooleanProperty AXIS_Y = GTBlockStateProperties.AXIS_Y;
     public static final BooleanProperty AXIS_Z = GTBlockStateProperties.AXIS_Z;
+    public static final EnumProperty<ClimbingPlant> CLIMBING_PLANT = GTBlockStateProperties.CLIMBING_PLANT;
+    public static final IntegerProperty AGE = GTBlockStateProperties.AGE_6;
 
-    // Suppliers resolved lazily at runtime — set to null for pergola variants that don't support plants
-    private final Supplier<PergolaBlock> vineVariant;
-    private final Supplier<PergolaBlock> ivyVariant;
-    private final Supplier<PergolaBlock> grapeVariant;
-
-    /** Full constructor: pergola that supports climbing plants. */
-    public PergolaBlock(Properties properties,
-                        Supplier<PergolaBlock> vineVariant,
-                        Supplier<PergolaBlock> ivyVariant,
-                        Supplier<PergolaBlock> grapeVariant) {
+    public PergolaBlock(Properties properties) {
         super(properties, PERGOLA_SHAPES);
-        this.vineVariant  = vineVariant;
-        this.ivyVariant   = ivyVariant;
-        this.grapeVariant = grapeVariant;
-        this.registerDefaultState(this.defaultBlockState().setValue(AXIS_Y, false).setValue(AXIS_X, false).setValue(AXIS_Z, false));
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(AXIS_Y, false).setValue(AXIS_X, false).setValue(AXIS_Z, false)
+                .setValue(CLIMBING_PLANT, ClimbingPlant.NONE).setValue(AGE, 0));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(AXIS_Y, AXIS_X, AXIS_Z);
+        builder.add(AXIS_Y, AXIS_X, AXIS_Z, CLIMBING_PLANT, AGE);
     }
 
     @Override
@@ -75,6 +74,23 @@ public class PergolaBlock extends BlockGT implements IBlockTooltip {
             int index = state.getValue(AXIS_Z) ? 1 : 0;
             return state.getValue(AXIS_X) ? index * 2 : index;
         }
+    }
+
+    /** A pergola holding a plant has a smaller selection box than its collision box. */
+    @Override
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        if (state.getValue(CLIMBING_PLANT).hasNoPlant()) {
+            return super.getShape(state, level, pos, context);
+        }
+        if (state.getValue(AXIS_X) || state.getValue(AXIS_Z)) {
+            return state.getValue(AXIS_Y) ? PERGOLA_COLLISION_SHAPES[2] : PERGOLA_COLLISION_SHAPES[1];
+        }
+        return PERGOLA_COLLISION_SHAPES[0];
+    }
+
+    @Override
+    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        return super.getShape(state, level, pos, context);
     }
 
     @Nullable
@@ -120,48 +136,36 @@ public class PergolaBlock extends BlockGT implements IBlockTooltip {
     }
 
     @Override
+    public boolean isRandomlyTicking(@NotNull BlockState state) {
+        return !state.getValue(CLIMBING_PLANT).hasNoPlant();
+    }
+
+    @Override
+    public void randomTick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
+        this.tickPlant(state, level, pos, random);
+    }
+
+    @Override
+    public void spawnAfterBreak(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull ItemStack stack, boolean dropExperience) {
+        super.spawnAfterBreak(state, level, pos, stack, dropExperience);
+        // Climbing plants do not drop from the block loot table but from their own loot table (plant name and age)
+        this.dropPlant(state, level, pos, stack);
+    }
+
+    @Override
+    protected InteractionResult useItemOn(ItemStack usedStack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        if (this.tryPlacingPlant(state, level, pos, player, hand)) {
+            return InteractionResult.SUCCESS;
+        }
+        return this.harvestPlant(state, level, pos, player, hand);
+    }
+
+    @Override
     public void appendTooltip(List<Component> tooltip) {
         TooltipHelper.label(tooltip, "lore.gardentrails.pergola.label");
         TooltipHelper.lore(tooltip, "lore.gardentrails.pergola.accepts", TooltipHelper.names(
                 "item.gardentrails.grape_seeds", "block.gardentrails.ivy", "block.minecraft.vine"));
         TooltipHelper.lore(tooltip, "lore.gardentrails.pergola.usage");
-    }
-
-    @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        // Plants can be placed anywhere on a bare pergola, in creative and in survival
-        return this.tryPutPlant(stack, state, level, pos, player);
-    }
-
-    private InteractionResult tryPutPlant(ItemStack stackInHand, BlockState currentState, @NotNull Level level, @NotNull BlockPos pos, Player player) {
-        // Guard: if this variant has no plant support, skip
-        if (vineVariant == null || ivyVariant == null || grapeVariant == null)
-            return InteractionResult.TRY_WITH_EMPTY_HAND;
-
-        Item itemInHand = stackInHand.getItem();
-        PergolaBlock target = null;
-        if (itemInHand == Blocks.VINE.asItem()) {
-            target = vineVariant.get();
-        } else if (itemInHand == GTBlocksRegistry.INSTANCE.IVY.get().asItem()) {
-            target = ivyVariant.get();
-        } else if (itemInHand == GTItemsRegistry.INSTANCE.GRAPE_SEEDS.get()) {
-            target = grapeVariant.get();
-        }
-        if (target == null)
-            return InteractionResult.TRY_WITH_EMPTY_HAND;
-
-        level.setBlock(pos, this.copyShapeToPergola(currentState, target), 2);
-        if (!player.isCreative()) {
-            stackInHand.shrink(1);
-        }
-        return InteractionResult.SUCCESS;
-    }
-
-    public BlockState copyShapeToPergola(@NotNull BlockState currentState, PergolaBlock targetPergola) {
-        return targetPergola.defaultBlockState()
-                .setValue(AXIS_X, currentState.getValue(AXIS_X))
-                .setValue(AXIS_Y, currentState.getValue(AXIS_Y))
-                .setValue(AXIS_Z, currentState.getValue(AXIS_Z));
     }
 
     public static BlockPos randomSpread(BlockPos pos, RandomSource random) {

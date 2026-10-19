@@ -1,8 +1,9 @@
 package org.dawnoftime.gardentrails.block.trees;
 
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -14,41 +15,33 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.dawnoftime.gardentrails.block.templates.BlockGT;
 import org.dawnoftime.gardentrails.util.GTBlockStateProperties;
 import org.jetbrains.annotations.NotNull;
 
-public class MapleLeavesBlock extends BlockGT {
+public class MapleLeavesBlock extends MapleMultiblockBlock {
     public static final IntegerProperty MULTIBLOCK_X = GTBlockStateProperties.MULTIBLOCK_3X;
     public static final IntegerProperty MULTIBLOCK_Y = GTBlockStateProperties.MULTIBLOCK_2Y;
     public static final IntegerProperty MULTIBLOCK_Z = GTBlockStateProperties.MULTIBLOCK_3Z;
 
+    private static final VoxelShape VS = Block.box(0.1D, 0.1D, 0.1D, 15.9D, 15.9D, 15.9D);
+
     public MapleLeavesBlock(final Properties properties) {
-        super(properties.pushReaction(PushReaction.POPPED));
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(MapleTrunkBlock.FACING, Direction.NORTH).setValue(MapleLeavesBlock.MULTIBLOCK_X, 0).setValue(MapleLeavesBlock.MULTIBLOCK_Y, 0).setValue(MapleLeavesBlock.MULTIBLOCK_Z, 0));
     }
 
     @Override
     public BlockState playerWillDestroy(final Level worldIn, final BlockPos blockPosIn, final BlockState blockStateIn, final Player playerEntityIn) {
         if(!worldIn.isClientSide()) {
-            final float currentX = -blockStateIn.getValue(MapleLeavesBlock.MULTIBLOCK_X);
-            final float currentY = -blockStateIn.getValue(MapleLeavesBlock.MULTIBLOCK_Y);
-            final float currentZ = -blockStateIn.getValue(MapleLeavesBlock.MULTIBLOCK_Z);
-            // Remove all leaf blocks silently — super.playerWillDestroy handles the one sound/particle for the directly broken block
-            for(int x = 0; x <= 2; x++) {
-                for(int y = 0; y <= 1; y++) {
-                    for(int z = 0; z <= 2; z++) {
-                        final BlockPos baseBlockPos = new BlockPos((int) (blockPosIn.getX() + x + currentX), (int) (blockPosIn.getY() + y + currentY), (int) (blockPosIn.getZ() + z + currentZ));
-                        worldIn.setBlock(baseBlockPos, Blocks.AIR.defaultBlockState(), 35);
-                    }
-                }
+            final BlockPos trunkBlockPos = MapleTree.trunkFromLeaf(blockPosIn, blockStateIn);
+            // Remove all leaf blocks silently, super.playerWillDestroy handles the one sound/particle for the directly broken block
+            for(final BlockPos leafPos : MapleTree.leafArea(trunkBlockPos)) {
+                worldIn.setBlock(leafPos, Blocks.AIR.defaultBlockState(), 35);
             }
 
-            final BlockPos trunkBlockPos = new BlockPos((int) (blockPosIn.getX() + currentX + 1), (int) (blockPosIn.getY() + currentY - 1), (int) (blockPosIn.getZ() + currentZ + 1));
             if(!playerEntityIn.isCreative()) {
                 worldIn.destroyBlock(trunkBlockPos, true);
             } else {
@@ -66,98 +59,45 @@ public class MapleLeavesBlock extends BlockGT {
     }
 
     @Override
-    public BlockState updateShape(final BlockState stateIn, final LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, final BlockPos currentPos, final Direction facing, final BlockPos facingPos, final BlockState facingState, RandomSource random) {
-        final Direction currentFacing = stateIn.getValue(MapleTrunkBlock.FACING);
-        final float multiblockX = stateIn.getValue(MapleLeavesBlock.MULTIBLOCK_X);
-        final float multiblockY = stateIn.getValue(MapleLeavesBlock.MULTIBLOCK_Y);
-        final float multiblockZ = stateIn.getValue(MapleLeavesBlock.MULTIBLOCK_Z);
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess scheduledTickAccess, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
+        final int x = stateIn.getValue(MapleLeavesBlock.MULTIBLOCK_X);
+        final int y = stateIn.getValue(MapleLeavesBlock.MULTIBLOCK_Y);
+        final int z = stateIn.getValue(MapleLeavesBlock.MULTIBLOCK_Z);
+        final Direction treeFacing = stateIn.getValue(MapleTrunkBlock.FACING);
 
-        if(Direction.DOWN.equals(facing)) {
-            if(multiblockX == 1 && multiblockY == 0 && multiblockZ == 1) {
-                final BlockState state = worldIn.getBlockState(currentPos.offset(0, -1, 0));
+        // The center of the bottom layer rests on the trunk, every other inner face needs a leaf of the same tree next to it
+        final boolean needsTrunk = facing == Direction.DOWN && x == 1 && y == 0 && z == 1;
+        final boolean needsLeaf = switch(facing) {
+            case DOWN -> y == 1;
+            case UP -> y == 0;
+            case WEST -> x > 0;
+            case EAST -> x < 2;
+            case NORTH -> z > 0;
+            case SOUTH -> z < 2;
+        };
 
-                if(!(state.getBlock() instanceof MapleTrunkBlock) || currentFacing == null || !currentFacing.equals(state.getValue(MapleTrunkBlock.FACING))) {
-                    return Blocks.AIR.defaultBlockState();
-                }
-            } else if(multiblockY == 1) {
-                final BlockState state = worldIn.getBlockState(currentPos.offset(0, -1, 0));
-
-                if(!(state.getBlock() instanceof MapleLeavesBlock) || currentFacing == null || !currentFacing.equals(state.getValue(MapleTrunkBlock.FACING))) {
-                    return Blocks.AIR.defaultBlockState();
-                }
-            }
-        } else if(Direction.UP.equals(facing) && multiblockY == 0) {
-            final BlockState state = worldIn.getBlockState(currentPos.offset(0, 1, 0));
-
-            if(!(state.getBlock() instanceof MapleLeavesBlock) || currentFacing == null || !currentFacing.equals(state.getValue(MapleTrunkBlock.FACING))) {
+        if(needsTrunk) {
+            if(!isSameTree(facingState, MapleTrunkBlock.class, treeFacing)) {
                 return Blocks.AIR.defaultBlockState();
             }
-        } else if(Direction.WEST.equals(facing) && multiblockX > 0) {
-            final BlockState state = worldIn.getBlockState(currentPos.offset(-1, 0, 0));
-
-            if(!(state.getBlock() instanceof MapleLeavesBlock) || currentFacing == null || !currentFacing.equals(state.getValue(MapleTrunkBlock.FACING))) {
-                return Blocks.AIR.defaultBlockState();
-            }
-        } else if(Direction.EAST.equals(facing)) {
-            if(multiblockX < 2) {
-                final BlockState state = worldIn.getBlockState(currentPos.offset(1, 0, 0));
-
-                if(!(state.getBlock() instanceof MapleLeavesBlock) || currentFacing == null || !currentFacing.equals(state.getValue(MapleTrunkBlock.FACING))) {
-                    return Blocks.AIR.defaultBlockState();
-                }
-            }
-        } else if(Direction.NORTH.equals(facing)) {
-            if(multiblockZ > 0) {
-                final BlockState state = worldIn.getBlockState(currentPos.offset(0, 0, -1));
-
-                if(!(state.getBlock() instanceof MapleLeavesBlock) || currentFacing == null || !currentFacing.equals(state.getValue(MapleTrunkBlock.FACING))) {
-                    return Blocks.AIR.defaultBlockState();
-                }
-            }
-        } else if(Direction.SOUTH.equals(facing) && multiblockZ < 2) {
-            final BlockState state = worldIn.getBlockState(currentPos.offset(0, 0, 1));
-
-            if(!(state.getBlock() instanceof MapleLeavesBlock) || currentFacing == null || !currentFacing.equals(state.getValue(MapleTrunkBlock.FACING))) {
-                return Blocks.AIR.defaultBlockState();
-            }
+        } else if(needsLeaf && !isSameTree(facingState, MapleLeavesBlock.class, treeFacing)) {
+            return Blocks.AIR.defaultBlockState();
         }
 
         return stateIn;
     }
 
-//    @Override
-//    public ItemStack getCloneItemStack(final BlockState stateIn, final HitResult targetIn, final BlockGetter worldIn, final BlockPos posIn, final Player playerIn) {
-//        return new ItemStack(DoTBBlocksRegistry.MAPLE_RED_SAPLING.get().asItem());
-//    }
-
-    @Override
-    public VoxelShape getBlockSupportShape(final BlockState p_230335_1_, final BlockGetter p_230335_2_, final BlockPos p_230335_3_) {
-        return Shapes.empty();
+    private static boolean isSameTree(final BlockState state, final Class<? extends Block> type, final Direction treeFacing) {
+        return type.isInstance(state.getBlock()) && state.getValue(MapleTrunkBlock.FACING) == treeFacing;
     }
 
-    /**
-     * Light corrections methods
-     */
-    private static final VoxelShape VS = Block.box(0.1D, 0.1D, 0.1D, 15.9D, 15.9D, 15.9D);
+    @Override
+    public VoxelShape getBlockSupportShape(final BlockState state, final BlockGetter level, final BlockPos pos) {
+        return Shapes.empty();
+    }
 
     @Override
     public @NotNull VoxelShape getShape(final @NotNull BlockState state, final @NotNull BlockGetter worldIn, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
         return MapleLeavesBlock.VS;
-    }
-
-    @Override
-    public boolean useShapeForLightOcclusion(final BlockState p_220074_1_In) {
-        return false;
-    }
-
-    @Override
-
-    public float getShadeBrightness(final BlockState p_220080_1_, final BlockGetter p_220080_2_, final BlockPos p_220080_3_) {
-        return 1.0F;
-    }
-
-    @Override
-    public boolean propagatesSkylightDown(final BlockState p_200123_1_) {
-        return true;
     }
 }

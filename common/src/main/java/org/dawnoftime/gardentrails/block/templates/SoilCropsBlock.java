@@ -1,23 +1,20 @@
 package org.dawnoftime.gardentrails.block.templates;
 
 import org.dawnoftime.gardentrails.util.RegistrationContext;
+import net.minecraft.world.level.LevelReader;
 
+import org.dawnoftime.gardentrails.platform.Services;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import org.dawnoftime.gardentrails.block.IBlockGeneration;
-import org.dawnoftime.gardentrails.platform.Services;
+import org.dawnoftime.gardentrails.util.PlantSoils;
 
 import javax.annotation.Nonnull;
 
@@ -26,7 +23,7 @@ public class SoilCropsBlock extends CropBlock implements IBlockGeneration {
     private final PlantType plantType;
 
     public enum PlantType {
-        DESERT, NETHER, CROP, CAVE, PLAINS, WATER, BEACH
+        CROP, PLAINS, WATER
     }
 
     public SoilCropsBlock(PlantType type) {
@@ -75,67 +72,21 @@ public class SoilCropsBlock extends CropBlock implements IBlockGeneration {
      */
     public boolean mayGenerateOn(BlockGetter worldIn, BlockPos pos, PlantType plantType) {
         BlockState stateOn = worldIn.getBlockState(pos);
-        Block blockOn = stateOn.getBlock();
 
-        if(plantType.equals(PlantType.DESERT)) {
-            return stateOn.is(Blocks.SAND)
-                    || stateOn.is(Blocks.TERRACOTTA)
-                    || blockOn instanceof GlazedTerracottaBlock;
-        } else if(plantType.equals(PlantType.NETHER)) {
-            return stateOn.is(Blocks.SOUL_SAND);
-        } else if(plantType.equals(PlantType.CROP)) {
-            return stateOn.is(Blocks.FARMLAND) || isModCompatible(stateOn);
-        } else if(plantType.equals(PlantType.CAVE)) {
-            return stateOn.isFaceSturdy(worldIn, pos, Direction.UP);
+        if(plantType.equals(PlantType.CROP)) {
+            return PlantSoils.isCropSoil(stateOn);
         } else if(plantType.equals(PlantType.PLAINS)) {
             return stateOn.is(Blocks.GRASS_BLOCK)
                     || stateOn.is(Blocks.DIRT)
-                    || stateOn.is(Blocks.FARMLAND)
-                    || isModCompatible(stateOn);
+                    || PlantSoils.isCropSoil(stateOn);
         } else if(plantType.equals(PlantType.WATER)) {
             return worldIn.getFluidState(pos.above()).getType() == Fluids.WATER
                     && (stateOn.is(Blocks.CLAY)
                     || stateOn.is(Blocks.DIRT)
                     || stateOn.is(Blocks.FARMLAND)
                     || stateOn.is(Blocks.GRAVEL));
-        } else if(plantType.equals(PlantType.BEACH)) {
-            boolean isBeach = stateOn.is(Blocks.GRASS_BLOCK)
-                    || stateOn.is(Blocks.DIRT)
-                    || stateOn.is(Blocks.SAND)
-                    || stateOn.is(Blocks.RED_SAND);
-            if(isBeach) {
-                boolean hasWater = false;
-                for(Direction face : Direction.Plane.HORIZONTAL) {
-                    BlockState blockState = worldIn.getBlockState(pos.relative(face));
-                    FluidState fluidState = worldIn.getFluidState(pos.relative(face));
-                    hasWater = blockState.is(Blocks.FROSTED_ICE);
-                    hasWater |= fluidState.is(FluidTags.WATER);
-                    if(hasWater)
-                        break; //No point continuing.
-                }
-                return hasWater;
-            }
         }
         return false;
-    }
-
-    private boolean isModCompatible(BlockState stateOn) {
-        if (Services.PLATFORM.isModLoaded("farmersdelight") && stateOn.is(getBlockFromRegistry("farmersdelight:rich_soil_farmland")))
-            return true;
-
-        else if (Services.PLATFORM.isModLoaded("aether") && stateOn.is(getBlockFromRegistry("aether:aether_farmland")))
-            return true;
-
-        else return Services.PLATFORM.isModLoaded("immersive_weathering") && (
-                    stateOn.is(getBlockFromRegistry("immersive_weathering:loamy_farmland")) ||
-                    stateOn.is(getBlockFromRegistry("immersive_weathering:earthen_clay_farmland")) ||
-                    stateOn.is(getBlockFromRegistry("immersive_weathering:sandy_farmland")) ||
-                    stateOn.is(getBlockFromRegistry("immersive_weathering:silty_farmland"))
-            );
-    }
-
-    private Block getBlockFromRegistry(String name) {
-        return BuiltInRegistries.BLOCK.getValue(Identifier.tryParse(name));
     }
 
     public void setPlantWithAge(BlockState currentState, LevelAccessor worldIn, BlockPos pos, int newAge) {

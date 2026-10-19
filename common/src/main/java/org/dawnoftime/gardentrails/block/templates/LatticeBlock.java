@@ -1,8 +1,8 @@
 package org.dawnoftime.gardentrails.block.templates;
 
 import org.dawnoftime.gardentrails.block.IBlockTooltip;
-import net.minecraft.world.item.Item;
 
+import net.minecraft.world.item.Item;
 import org.dawnoftime.gardentrails.util.TooltipHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,10 +17,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BonemealSource;
-import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,7 +38,7 @@ import java.util.List;
 
 import static org.dawnoftime.gardentrails.util.VoxelShapes.LATTICE_SHAPES;
 
-public class LatticeBlock extends WaterloggedBlock implements IBlockClimbingPlant, BonemealableBlock, IBlockTooltip {
+public class LatticeBlock extends WaterloggedBlock implements IBlockClimbingPlant, IBlockTooltip {
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
     public static final BooleanProperty EAST = BlockStateProperties.EAST;
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
@@ -153,29 +150,11 @@ public class LatticeBlock extends WaterloggedBlock implements IBlockClimbingPlan
     }
 
     @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack usedStack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (this.tryPlacingPlant(state, level, pos, player, hand)) {
             return InteractionResult.SUCCESS;
         }
         return this.harvestPlant(state, level, pos, player, hand);
-    }
-
-    @Override
-    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
-        ClimbingPlant plant = state.getValue(CLIMBING_PLANT);
-        return !plant.hasNoPlant() && state.getValue(AGE) < plant.maxAge();
-    }
-
-    @Override
-    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
-        return true;
-    }
-
-    @Override
-    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
-        // Bonemeal bypasses the light and moon cycle conditions of the random tick
-        int age = state.getValue(AGE);
-        level.setBlock(pos, state.setValue(AGE, age < 2 ? age + 1 : 2 + ((age - 1) % 5)), 2);
     }
 
     @Override

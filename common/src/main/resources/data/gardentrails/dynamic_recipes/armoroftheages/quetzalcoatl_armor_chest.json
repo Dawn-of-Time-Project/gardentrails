@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "GBR",
+    "xix",
+    "ROG"
+  ],
+  "key": {
+    "G": {
+      "item": "gardentrails:green_feather"
+    },
+    "R": {
+      "item": "gardentrails:red_feather"
+    },
+    "B": {
+      "item": "minecraft:bone_block"
+    },
+    "x": {
+      "item": "minecraft:gold_ingot"
+    },
+    "i": {
+      "item": "minecraft:netherite_chestplate"
+    },
+    "O": {
+      "item": "minecraft:egg"
+    }
+  },
+  "result": {
+    "id": "armoroftheages:quetzalcoatl_armor_chest",
+    "count": 1
+  }
+}

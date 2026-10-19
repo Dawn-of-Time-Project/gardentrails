@@ -11,6 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.dawnoftime.gardentrails.block.templates.PergolaBlock;
@@ -22,7 +24,7 @@ import java.util.List;
 import static org.dawnoftime.gardentrails.util.GTBlockStateProperties.AGE_6;
 import static org.dawnoftime.gardentrails.util.GTBlockStateProperties.CLIMBING_PLANT;
 
-public interface IBlockClimbingPlant {
+public interface IBlockClimbingPlant extends BonemealableBlock {
     // The probability to grow is 1/GROWTH_CHANCE (same value as the pergola plants)
     int GROWTH_CHANCE = 16;
     // If the plant could have grown, it has a 1/SPREAD_CHANCE probability to spread to a neighbour
@@ -137,6 +139,24 @@ public interface IBlockClimbingPlant {
         }
         List<ItemStack> drops = Utils.getLootList(serverLevel, state, heldItemStack, plant.getSerializedName() + "_" + state.getValue(AGE_6));
         return Utils.dropLootFromList(level, pos, drops, 1.0F);
+    }
+
+    @Override
+    default boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, net.minecraft.world.level.block.BonemealSource source) {
+        ClimbingPlant plant = state.getValue(CLIMBING_PLANT);
+        return !plant.hasNoPlant() && state.getValue(AGE_6) < plant.maxAge();
+    }
+
+    @Override
+    default boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state, net.minecraft.world.level.block.BonemealSource source) {
+        return true;
+    }
+
+    @Override
+    default void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state, net.minecraft.world.level.block.BonemealSource source) {
+        // Bonemeal bypasses the light and moon cycle conditions of the random tick
+        int age = state.getValue(AGE_6);
+        level.setBlock(pos, state.setValue(AGE_6, age < 2 ? age + 1 : 2 + ((age - 1) % 5)), 2);
     }
 
     /**

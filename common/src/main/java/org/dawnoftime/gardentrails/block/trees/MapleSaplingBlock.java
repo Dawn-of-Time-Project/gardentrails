@@ -1,5 +1,7 @@
 package org.dawnoftime.gardentrails.block.trees;
 
+import net.minecraft.world.level.LevelReader;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -67,17 +69,17 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
     }
 
     @Override
-    public boolean isValidBonemealTarget(final LevelReader p_176473_1_, final BlockPos p_176473_2_, final BlockState p_176473_3_, final net.minecraft.world.level.block.BonemealSource source) {
+    public boolean isValidBonemealTarget(final LevelReader p_176473_1_, final BlockPos p_176473_2_, final BlockState p_176473_3_, net.minecraft.world.level.block.BonemealSource source) {
         return true;
     }
 
     @Override
-    public boolean isBonemealSuccess(final Level p_180670_1_, final RandomSource p_180670_2_, final BlockPos p_180670_3_, final BlockState p_180670_4_, final net.minecraft.world.level.block.BonemealSource bonemealSource) {
+    public boolean isBonemealSuccess(final Level p_180670_1_, final RandomSource p_180670_2_, final BlockPos p_180670_3_, final BlockState p_180670_4_, net.minecraft.world.level.block.BonemealSource source) {
         return p_180670_1_.getRandom().nextFloat() < 0.45D;
     }
 
     @Override
-    public void performBonemeal(final ServerLevel level, final RandomSource source, final BlockPos pos, final BlockState state, final net.minecraft.world.level.block.BonemealSource bonemealSource) {
+    public void performBonemeal(final ServerLevel level, final RandomSource source, final BlockPos pos, final BlockState state, net.minecraft.world.level.block.BonemealSource bonemealSource) {
         this.advanceTree(level, pos, state);
     }
 
@@ -110,14 +112,9 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
         if(!state.is(BlockTags.SUBSTRATE_OVERWORLD)) {
             return false;
         }
-        for(int x = -1; x <= 1; x++) {
-            for(int y = 0; y <= 1; y++) {
-                for(int z = -1; z <= 1; z++) {
-                    state = worldIn.getBlockState(bottomCenterIn.offset(x, y + 1, z));
-                    if(!(state.getBlock() instanceof AirBlock)) {
-                        return false;
-                    }
-                }
+        for(final BlockPos leafPos : MapleTree.leafArea(bottomCenterIn)) {
+            if(!(worldIn.getBlockState(leafPos).getBlock() instanceof AirBlock)) {
+                return false;
             }
         }
         return true;
@@ -128,14 +125,8 @@ public class MapleSaplingBlock extends BushBlockGT implements BonemealableBlock 
             final Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(worldIn.getRandom());
             worldIn.setBlock(centerPosIn, this.trunk.get().defaultBlockState().setValue(MapleTrunkBlock.FACING, direction), 10);
 
-            for(int x = -1; x <= 1; x++) {
-                for(int y = 0; y <= 1; y++) {
-                    for(int z = -1; z <= 1; z++) {
-                        final BlockPos newBlockPosition = new BlockPos(centerPosIn.getX() + x, centerPosIn.getY() + y + 1, centerPosIn.getZ() + z);
-
-                        worldIn.setBlock(newBlockPosition, this.leaves.get().defaultBlockState().setValue(MapleTrunkBlock.FACING, direction).setValue(MapleLeavesBlock.MULTIBLOCK_X, x + 1).setValue(MapleLeavesBlock.MULTIBLOCK_Y, y).setValue(MapleLeavesBlock.MULTIBLOCK_Z, z + 1), 10);
-                    }
-                }
+            for(final BlockPos leafPos : MapleTree.leafArea(centerPosIn)) {
+                worldIn.setBlock(leafPos, MapleTree.leafState(this.leaves.get(), direction, centerPosIn, leafPos), 10);
             }
             return true;
         }

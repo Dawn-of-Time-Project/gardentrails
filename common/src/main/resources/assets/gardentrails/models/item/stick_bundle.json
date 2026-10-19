@@ -1,6 +1,5 @@
 {
 	"textures": {
-		"particle": "gardentrails:block/stick_bundle",
 		"1": "gardentrails:block/stick_bundle"
 	},
 	"elements": [

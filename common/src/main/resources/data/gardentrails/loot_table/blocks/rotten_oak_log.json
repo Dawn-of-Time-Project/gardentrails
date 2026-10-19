@@ -26,7 +26,7 @@
             },
             {
               "type": "minecraft:item",
-              "name": "gardentrails:soaked_oak_log",
+              "name": "gardentrails:decayed_oak_log",
               "condition": {
                 "type": "minecraft:survives_explosion"
               }

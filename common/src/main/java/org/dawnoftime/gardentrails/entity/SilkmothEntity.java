@@ -1,9 +1,13 @@
 package org.dawnoftime.gardentrails.entity;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+
+import net.minecraft.world.entity.EntitySpawnReason;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -16,15 +20,18 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ambient.AmbientCreature;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.dawnoftime.gardentrails.GTCommon;
 import org.dawnoftime.gardentrails.block.templates.DoubleGrowingBushBlock;
 import org.dawnoftime.gardentrails.platform.Services;
 import org.dawnoftime.gardentrails.registry.GTBlocksRegistry;
-import org.dawnoftime.gardentrails.registry.GTCriteriaRegistry;
 import org.dawnoftime.gardentrails.registry.GTItemsRegistry;
 import org.dawnoftime.gardentrails.registry.GTEntitiesRegistry;
 
@@ -33,6 +40,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SilkmothEntity extends AmbientCreature {
+    private static final int PITILESS_KILLS = 10;
+    private static final Identifier PITILESS_ADVANCEMENT = Identifier.fromNamespaceAndPath(GTCommon.MOD_ID, "pitiless");
+    private static final String PITILESS_CRITERION = "kill_silkmoths";
     private static final EntityDataAccessor<BlockPos> ROTATION_POS = SynchedEntityData.defineId(SilkmothEntity.class, EntityDataSerializers.BLOCK_POS);
     private static final EntityDataAccessor<Boolean> CLOCKWISE = SynchedEntityData.defineId(SilkmothEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> DISTANCE = SynchedEntityData.defineId(SilkmothEntity.class, EntityDataSerializers.FLOAT);
@@ -128,7 +138,7 @@ public class SilkmothEntity extends AmbientCreature {
                     state = this.level().getBlockState(pos);
 
                     if(state.getBlock() == GTBlocksRegistry.INSTANCE.MULBERRY.get()){
-                        if(!((DoubleGrowingBushBlock) state.getBlock()).isBottomCrop(state)) listMulberry.add(pos);
+                        if(!((DoubleGrowingBushBlock) state.getBlock()).isBottomHalf(state)) listMulberry.add(pos);
                     }else if(isNight){
                         if(state.getLightEmission() >= 14) listLight.add(pos);
                     }
@@ -192,9 +202,13 @@ public class SilkmothEntity extends AmbientCreature {
     @Override
     public void die(DamageSource source) {
         super.die(source);
-        // Fire the kill trigger when a player kills a silkmoth (server-side only)
-        if (!this.level().isClientSide() && source.getEntity() instanceof ServerPlayer player) {
-            GTCriteriaRegistry.KILL_SILKMOTH.trigger(player);
+        // The vanilla kill statistic is already incremented by super.die(), so it is persistent per player
+        if (!this.level().isClientSide() && source.getEntity() instanceof ServerPlayer player
+                && player.getStats().getValue(Stats.ENTITY_KILLED.get(this.getType())) >= PITILESS_KILLS) {
+            AdvancementHolder advancement = player.level().getServer().getAdvancements().get(PITILESS_ADVANCEMENT);
+            if (advancement != null) {
+                player.getAdvancements().award(advancement, PITILESS_CRITERION);
+            }
         }
     }
 

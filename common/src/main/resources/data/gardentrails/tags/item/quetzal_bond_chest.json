@@ -1,9 +1,6 @@
 {
   "replace": false,
   "values": [
-    {
-      "id": "armoroftheages:quetzalcoatl_armor_chest",
-      "required": false
-    }
+    {"id": "armoroftheages:quetzalcoatl_armor_chest", "required": false}
   ]
 }

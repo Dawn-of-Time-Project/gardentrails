@@ -1,5 +1,5 @@
 {
-  "variants": {
-    "": { "model": "gardentrails:block/maple_orange/maple_orange_sapling" }
-  }
+	"variants": {
+		"": { "model": "gardentrails:block/maple_orange/maple_orange_sapling" }
+	}
 }

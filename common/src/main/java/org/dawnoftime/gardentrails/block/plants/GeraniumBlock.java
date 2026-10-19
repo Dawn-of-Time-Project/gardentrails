@@ -2,21 +2,19 @@ package org.dawnoftime.gardentrails.block.plants;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.world.level.block.BonemealableBlock;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import org.dawnoftime.gardentrails.block.IBiomeColoredBlock;
 import org.dawnoftime.gardentrails.block.templates.BlockGT;
+import org.dawnoftime.gardentrails.util.PlantSoils;
 import javax.annotation.Nullable;
 import static org.dawnoftime.gardentrails.util.VoxelShapes.GERANIUM_SHAPE;
 
@@ -34,22 +32,21 @@ public class GeraniumBlock extends BlockGT implements BonemealableBlock, IBiomeC
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
-        BlockState blockDown = worldIn.getBlockState(pos.below());
-        return blockDown.getBlock() == Blocks.GRASS_BLOCK || blockDown.is(BlockTags.SUBSTRATE_OVERWORLD) || blockDown.getBlock() == Blocks.FARMLAND;
+        return PlantSoils.isWildPlantSoil(worldIn.getBlockState(pos.below()));
     }
 
     @Override
-    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
+    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state, net.minecraft.world.level.block.BonemealSource source) {
         return true;
     }
 
     @Override
-    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
+    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, net.minecraft.world.level.block.BonemealSource source) {
         return random.nextInt(10) == 0;
     }
 
     @Override
-    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, BonemealSource source) {
+    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource random, @NotNull BlockPos pos, @NotNull BlockState state, net.minecraft.world.level.block.BonemealSource source) {
         Block.popResource(level, pos, new ItemStack(this.asItem()));
     }
 

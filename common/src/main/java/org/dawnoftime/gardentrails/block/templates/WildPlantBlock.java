@@ -1,17 +1,16 @@
 package org.dawnoftime.gardentrails.block.templates;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.dawnoftime.gardentrails.util.PlantSoils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -47,7 +46,6 @@ public class WildPlantBlock extends BlockGT {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
-        BlockState blockDown = worldIn.getBlockState(pos.below());
-        return blockDown.getBlock() == Blocks.GRASS_BLOCK || blockDown.is(BlockTags.SUBSTRATE_OVERWORLD) || blockDown.getBlock() == Blocks.FARMLAND;
+        return PlantSoils.isWildPlantSoil(worldIn.getBlockState(pos.below()));
     }
 }
